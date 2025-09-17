@@ -8,6 +8,7 @@
         "dist"
     ],
     "scripts": {
+        "prepare": "tsc",
         "build": "tsc",
         "test": "echo \"No tests yet\""
     },
@@ -18,7 +19,7 @@
         "easy",
         "easynat"
     ],
-    "author": "Tu Nombre",
+    "author": "JESUS RUIZ",
     "license": "MIT",
     "peerDependencies": {
         "react": ">=18.0.0",

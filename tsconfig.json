@@ -2,7 +2,6 @@
     "compilerOptions": {
         "outDir": "dist",
         "declaration": true,
-        "declarationDir": "dist",
         "module": "CommonJS",
         "target": "ES6",
         "jsx": "react-native",
