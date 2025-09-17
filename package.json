@@ -1,0 +1,40 @@
+{
+    "name": "easynat",
+    "version": "0.1.0",
+    "description": "A simple and easy-to-use React Native component library",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc",
+        "test": "echo \"No tests yet\""
+    },
+    "keywords": [
+        "react-native",
+        "components",
+        "UI",
+        "easy",
+        "easynat"
+    ],
+    "author": "Tu Nombre",
+    "license": "MIT",
+    "peerDependencies": {
+        "react": ">=18.0.0",
+        "react-native": ">=0.72.0",
+        "react-native-root-siblings": ">=4.0.0"
+    },
+    "peerDependenciesMeta": {
+        "react": {
+            "optional": true
+        },
+        "react-native": {
+            "optional": true
+        },
+        "react-native-root-siblings": {
+            "optional": true
+        }
+    },
+    "devDependencies": {
+        "typescript": ">=5.0.0",
+        "@types/react": ">=18.0.0"
+    }
+}
