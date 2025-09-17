@@ -2,20 +2,14 @@
     "compilerOptions": {
         "outDir": "dist",
         "declaration": true,
-        "declarationDir": "dist/types",
+        "declarationDir": "dist",
         "module": "CommonJS",
         "target": "ES6",
         "jsx": "react-native",
         "strict": true,
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
-        "skipLibCheck": true,
-        "baseUrl": ".",
-        "paths": {
-            "~/*": [
-                "src/*"
-            ]
-        }
+        "skipLibCheck": true
     },
     "include": [
         "src"
