@@ -1,4 +1,11 @@
-import React, { useRef, useState } from "react";
+import React, {
+    ReactElement,
+    useRef,
+    useState,
+    forwardRef,
+    useImperativeHandle,
+    useEffect,
+} from "react";
 import {
     StyleSheet,
     ViewStyle,
@@ -7,43 +14,75 @@ import {
     Platform,
     Dimensions,
     View,
+    ListRenderItemInfo,
+    ListRenderItem,
 } from "react-native";
 import { useTheme } from "./theme-provider";
 import { BSDefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
 import { Pressable } from "./Pressable";
-import { BSScrollBoxProps, ScrollBox } from "./Scrollview";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { RootSiblingPortal } from "react-native-root-siblings";
+import { BSFlatListProps, FlatList } from "./FlatList";
+import { BSButtonProps, Button } from "./Button";
+import { useKeyboardHeight } from "./utils/useKeyboardHeight";
 
+/* ---------------- Types ---------------- */
 export type Placement = "bottom" | "top";
 export type MenuDir = "left" | "right";
 
-export type BSMenuProps = ViewProps & BSDefaultProps & {
+/** Item por defecto para Menu.Item (si usas children) */
+export type EAMenuItemType = BSButtonProps & {
+    label: string | number;
+    value?: string | number;
+};
+
+export type MenuRef = {
+    open: () => void;
+    close: () => void;
+    isOpen: () => boolean;
+};
+
+export type BSMenuProps<T = unknown> = ViewProps & BSDefaultProps & {
     trigger?: (props: { onPress: (e: any) => void }) => React.ReactNode;
     defaultOpen?: boolean;
     placement?: Placement;
     menuDir?: MenuDir;
-    _ios?: BSMenuProps;
-    _android?: BSMenuProps;
-    _web?: BSMenuProps;
+    _ios?: BSMenuProps<T>;
+    _android?: BSMenuProps<T>;
+    _web?: BSMenuProps<T>;
     children?: React.ReactElement<any> | React.ReactElement<any>[];
-    _contentStyle?: BSScrollBoxProps
+    _contentStyle?: BSFlatListProps<T>;
+    data?: T[];
+    renderItem?: ListRenderItem<T>,
+    backdrop?: boolean | 'static';
+    useTriggerWidth?: boolean;
 };
 
-export const Menu: React.FC<BSMenuProps> = ({
-    trigger,
-    children,
-    style,
-    defaultOpen,
-    placement = "bottom",
-    menuDir = "left",
-    ...props
-}) => {
+const MenuItem: React.FC<EAMenuItemType> = () => null;
+MenuItem.displayName = "MenuItem";
+
+let awaitConfigMenu = null
+
+function InternalMenu<T>(
+    {
+        trigger,
+        children,
+        style,
+        defaultOpen,
+        placement = "bottom",
+        menuDir = "left",
+        data,
+        renderItem,
+        ...props
+    }: BSMenuProps<T>,
+    ref: React.Ref<MenuRef>
+) {
     const { theme } = useTheme();
-    const [open, setOpen] = useState(defaultOpen || false);
-    const { height } = Dimensions.get('screen')
+    const [show, setShow] = useState(defaultOpen || false);
+    const { height } = Dimensions.get("screen");
     const insets = useSafeAreaInsets();
-    const [triggerLayout, setTriggerLayout] = useState({
+    const keyboardHeight = useKeyboardHeight()
+    const [triggerLayout] = useState({
         x: 0,
         y: 0,
         width: 0,
@@ -52,26 +91,39 @@ export const Menu: React.FC<BSMenuProps> = ({
     const [menuSize, setMenuSize] = useState({ w: 0, h: 0 });
     const animation = useRef(new Animated.Value(0)).current;
 
-    const combinedProps: BSMenuProps = {
-        shadow: 3, borderWidth: 1, borderColor: 'light', bg: 'white', py: 3, rounded: 3,
+    const combinedProps: BSMenuProps<T> = {
+        shadow: 3,
+        borderWidth: 1,
+        borderColor: "light",
+        bg: "white",
+        py: 3,
+        rounded: 3,
+        backdrop: true,
         ...props,
         ...(Platform.OS === "ios" ? props._ios : {}),
         ...(Platform.OS === "android" ? props._android : {}),
         ...(Platform.OS === "web" ? props._web : {}),
     };
 
-    const styles = DEFAULT_PROPS(combinedProps, theme)
+    const styles = DEFAULT_PROPS(combinedProps, theme);
 
-    // posición vertical
-    const menuTop = placement === "bottom"
-        ? triggerLayout.y + triggerLayout.height
-        : triggerLayout.y - menuSize.h;
+    const calcMaxHeightBottom = height - insets.bottom - triggerLayout.y - triggerLayout.height - keyboardHeight
 
-    // posición horizontal según menuDir
-    const menuLeft = menuDir === "left"
-        ? Math.max(0, triggerLayout.x - Math.max(0, menuSize.w - triggerLayout.width))
-        : Math.max(0, triggerLayout.x + triggerLayout.width - menuSize.w)
+    placement = (calcMaxHeightBottom < 96 && placement == 'bottom') ? 'top' : placement
 
+    let menuTop = placement === "top" ? triggerLayout.y - menuSize.h : triggerLayout.y + triggerLayout.height
+
+    let maxHeight = placement == "top" ? triggerLayout.y - insets.top : calcMaxHeightBottom
+
+    if (maxHeight + 96 > height - keyboardHeight) {
+        menuTop -= (maxHeight + 96) - (height - keyboardHeight)
+        maxHeight -= (maxHeight + 96) - (height - keyboardHeight)
+    }
+
+    const menuLeft =
+        menuDir === "left"
+            ? Math.max(0, triggerLayout.x - Math.max(0, menuSize.w - triggerLayout.width))
+            : Math.max(0, triggerLayout.x + triggerLayout.width - menuSize.w);
 
     const baseStyle = StyleSheet.flatten<ViewStyle>([
         style,
@@ -79,43 +131,79 @@ export const Menu: React.FC<BSMenuProps> = ({
             position: "absolute",
             top: menuTop,
             left: menuLeft,
-            maxHeight: placement == 'top' ? triggerLayout.y - insets.top : height - insets.bottom - triggerLayout.y - triggerLayout.height
+            width: combinedProps.useTriggerWidth && triggerLayout.width,
+            maxHeight: maxHeight
         },
-        ...styles
+        ...styles,
     ]);
 
     const animate = (toValue: 0 | 1, callBack?: () => void) => {
         Animated.timing(animation, {
             toValue,
-            duration: toValue ? 250 : 200,
+            duration: toValue ? 200 : 200,
             useNativeDriver: true,
         }).start(({ finished }) => finished && callBack?.());
     };
 
-    const onOpen = () => {
-        setOpen(true)
-        animate(1)
-    }
+    const open = () => setShow(true)
 
-    const onClose = () => animate(0, () => setOpen(false));
+    useEffect(() => {
+        if (show) {
+            clearInterval(awaitConfigMenu)
+            awaitConfigMenu = setTimeout(() => animate(1), 10)
+        }
+    }, [show, menuSize])
+
+    const close = () => animate(0, () => setShow(false));
+
+    useImperativeHandle(ref, () => ({
+        open,
+        close,
+        isOpen: () => show,
+    }));
+
+
+    const renderItemDefault = ({ item }: ListRenderItemInfo<ReactElement<EAMenuItemType>>) => (
+        ((item?.type as any)?.name == 'MenuItem' || (item?.type as any)?.name == 'SearchInputItem') ?
+            <Button
+                children={item.props.label}
+                variant={"ghost"}
+                rounded={0}
+                {...item.props}
+                onPress={(e) => {
+                    item.props.onPress?.(e);
+                    close()
+                }}
+            />
+            : item?.type ? <item.type {...item.props} /> : item
+    )
+
+    const dataFlatList = {
+        data: data || React.Children.toArray(children),
+        renderItem: renderItem || renderItemDefault
+    }
 
     return (
         <>
-            {trigger({
+            {trigger?.({
                 onPress: (e) => {
-                    e.currentTarget.measure((x, _y, width, height, _px, y) => setTriggerLayout({ x, y, width, height: height }))
-                    open ? onClose() : onOpen()
-                }
+                    e.currentTarget?.measure?.((_x: any, _y: any, width: number, height: number, x: number, y: number) => {
+                        Object.assign(triggerLayout, { x, y, width, height })
+                    });
+                    show ? close() : open();
+                },
             })}
 
-            {open &&
+            {show && (
                 <RootSiblingPortal>
-                    <View style={StyleSheet.absoluteFill}>
-                        <Pressable onPress={() => onClose()} flex={1} />
+                    <View style={StyleSheet.absoluteFill} pointerEvents={"box-none"}>
+                        {combinedProps.backdrop && <Pressable onPress={() => combinedProps.backdrop != 'static' && close()} flex={1} />}
                         <Animated.View
                             onLayout={(e) => {
                                 const { width, height } = e.nativeEvent.layout;
-                                setMenuSize({ w: width, h: height });
+                                if (width != menuSize.w || Math.floor(height) != Math.floor(menuSize.h)) {
+                                    setMenuSize({ w: width, h: height })
+                                }
                             }}
                             style={[
                                 baseStyle,
@@ -125,32 +213,41 @@ export const Menu: React.FC<BSMenuProps> = ({
                                             translateY: animation.interpolate({
                                                 inputRange: [0, 1],
                                                 outputRange: [5, 0],
-                                            })
-                                        }
+                                            }),
+                                        },
                                     ],
-                                    opacity: animation
+                                    opacity: animation,
                                 },
                             ]}
                         >
-                            <ScrollBox _contentContainerStyle={{ bg: 'light', gap: 1 }} {...props._contentStyle}>
-                                {React.Children.map(children, (child) =>
-                                    <View style={{ backgroundColor: props?._contentStyle?.bg || '#fff' }}>
-                                        <child.type
-                                            p={3}
-                                            _pressed={{ bg: 'primary.50' }}
-                                            {...child.props}
-                                            onPress={e => {
-                                                child.props.onPress?.(e)
-                                                onClose()
-                                            }}
-                                        />
-                                    </View>
-                                )}
-                            </ScrollBox>
+                            <FlatList<T>
+                                initialNumToRender={1}
+                                maxToRenderPerBatch={10}
+                                updateCellsBatchingPeriod={10}
+                                windowSize={10}
+                                nestedScrollEnabled
+                                ItemSeparatorComponent={() => <View style={{ backgroundColor: '#ccc', height: .5 }} />}
+                                keyboardShouldPersistTaps={"handled"}
+                                {...combinedProps._contentStyle as any}
+                                {...dataFlatList}
+                            />
                         </Animated.View>
                     </View>
                 </RootSiblingPortal>
-            }
+            )}
         </>
     );
+}
+
+type MenuComponent = (<T = unknown>(props: BSMenuProps<T> & { ref?: React.Ref<MenuRef> }) => React.ReactElement | null) & {
+    Item: React.FC<EAMenuItemType>;
 };
+
+// cast seguro: forwardRef devuelve un React component no-genérico, así que casteamos.
+const MenuBase = forwardRef(InternalMenu) as unknown as MenuComponent;
+
+// asignar la prop estática
+MenuBase.Item = MenuItem;
+
+// export
+export const Menu = MenuBase as MenuComponent;

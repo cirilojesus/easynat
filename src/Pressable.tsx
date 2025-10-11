@@ -24,7 +24,11 @@ export const Pressable: React.FC<BSPressableProps> = ({ ...props }) => {
 
     const styles = DEFAULT_PROPS(combinedProps, theme);
     const pressedStyles = DEFAULT_PROPS(combinedProps?._pressed || {}, theme);
-    const baseStyle = StyleSheet.flatten<BSPressableProps>([combinedProps.style, ...styles]);
+    const baseStyle = StyleSheet.flatten<BSPressableProps>([
+        combinedProps.style,
+        combinedProps.disabled && { opacity: .5 },
+        ...styles,
+    ]);
 
     return (
         <PressableRN
@@ -34,14 +38,17 @@ export const Pressable: React.FC<BSPressableProps> = ({ ...props }) => {
                 pressed && pressedStyles,
             ]}
         >
-            {({ pressed }) =>
-                renderChild(
-                    combinedProps.children as any,
-                    pressed
-                        ? { ...combinedProps._text, ...combinedProps._pressed?._text } // 👉 fusiona estilo normal con estilo presionado
-                        : combinedProps._text
-                )
-            }
+            {({ pressed }) => {
+                return typeof combinedProps.children == 'function' ?
+                    combinedProps.children(({ ...combinedProps, pressed }))
+                    :
+                    renderChild(
+                        combinedProps.children,
+                        pressed
+                            ? { ...combinedProps._text, ...combinedProps._pressed?._text } // 👉 fusiona estilo normal con estilo presionado
+                            : combinedProps._text
+                    )
+            }}
         </PressableRN>
     );
 };

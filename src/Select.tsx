@@ -1,9 +1,10 @@
 import { useRef, useState, useEffect } from "react";
-import { FlatList } from "react-native";
+import { Animated, FlatList } from "react-native";
 import { BSPressableProps, Pressable } from "./Pressable";
 import { Icon, IconProps } from "./Icon";
 import { BSModalRef, Modal } from "./Modal";
 import { Box, BSBoxProps } from "./Box";
+import { BSTextProps, Text } from "./Text";
 
 export type BSSelectProps = BSPressableProps & {
     placeholder?: string;
@@ -13,20 +14,25 @@ export type BSSelectProps = BSPressableProps & {
     _option?: Partial<BSPressableProps>;
     _selected?: Partial<BSPressableProps>;
     _icon?: IconProps;
-    icon?: boolean | typeof Icon
-    children: React.ReactElement<BSSelectItemProps>[];
+    icon?: boolean | React.ReactElement<any>
+    children?: React.ReactElement<BSSelectItemProps>[];
+    label?: string;
+    _label?: BSTextProps,
+    isFloat?: boolean;
+    isRequired?: boolean;
 };
 
 export type BSSelectItemProps = BSPressableProps & {
-    label: string;
+    label: string | number;
     value: string | number;
 };
 
 const SelectItem: React.FC<BSSelectItemProps> = () => null;
 
+const AnimatedText = Animated.createAnimatedComponent(Text);
+
 export const Select: React.FC<BSSelectProps> & { Item: React.FC<BSSelectItemProps> } = ({
     children,
-    placeholder = "Selecciona...",
     defaultValue,
     onChange,
     _option,
@@ -37,12 +43,14 @@ export const Select: React.FC<BSSelectProps> & { Item: React.FC<BSSelectItemProp
     ...props
 }) => {
     const [selected, setSelected] = useState<React.ReactElement<BSSelectItemProps>>();
-    const modal = useRef<BSModalRef>();
+    const modal = useRef<BSModalRef>(null);
+    const animation = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
-        if (defaultValue !== undefined) {
+        animate(defaultValue)
+        if (defaultValue != selected?.props?.value) {
             const match = children.find(i => i.props.value === defaultValue);
-            if (match) setSelected(match);
+            setSelected(match);
         }
     }, [defaultValue, children]);
 
@@ -52,21 +60,58 @@ export const Select: React.FC<BSSelectProps> & { Item: React.FC<BSSelectItemProp
         modal.current.close();
     };
 
+    const animate = (text) => {
+        Animated.timing(animation, {
+            toValue: text ? 1 : 0,
+            duration: 100,
+            useNativeDriver: true,
+        }).start();
+    }
+
     return (
         <>
+            {props.label &&
+                <AnimatedText
+                    pointerEvents="none"
+                    style={[
+                        (props.isFloat ?
+                            {
+                                padding: 3,
+                                marginLeft: 10,
+                                backgroundColor: '#fff',
+                                zIndex: 1000,
+                                marginRight: 'auto',
+                                marginBottom: -11,
+                                transform: [
+                                    {
+                                        translateY: animation.interpolate({
+                                            inputRange: [0, 1],
+                                            outputRange: [20, 1],
+                                        })
+                                    }
+                                ]
+                            } :
+                            { marginBottom: 4 }),
+                    ]}
+                    {...props._label}
+                >
+                    {props.label} {props.isRequired && <Text color={'danger'}>*</Text>}
+                </AnimatedText>
+            }
             <Pressable
                 flexDir="row"
                 alignItems="center"
                 justifyContent="space-between"
-                p={3}
+                p={2}
                 borderWidth={1}
                 borderColor="light"
+                _pressed={{ opacity: .5 }}
                 rounded={1}
                 {...props}
-                onPress={e => { modal.current.open(); props.onPress?.(e); }}
+                onPress={e => { modal.current.open(); props.onPress?.(e) }}
             >
-                {selected?.props.label || placeholder}
-                {icon === true ? <Icon as="Feather" name="chevron-down" size={20} {..._icon} /> : icon && icon({ ..._icon })}
+                {selected?.props.label || props.placeholder || ''}
+                {icon === true ? <Icon as="Feather" name="chevron-down" size={20} {..._icon} /> : icon && icon}
             </Pressable>
             <Modal
                 ref={modal}

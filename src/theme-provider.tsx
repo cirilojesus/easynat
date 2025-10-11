@@ -2,6 +2,8 @@ import React, { createContext, useContext, ReactNode, useState, useEffect } from
 import { defaultTheme, theme as libTheme, Theme } from "./theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { mergeTheme } from "./utils/helpers";
+import { RootSiblingParent } from "react-native-root-siblings";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const THEME_KEY = "@app_theme";
 
@@ -30,7 +32,13 @@ export const ThemeProvider = ({ children, theme }: { children: ReactNode, theme:
     const themeMerge = mergeTheme(libTheme, theme)
 
     return (
-        <ThemeContext.Provider value={{ theme: { ...themeMerge[mode] }, toggleTheme }}>{children}</ThemeContext.Provider>
+        <SafeAreaProvider>
+            <ThemeContext.Provider value={{ theme: { ...themeMerge[mode] }, toggleTheme }}>
+                <RootSiblingParent>
+                    {children}
+                </RootSiblingParent>
+            </ThemeContext.Provider>
+        </SafeAreaProvider>
     );
 };
 

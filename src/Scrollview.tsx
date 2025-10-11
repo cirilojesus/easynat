@@ -1,26 +1,26 @@
 import React from "react";
-import { ScrollView, ScrollViewProps, StyleSheet, Platform } from "react-native";
+import { ScrollView as RNScrollView, ScrollViewProps, StyleSheet, Platform } from "react-native";
 import { useTheme } from "./theme-provider";
 import { BSTextProps } from "./Text";
 import { BSDefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
 import { renderChild } from "./utils/helpers";
 
-export type BSScrollBoxProps = ScrollViewProps & BSDefaultProps & {
-    _ios?: BSScrollBoxProps;
-    _android?: BSScrollBoxProps;
-    _web?: BSScrollBoxProps;
+export type BSScrollViewProps = ScrollViewProps & BSDefaultProps & {
+    _ios?: BSScrollViewProps;
+    _android?: BSScrollViewProps;
+    _web?: BSScrollViewProps;
     _text?: BSTextProps;
-    _contentContainerStyle?: BSScrollBoxProps;
+    _contentContainerStyle?: BSScrollViewProps;
 };
 
-export const ScrollBox: React.FC<BSScrollBoxProps> = ({
+export const ScrollView: React.FC<BSScrollViewProps> = ({
     style,
     children,
     ...props
 }) => {
     const { theme } = useTheme();
 
-    const combinedProps: BSScrollBoxProps = {
+    const combinedProps: BSScrollViewProps = {
         ...props,
         ...(Platform.OS === "ios" ? props._ios : {}),
         ...(Platform.OS === "android" ? props._android : {}),
@@ -31,8 +31,8 @@ export const ScrollBox: React.FC<BSScrollBoxProps> = ({
     const contentStyles = DEFAULT_PROPS(combinedProps?._contentContainerStyle || {}, theme);
 
     const scrollStyle = StyleSheet.flatten([
-        ...styles.filter(x => x && !Object.keys(x).some(key => key.startsWith("margin"))),
-        style
+        style,
+        ...styles,
     ]);
 
     const scrollContentStyle = StyleSheet.flatten([
@@ -41,12 +41,12 @@ export const ScrollBox: React.FC<BSScrollBoxProps> = ({
     ]);
 
     return (
-        <ScrollView
+        <RNScrollView
             {...props}
             style={scrollStyle}
             contentContainerStyle={scrollContentStyle}
         >
             {renderChild(children, props._text)}
-        </ScrollView>
+        </RNScrollView>
     );
 };

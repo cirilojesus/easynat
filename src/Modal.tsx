@@ -5,7 +5,7 @@ import { RootSiblingPortal } from "react-native-root-siblings";
 import { Box, BSBoxProps } from "./Box";
 import { Icon, IconProps } from "./Icon";
 import { Button, BSButtonProps } from "./Button";
-import { BSKeyboardAvoidingProps, KeyboardAvoiding } from "./KeyboardAvoidingView";
+import { BSKeyboardAvoidingProps, KeyboardAvoidingView } from "./KeyboardAvoidingView";
 import { BSDefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
 import { useTheme } from "./theme-provider";
 
@@ -16,7 +16,7 @@ export type BSModalRef = {
 
 export type BSModalProps = BSKeyboardAvoidingProps & {
     header?: BSBoxProps;
-    iconClose?: boolean | typeof Button;
+    iconClose?: boolean | React.ReactElement<any>;
     _icon?: BSButtonProps & { icon: Partial<IconProps> };
     _contentStyle?: ViewProps & BSDefaultProps;
     safeAreaTop?: boolean,
@@ -99,7 +99,7 @@ export const Modal = forwardRef<BSModalRef, BSModalProps>(({ ...props }, ref) =>
                     onPress={!combinedProps?.static ? handleRequestClose : null}
                 />
                 <Box bg={combinedProps.bg || 'white'} safeAreaTop={combinedProps?.safeAreaTop} />
-                <KeyboardAvoiding {...props}>
+                <KeyboardAvoidingView flex={1} {...props}>
                     <Animated.View
                         style={[
                             {
@@ -139,16 +139,16 @@ export const Modal = forwardRef<BSModalRef, BSModalProps>(({ ...props }, ref) =>
                                 rounded={50}
                                 right={0}
                                 m={2}
-                                children={<Icon name="close" as="AntDesign" {...combinedProps._icon?.icon} />}
+                                icon={<Icon name="close" as="AntDesign" {...combinedProps._icon?.icon} />}
                                 onPress={close}
                                 {...combinedProps._icon}
                             />
                         ) : (
-                            combinedProps.iconClose && combinedProps.iconClose({ onPress: close, ...combinedProps._icon })
+                            combinedProps.iconClose && React.cloneElement(combinedProps.iconClose, { onPress: close, ...combinedProps._icon })
                         )}
                         {combinedProps.children}
                     </Animated.View>
-                </KeyboardAvoiding>
+                </KeyboardAvoidingView>
                 <Box bg={combinedProps.bg || 'white'} safeAreaBottom={combinedProps?.safeAreaBottom !== undefined ? combinedProps?.safeAreaBottom : true} />
             </Box>
         </RootSiblingPortal>

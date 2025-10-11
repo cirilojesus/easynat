@@ -22,15 +22,17 @@
     "author": "JESUS RUIZ",
     "license": "MIT",
     "peerDependencies": {
-        "react": ">=18.0.0",
-        "react-native": ">=0.72.0",
-        "react-native-root-siblings": ">=4.0.0"
+        "react": "*",
+        "react-native": "*",
+        "react-native-safe-area-context": "*",
+        "react-native-svg": "*",
+        "react-native-root-siblings": "*",
+        "react-native-reanimated": "*",
+        "@react-native-async-storage/async-storage": "*",
+        "@expo/vector-icons": "*"
     },
     "peerDependenciesMeta": {
-        "react": {
-            "optional": true
-        },
-        "react-native": {
+        "react-native-svg": {
             "optional": true
         },
         "react-native-root-siblings": {
@@ -40,5 +42,6 @@
     "devDependencies": {
         "@types/react": ">=18.0.0",
         "typescript": "^5.9.2"
-    }
+    },
+    "dependencies": {}
 }

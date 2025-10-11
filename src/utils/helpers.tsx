@@ -24,6 +24,6 @@ export const mergeTheme = (libTheme, theme): ThemeType => {
 }
 
 export const renderChild = (children: React.ReactNode, props: BSTextProps) => React.Children.map(children, (child) => {
-    if (typeof child === "string") return <Text {...props}>{child}</Text>;
+    if (typeof child === "string" || typeof child === 'number') return <Text {...props}>{child}</Text>;
     return child;
 })

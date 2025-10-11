@@ -171,7 +171,9 @@ export const DEFAULT_PROPS = (props: BSDefaultProps, theme: Theme) => {
 
         // Others
         shadow && theme.shadows[shadow],
-        { flexDirection: flexDir, opacity, pointerEvents },
+        flexDir !== undefined && { flexDirection: flexDir },
+        pointerEvents !== undefined && { pointerEvents },
+        opacity !== undefined && { opacity },
         others
     ];
 };
