@@ -3,6 +3,8 @@
     "version": "0.1.0",
     "description": "A simple and easy-to-use React Native component library",
     "main": "dist/index.js",
+    "module": "dist/index.js",
+    "react-native": "dist/index.js",
     "types": "dist/index.d.ts",
     "files": [
         "dist"
@@ -21,6 +23,10 @@
     ],
     "author": "JESUS RUIZ",
     "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/cirilojesus/easynat.git"
+    },
     "peerDependencies": {
         "react": "*",
         "react-native": "*",
@@ -41,7 +47,7 @@
     },
     "devDependencies": {
         "@types/react": ">=18.0.0",
-        "typescript": "^5.9.2"
+        "typescript": "~5.3.3"
     },
     "dependencies": {}
 }

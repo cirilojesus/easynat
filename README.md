@@ -8,3 +8,5 @@ Easynat es una librería de componentes para React Native, fácil de usar y lige
 npm install easynat
 # o
 yarn add easynat
+
+# "prepare": "tsc",
