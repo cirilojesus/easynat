@@ -27,3 +27,14 @@ export const renderChild = (children: React.ReactNode, props: BSTextProps) => Re
     if (typeof child === "string" || typeof child === 'number') return <Text {...props}>{child}</Text>;
     return child;
 })
+
+export function getDeviceLanguage(): string {
+    return Intl.DateTimeFormat().resolvedOptions().locale.split(/[-_]/)[0];
+}
+
+export function getDeviceLocaleInfo(
+    options: Intl.DateTimeFormatOptions = {}
+) {
+    const formatter = new Intl.DateTimeFormat(undefined, options);
+    return formatter.resolvedOptions()
+}
