@@ -2,7 +2,6 @@ import { DimensionValue } from "react-native"
 import { ThemeType } from "../theme-provider"
 import { BSTextProps, Text } from "../Text"
 import React from "react"
-import { BSTextInputProps } from "../Input"
 
 export const calcSize = (size: DimensionValue) => {
     const sizes = [1, 2, 3, 4, 5, 6]
