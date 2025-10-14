@@ -1,0 +1,21 @@
+/// <reference types="react" />
+import { TextInputProps } from "react-native";
+import { BSDefaultProps } from "./utils/DEFAULT_PROPS";
+import { BSTextProps } from "./Text";
+import { BSBoxProps } from "./Box";
+import { Theme } from "./theme";
+export type BSTextInputProps = TextInputProps & BSTextProps & BSDefaultProps & {
+    _ios?: BSTextInputProps;
+    _android?: BSTextInputProps;
+    _web?: BSTextInputProps;
+    label?: string;
+    _label?: BSTextProps;
+    isPassword?: boolean;
+    isFloat?: boolean;
+    isRequired?: boolean;
+    _iconLeft?: React.ReactElement;
+    _containerStyle?: BSBoxProps;
+    _focus?: BSTextInputProps;
+    color?: keyof Theme["colors"];
+};
+export declare const InputText: React.FC<BSTextInputProps>;
