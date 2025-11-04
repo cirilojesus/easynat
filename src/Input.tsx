@@ -3,7 +3,7 @@ import { TextInput, TextInputProps, StyleSheet, Platform, TextStyle, Animated } 
 import { useTheme } from "./theme-provider";
 import { BSDefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
 import { Icon } from "./Icon";
-import { Button } from "./Button";
+import { BSButtonProps, Button } from "./Button";
 import { BSTextProps, Text } from "./Text";
 import { Box, BSBoxProps } from "./Box";
 import { Theme } from "./theme";
@@ -17,9 +17,11 @@ export type BSTextInputProps = TextInputProps & BSTextProps & BSDefaultProps & {
     isPassword?: boolean;
     isFloat?: boolean;
     isRequired?: boolean;
-    _iconLeft?: React.ReactElement,
+    iconLeft?: React.ReactElement,
     _containerStyle?: BSBoxProps,
     _focus?: BSTextInputProps,
+    _iconRight?: BSButtonProps,
+    iconRight?: React.ReactElement,
     color?: keyof Theme["colors"];
 };
 
@@ -111,7 +113,7 @@ export const InputText: React.FC<BSTextInputProps> = ({ style, ...props }) => {
                 {...{ ...styles_default._containerStyle, ...combinedProps._containerStyle }}
                 borderColor={styles_default?._containerStyle?.borderColor || combinedProps._containerStyle?.borderColor || (focus ? 'primary' : 'light')}
             >
-                {combinedProps._iconLeft}
+                {combinedProps.iconLeft}
                 <TextInput
                     {...combinedProps}
                     secureTextEntry={combinedProps.isPassword && !showPassword}
@@ -128,9 +130,16 @@ export const InputText: React.FC<BSTextInputProps> = ({ style, ...props }) => {
                     }}
                 />
                 {combinedProps.isPassword && (
-                    <Button onPress={() => setShowPassword(!showPassword)} variant={'ghost'} rounded={40} p={1} mr={2} marginVertical={4.5}>
-                        {showPassword ? <Icon name="eye-off" as={'Feather'} /> : <Icon name="eye" as={'Feather'} />}
-                    </Button>
+                    <Button
+                        onPress={() => setShowPassword(!showPassword)}
+                        variant={'ghost'}
+                        rounded={40}
+                        p={1}
+                        mr={2}
+                        marginVertical={4.5}
+                        icon={<Icon name={showPassword ? "eye-off" : 'eye'} as={'Feather'} size={16} />}
+                        {...combinedProps._iconRight}
+                    />
                 )}
             </Box>
         </>

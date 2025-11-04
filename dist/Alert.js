@@ -1,28 +1,22 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.hideAlert = exports.showAlert = void 0;
-const react_native_1 = require("react-native");
-const react_native_root_siblings_1 = __importDefault(require("react-native-root-siblings"));
-const Box_1 = require("./Box");
+import { Animated, Pressable } from "react-native";
+import RootSiblings from "react-native-root-siblings";
+import { Box } from "./Box";
 let currentAlert = null;
 let timer = null;
-const AnimatedPressable = react_native_1.Animated.createAnimatedComponent(react_native_1.Pressable);
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 let animate = (value, callBack) => null;
-const showAlert = (message, colorScheme, props, duration = 3000) => {
+export const showAlert = (message, colorScheme, props, duration = 3000) => {
     if (currentAlert)
         animate(0);
-    let opacity = new react_native_1.Animated.Value(0);
+    let opacity = new Animated.Value(0);
     animate = (value, callBack) => {
-        react_native_1.Animated.timing(opacity, {
+        Animated.timing(opacity, {
             toValue: value,
             duration: 200,
             useNativeDriver: true,
         }).start(({ finished }) => {
             if (finished)
-                callBack === null || callBack === void 0 ? void 0 : callBack();
+                callBack?.();
         });
     };
     setTimeout(() => {
@@ -31,7 +25,7 @@ const showAlert = (message, colorScheme, props, duration = 3000) => {
             currentAlert = null;
             clearTimeout(timer);
         }
-        currentAlert = new react_native_root_siblings_1.default(<AnimatedPressable style={[
+        currentAlert = new RootSiblings(<AnimatedPressable style={[
                 {
                     transform: [
                         {
@@ -48,17 +42,16 @@ const showAlert = (message, colorScheme, props, duration = 3000) => {
                     zIndex: 10000,
                 },
                 { opacity },
-            ]} onPress={exports.hideAlert}>
-                <Box_1.Box safeAreaTop bg={colorScheme + '.100'} _text={{ color: 'white' }} p={3} {...props}>
+            ]} onPress={hideAlert}>
+                <Box safeAreaTop bg={colorScheme + '.100'} _text={{ color: 'white' }} p={3} {...props}>
                     {message}
-                </Box_1.Box>
+                </Box>
             </AnimatedPressable>);
         animate(1);
-        timer = setTimeout(exports.hideAlert, duration);
+        timer = setTimeout(hideAlert, duration);
     }, 50);
 };
-exports.showAlert = showAlert;
-const hideAlert = () => {
+export const hideAlert = () => {
     if (currentAlert) {
         animate(0, () => {
             currentAlert.destroy();
@@ -67,4 +60,3 @@ const hideAlert = () => {
         });
     }
 };
-exports.hideAlert = hideAlert;

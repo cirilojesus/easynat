@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import { Animated, FlatList } from "react-native";
+import { Animated, FlatList, Keyboard } from "react-native";
 import { BSPressableProps, Pressable } from "./Pressable";
 import { Icon, IconProps } from "./Icon";
 import { BSModalRef, Modal } from "./Modal";
@@ -108,7 +108,7 @@ export const Select: React.FC<BSSelectProps> & { Item: React.FC<BSSelectItemProp
                 _pressed={{ opacity: .5 }}
                 rounded={1}
                 {...props}
-                onPress={e => { modal.current.open(); props.onPress?.(e) }}
+                onPress={e => { Keyboard.dismiss(), modal.current.open(); props.onPress?.(e) }}
             >
                 {selected?.props.label || props.placeholder || ''}
                 {icon === true ? <Icon as="Feather" name="chevron-down" size={20} {..._icon} /> : icon && icon}

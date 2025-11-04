@@ -28,7 +28,7 @@ type CombinedProps = Omit<Partial<BSSelectProps>, '_android' | '_ios' | '_web'> 
         _web?: CombinedProps;
     } & DatePickerType & Partial<SearchInputModel>
 
-interface InputFormParams<T extends Record<string, [any, InputValidation?]>> extends CombinedProps {
+export interface InputFormParams<T extends Record<string, [any, InputValidation?]>> extends CombinedProps {
     formControl: keyof T;
     formGroup: FormGroupRef<T>;
     _box?: BSBoxProps;
@@ -51,7 +51,7 @@ export type EAFormItemProps = Omit<CombinedProps, 'label' | 'value'> & {
     value: string | number;
 };
 
-const ContorlItem: React.FC<EAFormItemProps> = () => null;
+const ControlItem: React.FC<EAFormItemProps> = () => null;
 
 const emailValidator =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -243,4 +243,4 @@ export const FormListener = <T extends Record<string, [any, InputValidation?]>>(
     return children(form)
 }
 
-Control.Item = ContorlItem
+Control.Item = ControlItem
