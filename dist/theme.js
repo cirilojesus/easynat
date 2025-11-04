@@ -1,4 +1,7 @@
-export const COLORS_THEME = {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.theme = exports.defaultTheme = exports.COLORS_THEME = void 0;
+exports.COLORS_THEME = {
     'primary': "#4F46E5",
     'primary.50': "#4e46e56f",
     'primary.100': "#4F46E5",
@@ -24,8 +27,8 @@ export const COLORS_THEME = {
     'danger.100': "#c25757ff",
     'danger.200': "#ab4242ff",
 };
-export const defaultTheme = {
-    colors: COLORS_THEME,
+exports.defaultTheme = {
+    colors: exports.COLORS_THEME,
     shadows: {
         1: { shadowColor: "#0005", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.23, shadowRadius: 2.62, elevation: 4 },
         2: { shadowColor: "#0005", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 4.65, elevation: 8 },
@@ -35,11 +38,7 @@ export const defaultTheme = {
         6: { shadowColor: "#0005", shadowOffset: { width: 0, height: 12 }, shadowOpacity: 0.58, shadowRadius: 16, elevation: 24 },
     }
 };
-export const theme = {
-    light: {
-        ...defaultTheme
-    },
-    dark: {
-        ...defaultTheme
-    }
+exports.theme = {
+    light: Object.assign({}, exports.defaultTheme),
+    dark: Object.assign({}, exports.defaultTheme)
 };

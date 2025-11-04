@@ -22,7 +22,7 @@ type CombinedProps = Omit<Partial<BSSelectProps>, '_android' | '_ios' | '_web'> 
     _ios?: CombinedProps;
     _web?: CombinedProps;
 } & DatePickerType & Partial<SearchInputModel>;
-interface InputFormParams<T extends Record<string, [any, InputValidation?]>> extends CombinedProps {
+export interface InputFormParams<T extends Record<string, [any, InputValidation?]>> extends CombinedProps {
     formControl: keyof T;
     formGroup: FormGroupRef<T>;
     _box?: BSBoxProps;

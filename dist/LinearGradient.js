@@ -1,16 +1,49 @@
-import Svg, { Defs, LinearGradient, RadialGradient, Stop, Rect } from "react-native-svg";
-import { useTheme } from "./theme-provider";
-import { DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
-import { Platform } from "react-native";
-export const BSLinearGradient = ({ type = "linear", ...props }) => {
-    const { theme } = useTheme();
-    const combinedProps = {
-        ...props,
-        ...(Platform.OS === "ios" ? props._ios : {}),
-        ...(Platform.OS === "android" ? props._android : {}),
-        ...(Platform.OS === "web" ? props._web : {}),
-    };
-    const svgStyle = DEFAULT_PROPS(combinedProps, theme);
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BSLinearGradient = void 0;
+const react_native_svg_1 = __importStar(require("react-native-svg"));
+const theme_provider_1 = require("./theme-provider");
+const DEFAULT_PROPS_1 = require("./utils/DEFAULT_PROPS");
+const react_native_1 = require("react-native");
+const BSLinearGradient = (_a) => {
+    var { type = "linear" } = _a, props = __rest(_a, ["type"]);
+    const { theme } = (0, theme_provider_1.useTheme)();
+    const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign({}, props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
+    const svgStyle = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(combinedProps, theme);
     const coords = (() => {
         if (!combinedProps.angle)
             return { x1: 0, y1: 0, x2: 1, y2: 0 };
@@ -22,15 +55,19 @@ export const BSLinearGradient = ({ type = "linear", ...props }) => {
             y2: 0.5 + Math.sin(r) / 2,
         };
     })();
-    const stops = combinedProps.colors.map((c, i) => <Stop key={i} offset={`${c.offset ?? (i / (combinedProps.colors.length - 1)) * 100}%`} stopColor={theme.colors[c.color] || c.color} stopOpacity={c.opacity ?? 1}/>);
-    return (<Svg {...combinedProps} style={[combinedProps.style, ...svgStyle]}>
-            <Defs>
-                {type === "radial" ? (<RadialGradient id="grad" cx="50%" cy="50%" r="50%">
+    const stops = combinedProps.colors.map((c, i) => {
+        var _a, _b;
+        return <react_native_svg_1.Stop key={i} offset={`${(_a = c.offset) !== null && _a !== void 0 ? _a : (i / (combinedProps.colors.length - 1)) * 100}%`} stopColor={theme.colors[c.color] || c.color} stopOpacity={(_b = c.opacity) !== null && _b !== void 0 ? _b : 1}/>;
+    });
+    return (<react_native_svg_1.default {...combinedProps} style={[combinedProps.style, ...svgStyle]}>
+            <react_native_svg_1.Defs>
+                {type === "radial" ? (<react_native_svg_1.RadialGradient id="grad" cx="50%" cy="50%" r="50%">
                         {stops}
-                    </RadialGradient>) : (<LinearGradient id="grad" {...coords}>
+                    </react_native_svg_1.RadialGradient>) : (<react_native_svg_1.LinearGradient id="grad" {...coords}>
                         {stops}
-                    </LinearGradient>)}
-            </Defs>
-            <Rect x="0" y="0" width="100%" height="100%" fill="url(#grad)" {...combinedProps._rect}/>
-        </Svg>);
+                    </react_native_svg_1.LinearGradient>)}
+            </react_native_svg_1.Defs>
+            <react_native_svg_1.Rect x="0" y="0" width="100%" height="100%" fill="url(#grad)" {...combinedProps._rect}/>
+        </react_native_svg_1.default>);
 };
+exports.BSLinearGradient = BSLinearGradient;

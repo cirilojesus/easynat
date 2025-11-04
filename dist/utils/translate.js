@@ -1,41 +1,52 @@
-import { useSyncExternalStore } from 'react';
-import { getDeviceLanguage } from './helpers';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.useI18n = exports.subscribe = exports.t = exports.getLang = exports.setLang = exports.setLanguages = exports.initTranslate = void 0;
+const react_1 = require("react");
+const helpers_1 = require("./helpers");
+const async_storage_1 = __importDefault(require("@react-native-async-storage/async-storage"));
 const languages = { en: {}, es: {} };
-let currentLang = getDeviceLanguage();
+let currentLang = (0, helpers_1.getDeviceLanguage)();
 let translations = languages[currentLang];
 let listeners = [];
 const LANGUAGE_KEY = '@app_language';
-export const initTranslate = (languagesJSON) => {
+const initTranslate = (languagesJSON) => {
     (async () => {
-        const saved = await AsyncStorage.getItem(LANGUAGE_KEY);
+        const saved = await async_storage_1.default.getItem(LANGUAGE_KEY);
         if (saved) {
-            setLang(saved);
+            (0, exports.setLang)(saved);
         }
         else {
-            await AsyncStorage.setItem(LANGUAGE_KEY, currentLang);
+            await async_storage_1.default.setItem(LANGUAGE_KEY, currentLang);
         }
     })();
-    setLanguages(languagesJSON);
+    (0, exports.setLanguages)(languagesJSON);
 };
-export const setLanguages = (languagesJSON) => {
+exports.initTranslate = initTranslate;
+const setLanguages = (languagesJSON) => {
     Object.assign(languages, languagesJSON);
     translations = languages[currentLang];
 };
-export const setLang = async (lang) => {
+exports.setLanguages = setLanguages;
+const setLang = async (lang) => {
     if (!languages[lang])
         return;
     currentLang = lang;
     translations = languages[lang];
     listeners.forEach(fn => fn());
-    await AsyncStorage.setItem(LANGUAGE_KEY, lang);
+    await async_storage_1.default.setItem(LANGUAGE_KEY, lang);
 };
-export const getLang = () => currentLang;
-export const t = (key, params, option) => {
+exports.setLang = setLang;
+const getLang = () => currentLang;
+exports.getLang = getLang;
+const t = (key, params, option) => {
     let text = key.split('.').reduce((prev, curr) => prev[curr], translations) || key;
     text = text.split(' | ').reverse().reduce((prev, curr, i, arr) => {
-        const opt = curr.split(':')?.[0];
-        return option?.[opt] ? curr.replace(opt + ': ', '') : (prev || arr.at(-1));
+        var _a;
+        const opt = (_a = curr.split(':')) === null || _a === void 0 ? void 0 : _a[0];
+        return (option === null || option === void 0 ? void 0 : option[opt]) ? curr.replace(opt + ': ', '') : (prev || arr.at(-1));
     }, '');
     if (params) {
         for (const [k, v] of Object.entries(params)) {
@@ -44,13 +55,16 @@ export const t = (key, params, option) => {
     }
     return text;
 };
-export const subscribe = (listener) => {
+exports.t = t;
+const subscribe = (listener) => {
     listeners.push(listener);
     return () => {
         listeners = listeners.filter(fn => fn !== listener);
     };
 };
-export function useI18n() {
-    const lang = useSyncExternalStore(subscribe, getLang);
-    return { t, lang, setLang, setLanguages };
+exports.subscribe = subscribe;
+function useI18n() {
+    const lang = (0, react_1.useSyncExternalStore)(exports.subscribe, exports.getLang);
+    return { t: exports.t, lang, setLang: exports.setLang, setLanguages: exports.setLanguages };
 }
+exports.useI18n = useI18n;

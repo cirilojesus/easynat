@@ -1,21 +1,34 @@
 {
     "compilerOptions": {
-        "declaration": true,
-        "emitDeclarationOnly": false,
-        "declarationDir": "dist/types",
+        "composite": true,
+        "skipLibCheck": true,
+        "baseUrl": ".",
+        "paths": {
+            "react": [
+                "../node_modules/react"
+            ],
+            "react-native": [
+                "../node_modules/react-native"
+            ],
+            "@types/react": [
+                "../node_modules/@types/react"
+            ],
+            "@types/react-native": [
+                "../node_modules/@types/react-native"
+            ]
+        },
         "outDir": "dist",
         "rootDir": "src",
-        "target": "esnext",
-        "module": "esnext",
+        "declaration": true,
+        "module": "commonjs",
+        "target": "es2017",
         "lib": [
-            "esnext"
+            "es2017"
         ],
-        "jsx": "react-native",
         "moduleResolution": "node",
+        "jsx": "react-native",
         "esModuleInterop": true,
-        "skipLibCheck": true,
-        "allowSyntheticDefaultImports": true,
-        "noImplicitAny": false
+        "noImplicitAny": true
     },
     "include": [
         "src"

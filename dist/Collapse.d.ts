@@ -1,4 +1,4 @@
-import React from 'react';
+/// <reference types="react" />
 import { BSBoxProps } from './Box';
 import { BSButtonProps } from './Button';
 export type CollapseHandle = {
@@ -14,4 +14,4 @@ export type CollapseProps = BSBoxProps & {
     _open?: BSButtonProps;
     _trigger?: BSButtonProps;
 };
-export declare const Collapse: React.ForwardRefExoticComponent<Omit<any, "ref"> & React.RefAttributes<CollapseHandle>>;
+export declare const Collapse: import("react").ForwardRefExoticComponent<Omit<any, "ref"> & import("react").RefAttributes<CollapseHandle>>;
