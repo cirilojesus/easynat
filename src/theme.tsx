@@ -1,4 +1,4 @@
-import * as COMPONENTS from '.';
+import * as COMPONENTS from './';
 
 export type COLOR_SCHEME = 'primary' | 'secondary' | 'success' | 'danger' | 'light' | (string & {})
 export type VARIANT_BUTTON = "solid" | "outline" | "ghost" | 'link'

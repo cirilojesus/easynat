@@ -32,7 +32,7 @@ export type CollapseProps = BSBoxProps & {
 
 const IconAnimated = Animated.createAnimatedComponent(Icon)
 
-export const Collapse = forwardRef<CollapseHandle, CollapseProps>(({ trigger, ...props }: CollapseProps, ref: React.Ref<CollapseHandle>) => {
+export const Collapse = forwardRef<CollapseHandle, CollapseProps>(({ trigger, ...props }, ref) => {
     const height = useSharedValue(0);
     const isExpanded = useSharedValue(false);
     const [openState, setOpenState] = useState(false);
