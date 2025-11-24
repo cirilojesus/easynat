@@ -1,8 +1,8 @@
-/// <reference types="react" />
 import * as ICONS from "@expo/vector-icons";
 import { BSDefaultProps } from "./utils/DEFAULT_PROPS";
 import { Theme } from "./theme";
 import { ViewStyle } from "react-native";
+import React from "react";
 type IconLibrary = keyof typeof ICONS;
 export type IconProps = BSDefaultProps & {
     name: string;
@@ -11,5 +11,5 @@ export type IconProps = BSDefaultProps & {
     color?: keyof Theme["colors"];
     style?: ViewStyle;
 };
-export declare const Icon: import("react").ForwardRefExoticComponent<Omit<any, "ref"> & import("react").RefAttributes<any>>;
+export declare const Icon: React.ForwardRefExoticComponent<Omit<any, "ref"> & React.RefAttributes<unknown>>;
 export {};

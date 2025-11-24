@@ -38,14 +38,13 @@ exports.Icon = void 0;
 const ICONS = __importStar(require("@expo/vector-icons"));
 const DEFAULT_PROPS_1 = require("./utils/DEFAULT_PROPS");
 const theme_provider_1 = require("./theme-provider");
-const react_1 = require("react");
+const react_1 = __importStar(require("react"));
 exports.Icon = (0, react_1.forwardRef)((_a, ref) => {
     var _b;
     var { name, as = "MaterialIcons", size = 20, color = "dark", style } = _a, props = __rest(_a, ["name", "as", "size", "color", "style"]);
     const { theme } = (0, theme_provider_1.useTheme)();
     const styles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(props, theme);
     const IconComponent = ICONS[as];
-    return (<IconComponent ref={ref} // <-- reenviamos el ref
-     name={name} size={size} color={((_b = theme.colors) === null || _b === void 0 ? void 0 : _b[color]) || color} style={[style, ...styles]}/>);
+    return (<IconComponent ref={ref} name={name} size={size} color={((_b = theme.colors) === null || _b === void 0 ? void 0 : _b[color]) || color} style={[style, ...styles]}/>);
 });
 exports.Icon.displayName = "Icon";

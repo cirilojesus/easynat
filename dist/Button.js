@@ -54,12 +54,12 @@ const Button = (_a) => {
         } }, (_c = (_b = theme === null || theme === void 0 ? void 0 : theme.components) === null || _b === void 0 ? void 0 : _b.Button) === null || _c === void 0 ? void 0 : _c.variants);
     return (<Pressable_1.Pressable p={3} rounded={2} flexDir={'row'} alignItems={'center'} gap={8} justifyContent={'center'} {...Object.assign(Object.assign({}, variantStyles[variant]), props)} _pressed={Object.assign(Object.assign({}, (_d = variantStyles[variant]) === null || _d === void 0 ? void 0 : _d._pressed), props._pressed)} _text={Object.assign(Object.assign({ textAlign: 'center' }, (_e = variantStyles[variant]) === null || _e === void 0 ? void 0 : _e._text), props._text)}>
             {(_a) => {
-            var _b, _c, _d, _e, _f;
+            var _b, _c, _d, _e, _f, _g;
             var { pressed } = _a, e = __rest(_a, ["pressed"]);
             return <>
-                    {e.icon && (0, react_1.cloneElement)(e.icon, Object.assign(Object.assign(Object.assign({}, (_b = variantStyles[variant]) === null || _b === void 0 ? void 0 : _b._icon), props._icon), (pressed ? (_c = props._pressed) === null || _c === void 0 ? void 0 : _c._icon : {})))}
-                    {(0, helpers_1.renderChild)(props.children, pressed ? Object.assign(Object.assign({}, e._text), (_d = e._pressed) === null || _d === void 0 ? void 0 : _d._text) : e._text)}
-                    {e.iconRight && (0, react_1.cloneElement)(e.iconRight, Object.assign(Object.assign(Object.assign({}, (_e = variantStyles[variant]) === null || _e === void 0 ? void 0 : _e._iconRight), props._iconRight), (pressed ? (_f = props._pressed) === null || _f === void 0 ? void 0 : _f._iconRight : {})))}
+                    {e.icon && (0, react_1.cloneElement)(e.icon, Object.assign(Object.assign(Object.assign(Object.assign({}, (_b = variantStyles[variant]) === null || _b === void 0 ? void 0 : _b._icon), props._icon), (pressed ? (_c = props._pressed) === null || _c === void 0 ? void 0 : _c._icon : {})), (_d = e.icon) === null || _d === void 0 ? void 0 : _d.props))}
+                    {(0, helpers_1.renderChild)(props.children, pressed ? Object.assign(Object.assign({}, e._text), (_e = e._pressed) === null || _e === void 0 ? void 0 : _e._text) : e._text)}
+                    {e.iconRight && (0, react_1.cloneElement)(e.iconRight, Object.assign(Object.assign(Object.assign({}, (_f = variantStyles[variant]) === null || _f === void 0 ? void 0 : _f._iconRight), props._iconRight), (pressed ? (_g = props._pressed) === null || _g === void 0 ? void 0 : _g._iconRight : {})))}
                 </>;
         }}
         </Pressable_1.Pressable>);

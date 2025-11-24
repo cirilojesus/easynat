@@ -3,27 +3,45 @@ import { BSDefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
 import { Theme } from "./theme";
 import { useTheme } from "./theme-provider";
 import { ViewStyle } from "react-native";
-import { forwardRef } from "react";
+import React, { forwardRef } from "react";
 
 type IconLibrary = keyof typeof ICONS;
+
+/** 
+ * Tipo real del ref que recibe cualquier icono de expo 
+ */
+type IconRef = React.ComponentRef<
+    (typeof ICONS)[keyof typeof ICONS]
+>;
 
 export type IconProps = BSDefaultProps & {
     name: string;
     as: IconLibrary; // nombre del set de iconos
     size?: number;
     color?: keyof Theme["colors"];
-    style?: ViewStyle
+    style?: ViewStyle;
 };
 
-export const Icon = forwardRef<any, IconProps>(
-    ({ name, as = "MaterialIcons", size = 20, color = "dark", style, ...props }, ref) => {
+export const Icon = forwardRef<IconRef, IconProps>(
+    (
+        {
+            name,
+            as = "MaterialIcons",
+            size = 20,
+            color = "dark",
+            style,
+            ...props
+        },
+        ref
+    ) => {
         const { theme } = useTheme();
         const styles = DEFAULT_PROPS(props, theme);
+
         const IconComponent = ICONS[as];
 
         return (
             <IconComponent
-                ref={ref} // <-- reenviamos el ref
+                ref={ref}
                 name={name}
                 size={size}
                 color={theme.colors?.[color] || color}
@@ -32,5 +50,5 @@ export const Icon = forwardRef<any, IconProps>(
         );
     }
 );
-Icon.displayName = "Icon";
 
+Icon.displayName = "Icon";

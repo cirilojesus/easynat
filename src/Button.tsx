@@ -75,7 +75,7 @@ export const Button: React.FC<BSButtonProps> = ({ colorScheme = "primary", varia
         >
             {({ pressed, ...e }: BSButtonProps & { pressed: boolean }) =>
                 <>
-                    {e.icon && cloneElement(e.icon, { ...variantStyles[variant]?._icon, ...props._icon, ...(pressed ? props._pressed?._icon : {}) })}
+                    {e.icon && cloneElement(e.icon, { ...variantStyles[variant]?._icon, ...props._icon, ...(pressed ? props._pressed?._icon : {}), ...e.icon?.props })}
                     {renderChild(props.children as any, pressed ? { ...e._text, ...e._pressed?._text } : e._text)}
                     {e.iconRight && cloneElement(e.iconRight, { ...variantStyles[variant]?._iconRight, ...props._iconRight, ...(pressed ? props._pressed?._iconRight : {}) })}
                 </>
