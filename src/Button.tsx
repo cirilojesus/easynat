@@ -13,16 +13,13 @@ export type BSButtonProps = BSPressableProps & BSDefaultProps & {
     _android?: BSButtonProps;
     _web?: BSButtonProps;
     _icon?: Partial<IconProps>;
+    _iconRight?: Partial<IconProps>;
     icon?: React.ReactElement<IconProps>
-    iconLeft?: React.ReactElement<IconProps>
+    iconRight?: React.ReactElement<IconProps>
     _pressed?: BSButtonProps
 };
 
-export const Button: React.FC<BSButtonProps> = ({
-    colorScheme = "primary",
-    variant = "solid",
-    ...props
-}) => {
+export const Button: React.FC<BSButtonProps> = ({ colorScheme = "primary", variant = "solid", ...props }) => {
     const { theme } = useTheme();
 
     const variantStyles: Record<VARIANT_BUTTON, BSButtonProps> = {
@@ -68,15 +65,19 @@ export const Button: React.FC<BSButtonProps> = ({
         <Pressable
             p={3}
             rounded={2}
+            flexDir={'row'}
+            alignItems={'center'}
+            gap={8}
+            justifyContent={'center'}
             {...{ ...variantStyles[variant], ...props }}
             _pressed={{ ...variantStyles[variant]?._pressed, ...props._pressed }}
             _text={{ textAlign: 'center', ...variantStyles[variant]?._text, ...props._text }}
         >
             {({ pressed, ...e }: BSButtonProps & { pressed: boolean }) =>
-
                 <>
                     {e.icon && cloneElement(e.icon, { ...variantStyles[variant]?._icon, ...props._icon, ...(pressed ? props._pressed?._icon : {}) })}
                     {renderChild(props.children as any, pressed ? { ...e._text, ...e._pressed?._text } : e._text)}
+                    {e.iconRight && cloneElement(e.iconRight, { ...variantStyles[variant]?._iconRight, ...props._iconRight, ...(pressed ? props._pressed?._iconRight : {}) })}
                 </>
             }
         </Pressable>

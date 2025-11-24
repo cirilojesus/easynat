@@ -10,8 +10,9 @@ export type BSButtonProps = BSPressableProps & BSDefaultProps & {
     _android?: BSButtonProps;
     _web?: BSButtonProps;
     _icon?: Partial<IconProps>;
+    _iconRight?: Partial<IconProps>;
     icon?: React.ReactElement<IconProps>;
-    iconLeft?: React.ReactElement<IconProps>;
+    iconRight?: React.ReactElement<IconProps>;
     _pressed?: BSButtonProps;
 };
 export declare const Button: React.FC<BSButtonProps>;
