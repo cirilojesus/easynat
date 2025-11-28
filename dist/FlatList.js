@@ -39,13 +39,8 @@ const react_1 = __importStar(require("react"));
 const react_native_1 = require("react-native");
 const theme_provider_1 = require("./theme-provider");
 const DEFAULT_PROPS_1 = require("./utils/DEFAULT_PROPS");
-/**
- * FlatList extendida con:
- * - forwardRef
- * - estilos por plataforma
- * - inferencia de tipo
- */
-exports.FlatList = (0, react_1.forwardRef)((_a, ref) => {
+/** Implementación interna */
+const FlatListBase = (0, react_1.forwardRef)((_a, ref) => {
     var _b, _c, _d;
     var { style } = _a, props = __rest(_a, ["style"]);
     const { theme } = (0, theme_provider_1.useTheme)();
@@ -55,8 +50,10 @@ exports.FlatList = (0, react_1.forwardRef)((_a, ref) => {
     const styles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(Object.assign(Object.assign(Object.assign({}, props_default), props_variant[combinedProps.variant]), combinedProps), theme);
     const baseStyle = react_native_1.StyleSheet.flatten([style, ...styles]);
     const contentStyles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)((combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._contentContainerStyle) || {}, theme);
-    return (<react_native_1.FlatList ref={ref} contentContainerStyle={[
+    return (<react_native_1.FlatList ref={ref} {...combinedProps} style={baseStyle} contentContainerStyle={[
             combinedProps.contentContainerStyle,
             ...contentStyles,
-        ]} {...combinedProps} style={baseStyle}/>);
+        ]}/>);
 });
+/** ✅ EXPORT FINAL (CLAVE para que el .d.ts NO colapse a any) */
+exports.FlatList = FlatListBase;

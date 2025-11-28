@@ -12,10 +12,10 @@ export type BSFlatListProps<T> = FlatListProps<T> & BSDefaultProps & {
 };
 /** Tipo de instancia que expondrá la ref */
 export type BSFlatListInstance<T> = RNFlatList<T>;
-/**
- * FlatList extendida con:
- * - forwardRef
- * - estilos por plataforma
- * - inferencia de tipo
- */
-export declare const FlatList: <T>(props: any) => React.ReactElement;
+/** Tipo del componente genérico (igual patrón que Menu) */
+type FlatListComponent = <T = any>(props: BSFlatListProps<T> & {
+    ref?: React.Ref<RNFlatList<T>>;
+}) => React.ReactElement | null;
+/** ✅ EXPORT FINAL (CLAVE para que el .d.ts NO colapse a any) */
+export declare const FlatList: FlatListComponent;
+export {};
