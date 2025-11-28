@@ -11,24 +11,26 @@ import { BSDefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
 import { BSBoxProps } from "./Box";
 
 /** Props extra de tu proyecto */
-export type BSFlatListProps<T> = FlatListProps<T> & BSDefaultProps & {
-    _ios?: BSFlatListProps<T>;
-    _android?: BSFlatListProps<T>;
-    _web?: BSFlatListProps<T>;
-    _contentContainerStyle?: BSBoxProps;
-    variant?: BSFlatListProps<T>
-};
+export type BSFlatListProps<T> = FlatListProps<T> &
+    BSDefaultProps & {
+        _ios?: BSFlatListProps<T>;
+        _android?: BSFlatListProps<T>;
+        _web?: BSFlatListProps<T>;
+        _contentContainerStyle?: BSBoxProps;
+        variant?: BSFlatListProps<T>;
+    };
 
 /** Tipo de instancia que expondrá la ref */
 export type BSFlatListInstance<T> = RNFlatList<T>;
 
-/**
- * FlatList extendida con:
- * - forwardRef
- * - estilos por plataforma
- * - inferencia de tipo
- */
-export const FlatList = forwardRef(
+/** Tipo del componente genérico (igual patrón que Menu) */
+type FlatListComponent =
+    <T = any>(
+        props: BSFlatListProps<T> & { ref?: React.Ref<RNFlatList<T>> }
+    ) => React.ReactElement | null;
+
+/** Implementación interna */
+const FlatListBase = forwardRef(
     <T,>(
         { style, ...props }: BSFlatListProps<T>,
         ref: React.Ref<RNFlatList<T>>
@@ -54,15 +56,16 @@ export const FlatList = forwardRef(
         return (
             <RNFlatList
                 ref={ref}
+                {...combinedProps}
+                style={baseStyle}
                 contentContainerStyle={[
                     combinedProps.contentContainerStyle,
                     ...contentStyles,
                 ]}
-                {...combinedProps}
-                style={baseStyle}
             />
         );
     }
-) as <T>(
-    props: BSFlatListProps<T> & React.RefAttributes<RNFlatList<T>>
-) => React.ReactElement;
+) as unknown as FlatListComponent;
+
+/** ✅ EXPORT FINAL (CLAVE para que el .d.ts NO colapse a any) */
+export const FlatList = FlatListBase as FlatListComponent;

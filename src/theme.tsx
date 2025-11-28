@@ -30,7 +30,7 @@ export const COLORS_THEME = {
     'danger.200': "#ab4242ff",
 }
 
-export type ALL_PROPS = COMPONENTS.BSTextProps & COMPONENTS.BSTextInputProps & COMPONENTS.BSBoxProps
+export type ALL_PROPS = COMPONENTS.BSTextProps & COMPONENTS.BSTextInputProps & COMPONENTS.BSBoxProps & COMPONENTS.BSFlatListProps<any>
 export type VARIANTS_TYPE = Record<string, Partial<ALL_PROPS>>
 
 export const defaultTheme: {
