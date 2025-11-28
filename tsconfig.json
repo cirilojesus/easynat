@@ -28,7 +28,8 @@
         "moduleResolution": "node",
         "jsx": "react-native",
         "esModuleInterop": true,
-        "noImplicitAny": false
+        "noImplicitAny": false,
+        "emitDeclarationOnly": false
     },
     "include": [
         "src"

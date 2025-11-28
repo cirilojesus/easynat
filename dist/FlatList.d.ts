@@ -8,13 +8,14 @@ export type BSFlatListProps<T> = FlatListProps<T> & BSDefaultProps & {
     _android?: BSFlatListProps<T>;
     _web?: BSFlatListProps<T>;
     _contentContainerStyle?: BSBoxProps;
+    variant?: BSFlatListProps<T>;
 };
 /** Tipo de instancia que expondrá la ref */
 export type BSFlatListInstance<T> = RNFlatList<T>;
 /**
- * Componente FlatList con:
- *  - forwardRef (para refs nativas)
- *  - overrides por plataforma
- *  - inferencia de tipo T igual al FlatList nativo
+ * FlatList extendida con:
+ * - forwardRef
+ * - estilos por plataforma
+ * - inferencia de tipo
  */
-export declare const FlatList: <T>(p: any) => React.ReactElement;
+export declare const FlatList: <T>(props: any) => React.ReactElement;

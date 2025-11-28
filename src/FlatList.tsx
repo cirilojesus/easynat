@@ -16,16 +16,17 @@ export type BSFlatListProps<T> = FlatListProps<T> & BSDefaultProps & {
     _android?: BSFlatListProps<T>;
     _web?: BSFlatListProps<T>;
     _contentContainerStyle?: BSBoxProps;
+    variant?: BSFlatListProps<T>
 };
 
 /** Tipo de instancia que expondrá la ref */
 export type BSFlatListInstance<T> = RNFlatList<T>;
 
 /**
- * Componente FlatList con:
- *  - forwardRef (para refs nativas)
- *  - overrides por plataforma
- *  - inferencia de tipo T igual al FlatList nativo
+ * FlatList extendida con:
+ * - forwardRef
+ * - estilos por plataforma
+ * - inferencia de tipo
  */
 export const FlatList = forwardRef(
     <T,>(
@@ -33,6 +34,8 @@ export const FlatList = forwardRef(
         ref: React.Ref<RNFlatList<T>>
     ) => {
         const { theme } = useTheme();
+        const props_default = theme?.components?.FlatList || {}
+        const props_variant = theme?.components?.FlatList?.variants || {}
 
         const combinedProps: BSFlatListProps<T> = {
             ...props,
@@ -41,19 +44,25 @@ export const FlatList = forwardRef(
             ...(Platform.OS === "web" ? props._web : {}),
         };
 
-        const styles = DEFAULT_PROPS(combinedProps, theme);
+        const styles = DEFAULT_PROPS({ ...props_default, ...props_variant[combinedProps.variant], ...combinedProps }, theme);
         const baseStyle = StyleSheet.flatten<ViewStyle>([style, ...styles]);
-        const contentStyles = DEFAULT_PROPS(combinedProps?._contentContainerStyle || {}, theme);
+        const contentStyles = DEFAULT_PROPS(
+            combinedProps?._contentContainerStyle || {},
+            theme
+        );
 
         return (
             <RNFlatList
                 ref={ref}
-                contentContainerStyle={[combinedProps.contentContainerStyle, ...contentStyles]}
+                contentContainerStyle={[
+                    combinedProps.contentContainerStyle,
+                    ...contentStyles,
+                ]}
                 {...combinedProps}
                 style={baseStyle}
             />
         );
     }
 ) as <T>(
-    p: BSFlatListProps<T> & { ref?: React.Ref<RNFlatList<T>> }
+    props: BSFlatListProps<T> & React.RefAttributes<RNFlatList<T>>
 ) => React.ReactElement;
