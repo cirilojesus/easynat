@@ -14,6 +14,8 @@ export type BSPressableProps = PressableProps & BSDefaultProps & {
 
 export const Pressable: React.FC<BSPressableProps> = ({ ...props }) => {
     const { theme } = useTheme();
+    const props_default = theme?.components?.Pressable || {}
+    const props_variant = theme?.components?.Pressable?.variants || {}
 
     const combinedProps: BSPressableProps = {
         ...props,
@@ -22,7 +24,7 @@ export const Pressable: React.FC<BSPressableProps> = ({ ...props }) => {
         ...(Platform.OS === "web" ? props._web : {}),
     };
 
-    const styles = DEFAULT_PROPS(combinedProps, theme);
+    const styles = DEFAULT_PROPS({ ...props_default, ...props_variant[props_default.variant || combinedProps.variant], ...combinedProps }, theme);
     const pressedStyles = DEFAULT_PROPS(combinedProps?._pressed || {}, theme);
     const baseStyle = StyleSheet.flatten<BSPressableProps>([
         combinedProps.style,

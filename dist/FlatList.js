@@ -41,15 +41,15 @@ const theme_provider_1 = require("./theme-provider");
 const DEFAULT_PROPS_1 = require("./utils/DEFAULT_PROPS");
 /** Implementación interna */
 const FlatListBase = (0, react_1.forwardRef)((_a, ref) => {
-    var _b, _c, _d;
+    var _b, _c, _d, _e;
     var { style } = _a, props = __rest(_a, ["style"]);
     const { theme } = (0, theme_provider_1.useTheme)();
     const props_default = ((_b = theme === null || theme === void 0 ? void 0 : theme.components) === null || _b === void 0 ? void 0 : _b.FlatList) || {};
     const props_variant = ((_d = (_c = theme === null || theme === void 0 ? void 0 : theme.components) === null || _c === void 0 ? void 0 : _c.FlatList) === null || _d === void 0 ? void 0 : _d.variants) || {};
     const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign({}, props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
-    const styles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(Object.assign(Object.assign(Object.assign({}, props_default), props_variant[combinedProps.variant]), combinedProps), theme);
+    const styles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(Object.assign(Object.assign(Object.assign({}, props_default), props_variant[props_default.variant || combinedProps.variant]), combinedProps), theme);
     const baseStyle = react_native_1.StyleSheet.flatten([style, ...styles]);
-    const contentStyles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)((combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._contentContainerStyle) || {}, theme);
+    const contentStyles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(Object.assign(Object.assign(Object.assign({}, props_default === null || props_default === void 0 ? void 0 : props_default._contentContainerStyle), (_e = props_variant[props_default.variant || combinedProps.variant]) === null || _e === void 0 ? void 0 : _e._contentContainerStyle), combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._contentContainerStyle), theme);
     return (<react_native_1.FlatList ref={ref} {...combinedProps} style={baseStyle} contentContainerStyle={[
             combinedProps.contentContainerStyle,
             ...contentStyles,

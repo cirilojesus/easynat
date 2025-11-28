@@ -17,7 +17,7 @@ export type BSFlatListProps<T> = FlatListProps<T> &
         _android?: BSFlatListProps<T>;
         _web?: BSFlatListProps<T>;
         _contentContainerStyle?: BSBoxProps;
-        variant?: BSFlatListProps<T>;
+        variant?: (string & {});
     };
 
 /** Tipo de instancia que expondrá la ref */
@@ -46,10 +46,14 @@ const FlatListBase = forwardRef(
             ...(Platform.OS === "web" ? props._web : {}),
         };
 
-        const styles = DEFAULT_PROPS({ ...props_default, ...props_variant[combinedProps.variant], ...combinedProps }, theme);
+        const styles = DEFAULT_PROPS({ ...props_default, ...props_variant[props_default.variant || combinedProps.variant], ...combinedProps }, theme);
         const baseStyle = StyleSheet.flatten<ViewStyle>([style, ...styles]);
         const contentStyles = DEFAULT_PROPS(
-            combinedProps?._contentContainerStyle || {},
+            {
+                ...props_default?._contentContainerStyle,
+                ...props_variant[props_default.variant || combinedProps.variant]?._contentContainerStyle,
+                ...combinedProps?._contentContainerStyle
+            },
             theme
         );
 

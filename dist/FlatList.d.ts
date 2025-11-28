@@ -8,7 +8,7 @@ export type BSFlatListProps<T> = FlatListProps<T> & BSDefaultProps & {
     _android?: BSFlatListProps<T>;
     _web?: BSFlatListProps<T>;
     _contentContainerStyle?: BSBoxProps;
-    variant?: BSFlatListProps<T>;
+    variant?: (string & {});
 };
 /** Tipo de instancia que expondrá la ref */
 export type BSFlatListInstance<T> = RNFlatList<T>;

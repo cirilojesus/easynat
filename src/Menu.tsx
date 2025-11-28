@@ -32,7 +32,7 @@ export type MenuDir = "left" | "right";
 
 /** Item por defecto para Menu.Item (si usas children) */
 export type EAMenuItemType = BSButtonProps & {
-    label: string | number;
+    label?: string | number;
     value?: string | number;
 };
 
