@@ -9,7 +9,8 @@ export type BSPressableProps = PressableProps & BSDefaultProps & {
     _ios?: BSPressableProps;
     _android?: BSPressableProps;
     _web?: BSPressableProps;
-    _pressed?: BSPressableProps; // estilo cuando está presionado
+    _pressed?: BSPressableProps;
+    variant?: (string & {});
 };
 
 export const Pressable: React.FC<BSPressableProps> = ({ ...props }) => {
@@ -25,7 +26,7 @@ export const Pressable: React.FC<BSPressableProps> = ({ ...props }) => {
     };
 
     const styles = DEFAULT_PROPS({ ...props_default, ...props_variant[props_default.variant || combinedProps.variant], ...combinedProps }, theme);
-    const pressedStyles = DEFAULT_PROPS(combinedProps?._pressed || {}, theme);
+    const pressedStyles = DEFAULT_PROPS({ ...props_variant[props_default.variant || combinedProps.variant]?._pressed, ...combinedProps?._pressed }, theme);
     const baseStyle = StyleSheet.flatten<BSPressableProps>([
         combinedProps.style,
         combinedProps.disabled && { opacity: .5 },

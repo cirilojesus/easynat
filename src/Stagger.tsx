@@ -1,267 +1,152 @@
-import React, {
+import {
     forwardRef,
-    useEffect,
     useImperativeHandle,
-    useRef,
-} from 'react';
+    useEffect,
+} from "react";
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
     withTiming,
     Easing,
-    interpolateColor,
     interpolate,
-    withDelay,
-    EasingFunctionFactory,
-} from 'react-native-reanimated';
-import { Box, BSBoxProps } from './Box';
+} from "react-native-reanimated";
+import { Box, BSBoxProps } from "./Box";
 
-type AnimatedStyles = {
+export type AnimValues = {
     opacity?: number;
-    translateX?: number;
     translateY?: number;
+    translateX?: number;
     scale?: number;
     rotate?: string | number;
-    rotateX?: string | number;
-    rotateY?: string | number;
-    rotateZ?: string | number;
-    skewX?: string | number;
-    skewY?: string | number;
-    backgroundColor?: string;
-    color?: string;
-    borderColor?: string;
-    borderWidth?: number;
-    borderRadius?: number;
     letterSpacing?: number;
-    width?: number;
-    height?: number;
-}
-
-type AnimValues = AnimatedStyles & {
-    delay?: number;
-    duration?: number;
-    easing?: EasingFunctionFactory;
-    delayAnimation?: Partial<Record<keyof AnimatedStyles, number>>;
-    durationAnimation?: Partial<Record<keyof AnimatedStyles, number>>;
 };
 
-type StaggerProps = BSBoxProps & {
-    children: React.ReactElement[] | React.ReactElement;
-    from: AnimValues;
-    to: AnimValues;
+export type StaggerRef = {
+    play: () => void;
+    reset: () => void;
+};
+
+export type StaggerProps = BSBoxProps & {
+    children: React.ReactElement | React.ReactElement[];
+    from?: AnimValues;
+    to?: AnimValues;
     animateOnInit?: boolean;
     staggerDelay?: number;
     delay?: number;
     duration?: number;
-    easing?: EasingFunctionFactory;
+    easing?: (v: number) => number;
 };
 
-export type StaggerRef = {
-    show: () => void;
-    hide: () => void;
-};
-
-const DEFAULT_DURATION = 400;
 const DEFAULT_DELAY = 0;
-const DEFAULT_EASING = Easing.bezier(0.4, 0, 0.2, 1);
+const DEFAULT_DURATION = 300;
+const DEFAULT_EASING = Easing.out(Easing.exp);
 
-export const Stagger = forwardRef<StaggerRef, StaggerProps>(
-    (
-        {
-            children,
-            from = { opacity: 0, translateY: 20, scale: 0.95 },
-            to = { opacity: 1, translateY: 0, scale: 1 },
-            animateOnInit,
-            staggerDelay = 80,
-            delay,
-            duration,
-            easing,
-            ...props
-        },
-        ref
-    ) => {
-        const showRefs = useRef<(() => void)[]>([]);
-        const hideRefs = useRef<(() => void)[]>([]);
+export const Stagger = forwardRef<StaggerRef, StaggerProps>((props, ref) => {
 
-        useImperativeHandle(ref, () => ({
-            show: () => showRefs.current.forEach((fn) => fn?.()),
-            hide: () => hideRefs.current.slice().reverse().forEach((fn) => fn?.()),
-        }));
+    const {
+        children,
+        from = { opacity: 0, translateY: 20, scale: 0.95 },
+        to = { opacity: 1, translateY: 0, scale: 1 },
+        animateOnInit = false,
+        staggerDelay = 80,
+        delay = DEFAULT_DELAY,
+        duration = DEFAULT_DURATION,
+        easing = DEFAULT_EASING,
+        ...rest
+    } = props;
 
-        return (
-            <Box {...props}>
-                {React.Children.map(children, (child, index) => (
-                    <StaggerItem
-                        key={index}
-                        index={index}
-                        from={from}
-                        to={to}
-                        animateOnInit={animateOnInit}
-                        staggerDelay={staggerDelay}
-                        delayGlobal={delay}
-                        durationGlobal={duration}
-                        easingGlobal={easing}
-                        registerShow={(fn) => (showRefs.current[index] = fn)}
-                        registerHide={(fn) => (hideRefs.current[index] = fn)}
-                    >
-                        {child}
-                    </StaggerItem>
-                ))}
-            </Box>
-        );
-    }
-);
+    const nodes = Array.isArray(children) ? children : [children];
+    const timers = nodes.map(() => useSharedValue(0));
 
-type ItemProps = {
-    from: AnimValues;
-    to: AnimValues;
-    index: number;
-    staggerDelay: number;
-    animateOnInit: boolean;
-    durationGlobal: number,
-    easingGlobal: EasingFunctionFactory;
-    delayGlobal: number,
-    registerShow: (fn: () => void) => void;
-    registerHide: (fn: () => void) => void;
-    children: React.ReactElement;
-};
-
-const StaggerItem = ({
-    from,
-    to,
-    index,
-    staggerDelay,
-    animateOnInit,
-    durationGlobal,
-    delayGlobal,
-    easingGlobal,
-    registerShow,
-    registerHide,
-    children,
-}: ItemProps) => {
-    const progress = useSharedValue(0);
-
-    const animateTo = (v: number) => {
-        const isForward = v === 1;
-
-        const duration = (isForward ? to.duration : from.duration) || durationGlobal || DEFAULT_DURATION
-
-        const delayBase = (isForward ? to.delay : from.delay) || delayGlobal || DEFAULT_DELAY
-
-        const easing = (isForward ? to.easing : from.easing) || easingGlobal || DEFAULT_EASING
-
-        const delay = delayBase + index * staggerDelay;
-
-        progress.value = withDelay(delay, withTiming(v, { duration, easing }));
+    const animate = () => {
+        timers.forEach((t, i) => {
+            t.value = 0;
+            t.value = withTiming(1, {
+                duration,
+                easing,
+                delay: delay + i * staggerDelay,
+            });
+        });
     };
 
+    const reset = () => {
+        timers.forEach((t) => (t.value = 0));
+    };
+
+    useImperativeHandle(ref, () => ({
+        play: animate,
+        reset,
+    }));
+
     useEffect(() => {
-        registerShow(() => animateTo(1));
-        registerHide(() => animateTo(0));
-        if (animateOnInit) animateTo(1);
-    }, [from, to]);
-
-    const style = useAnimatedStyle(() => {
-        const transforms: any[] = [];
-
-        const tx = interpolate(progress.value, [0, 1], [from.translateX ?? 0, to.translateX ?? from.translateX ?? 0]);
-        const ty = interpolate(progress.value, [0, 1], [from.translateY ?? 0, to.translateY ?? from.translateY ?? 0]);
-        const sc = interpolate(progress.value, [0, 1], [from.scale ?? 1, to.scale ?? from.scale ?? 1]);
-        transforms.push({ translateX: tx }, { translateY: ty }, { scale: sc });
-
-        const rotateProps = ['rotate', 'rotateX', 'rotateY', 'rotateZ', 'skewX', 'skewY'] as const;
-        for (const prop of rotateProps) {
-            const f = from[prop];
-            const t = to[prop];
-            if (f != null || t != null) {
-                const fr = parseFloat(String(f ?? '0'));
-                const tr = parseFloat(String(t ?? f ?? '0'));
-                const val = fr + (tr - fr) * progress.value;
-                transforms.push({ [prop]: `${val}deg` });
-            }
-        }
-
-        const opacity =
-            (from.opacity ?? 1) +
-            (to.opacity ?? 1 - (from.opacity ?? 1)) * progress.value;
-
-        const backgroundColor =
-            from.backgroundColor || to.backgroundColor
-                ? interpolateColor(
-                    progress.value,
-                    [0, 1],
-                    [from.backgroundColor ?? 'transparent', to.backgroundColor ?? 'transparent']
-                )
-                : undefined;
-
-        const borderColor =
-            from.borderColor || to.borderColor
-                ? interpolateColor(
-                    progress.value,
-                    [0, 1],
-                    [from.borderColor ?? 'transparent', to.borderColor ?? 'transparent']
-                )
-                : undefined;
-
-        const borderWidth = interpolate(
-            progress.value,
-            [0, 1],
-            [from.borderWidth ?? 0, to.borderWidth ?? from.borderWidth ?? 0]
-        );
-
-        const borderRadius = interpolate(
-            progress.value,
-            [0, 1],
-            [from.borderRadius ?? 0, to.borderRadius ?? from.borderRadius ?? 0]
-        );
-
-        const width = interpolate(progress.value, [0, 1], [from.width ?? 0, to.width ?? from.width ?? 0]);
-        const height = interpolate(progress.value, [0, 1], [from.height ?? 0, to.height ?? from.height ?? 0]);
-
-        return {
-            opacity,
-            transform: transforms,
-            backgroundColor,
-            borderColor,
-            borderWidth,
-            borderRadius,
-            width: width || undefined,
-            height: height || undefined,
-        };
-    });
-
-    const styleText = useAnimatedStyle(() => {
-        const color =
-            from.color || to.color
-                ? interpolateColor(
-                    progress.value,
-                    [0, 1],
-                    [from.color ?? '#000', to.color ?? from.color ?? '#000']
-                )
-                : undefined;
-
-        const letterSpacing = interpolate(
-            progress.value,
-            [0, 1],
-            [from.letterSpacing ?? 0, to.letterSpacing ?? from.letterSpacing ?? 0]
-        );
-
-        return { color, letterSpacing };
-    });
-
-    const childsChildren = React.Children.map(children.props['children'], (x) => {
-        if (typeof x === 'string') {
-            return <Animated.Text style={styleText}>{x}</Animated.Text>;
-        }
-        return x;
-    });
+        if (animateOnInit) animate();
+    }, []);
 
     return (
-        <Animated.View style={style}>
-            {React.cloneElement(children, { children: childsChildren } as any)}
-        </Animated.View>
+        <Box {...rest}>
+            {nodes.map((child, index) => {
+                const progress = timers[index];
+
+                const animatedStyle = useAnimatedStyle(() => {
+                    return {
+                        opacity:
+                            from.opacity !== undefined
+                                ? interpolate(
+                                    progress.value,
+                                    [0, 1],
+                                    [from.opacity ?? 0, to.opacity ?? 1]
+                                )
+                                : undefined,
+
+                        transform: [
+                            from.translateY !== undefined && {
+                                translateY: interpolate(
+                                    progress.value,
+                                    [0, 1],
+                                    [from.translateY ?? 20, to.translateY ?? 0]
+                                ),
+                            },
+                            from.translateX !== undefined && {
+                                translateX: interpolate(
+                                    progress.value,
+                                    [0, 1],
+                                    [from.translateX ?? 20, to.translateX ?? 0]
+                                ),
+                            },
+                            from.scale !== undefined && {
+                                scale: interpolate(
+                                    progress.value,
+                                    [0, 1],
+                                    [from.scale ?? 0.9, to.scale ?? 1]
+                                ),
+                            },
+                            from.rotate !== undefined && {
+                                rotate: `${interpolate(
+                                    progress.value,
+                                    [0, 1],
+                                    [
+                                        Number(String(from.rotate).replace("deg", "")) ||
+                                        0,
+                                        Number(String(to.rotate).replace("deg", "")) ||
+                                        0,
+                                    ]
+                                )
+                                    }deg`,
+                            },
+                        ].filter(Boolean) as any,
+                    };
+                });
+
+                return (
+                    <Animated.View key={index} style={animatedStyle}>
+                        {child}
+                    </Animated.View>
+                );
+            })}
+        </Box>
     );
-};
+});
+
 
 
 // import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';

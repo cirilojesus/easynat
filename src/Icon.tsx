@@ -2,53 +2,43 @@ import * as ICONS from "@expo/vector-icons";
 import { BSDefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
 import { Theme } from "./theme";
 import { useTheme } from "./theme-provider";
-import { ViewStyle } from "react-native";
-import React, { forwardRef } from "react";
+import { forwardRef } from "react";
+import { IconButtonProps } from "@expo/vector-icons/build/createIconSet";
 
 type IconLibrary = keyof typeof ICONS;
 
-/** 
- * Tipo real del ref que recibe cualquier icono de expo 
- */
-type IconRef = React.ComponentRef<
-    (typeof ICONS)[keyof typeof ICONS]
->;
+type IconRef = React.ComponentRef<(typeof ICONS)[keyof typeof ICONS]>;
 
-export type IconProps = BSDefaultProps & {
-    name: string;
-    as: IconLibrary; // nombre del set de iconos
-    size?: number;
+export type IconProps<L extends IconLibrary> = Omit<IconButtonProps<typeof ICONS[L]>, "color" | 'name'> & BSDefaultProps & {
+    as: L;
     color?: keyof Theme["colors"];
-    style?: ViewStyle;
+    name: keyof typeof ICONS[L]['glyphMap'];
 };
 
-export const Icon = forwardRef<IconRef, IconProps>(
-    (
-        {
-            name,
-            as = "MaterialIcons",
-            size = 20,
-            color = "dark",
-            style,
-            ...props
-        },
-        ref
-    ) => {
-        const { theme } = useTheme();
-        const styles = DEFAULT_PROPS(props, theme);
+/** --- 1. Tipo del componente genérico --- */
+type IconComponent = <L extends IconLibrary>(
+    props: IconProps<L> & { ref?: React.Ref<IconRef> }
+) => React.ReactElement | null;
 
-        const IconComponent = ICONS[as];
+/** --- 2. Implementación interna --- */
+const IconBase = forwardRef(<L extends IconLibrary>(props: IconProps<L>, ref: React.Ref<IconRef>) => {
+    const { theme } = useTheme();
+    const styles = DEFAULT_PROPS(props, theme);
 
-        return (
-            <IconComponent
-                ref={ref}
-                name={name}
-                size={size}
-                color={theme.colors?.[color] || color}
-                style={[style, ...styles]}
-            />
-        );
-    }
-);
+    const IconComponent = ICONS[props.as];
 
-Icon.displayName = "Icon";
+    return (
+        <IconComponent
+            {...props}
+            ref={ref}
+            size={props.size || 20}
+            color={theme.colors?.[props.color] || props.color}
+            style={[props.style, ...styles]}
+        />
+    );
+}
+) as unknown as IconComponent;
+
+/** --- 3. Export final con genéricos preservados --- */
+export const Icon = IconBase;
+

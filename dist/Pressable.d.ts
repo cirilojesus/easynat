@@ -8,5 +8,6 @@ export type BSPressableProps = PressableProps & BSDefaultProps & {
     _android?: BSPressableProps;
     _web?: BSPressableProps;
     _pressed?: BSPressableProps;
+    variant?: (string & {});
 };
 export declare const Pressable: React.FC<BSPressableProps>;

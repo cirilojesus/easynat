@@ -1,6 +1,21 @@
 // Modal.tsx
-import React, { forwardRef, useImperativeHandle, useRef, useState, useEffect } from "react";
-import { Animated, BackHandler, Easing, StyleSheet, Pressable, Platform, ViewProps, PressableProps } from "react-native";
+import React, {
+    forwardRef,
+    useImperativeHandle,
+    useRef,
+    useState,
+    useEffect,
+} from "react";
+import {
+    Animated,
+    BackHandler,
+    Easing,
+    StyleSheet,
+    Pressable,
+    Platform,
+    ViewProps,
+    PressableProps,
+} from "react-native";
 import { RootSiblingPortal } from "react-native-root-siblings";
 import { Box, BSBoxProps } from "./Box";
 import { Icon, IconProps } from "./Icon";
@@ -19,8 +34,8 @@ export type BSModalProps = BSKeyboardAvoidingProps & {
     iconClose?: boolean | React.ReactElement<any>;
     _icon?: BSButtonProps & { icon: Partial<IconProps> };
     _contentStyle?: ViewProps & BSDefaultProps;
-    safeAreaTop?: boolean,
-    safeAreaBottom?: boolean,
+    safeAreaTop?: boolean;
+    safeAreaBottom?: boolean;
     onClose?: () => void;
     _ios?: BSModalProps;
     _android?: BSModalProps;
@@ -31,7 +46,7 @@ export type BSModalProps = BSKeyboardAvoidingProps & {
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-export const Modal = forwardRef<BSModalRef, BSModalProps>(({ ...props }, ref) => {
+const ModalInner = forwardRef<BSModalRef, BSModalProps>((props, ref) => {
     const { theme } = useTheme();
     const [visible, setVisible] = useState(false);
     const slideAnim = useRef(new Animated.Value(0)).current;
@@ -57,18 +72,18 @@ export const Modal = forwardRef<BSModalRef, BSModalProps>(({ ...props }, ref) =>
     const contentStyle = DEFAULT_PROPS(combinedProps?._contentStyle || {}, theme);
     const backdropStyle = DEFAULT_PROPS(combinedProps?._backdrop || {}, theme);
 
-    const animate = (toValue: 0 | 1, callBack?: () => void) => {
+    const animate = (toValue: 0 | 1, cb?: () => void) => {
         Animated.timing(slideAnim, {
             toValue,
             duration: toValue ? 250 : 200,
             easing: toValue ? Easing.out(Easing.ease) : Easing.in(Easing.ease),
             useNativeDriver: true,
-        }).start(({ finished }) => finished && callBack?.());
+        }).start(({ finished }) => finished && cb?.());
     };
 
     const open = () => {
-        setVisible(true)
-        animate(1)
+        setVisible(true);
+        animate(1);
     };
 
     const close = () => animate(0, () => setVisible(false));
@@ -94,18 +109,20 @@ export const Modal = forwardRef<BSModalRef, BSModalProps>(({ ...props }, ref) =>
                                 inputRange: [0, 1],
                                 outputRange: [0, 1],
                             }),
-                        }
+                        },
                     ]}
                     onPress={!combinedProps?.static ? handleRequestClose : null}
                 />
-                <Box bg={combinedProps.bg || 'white'} safeAreaTop={combinedProps?.safeAreaTop} />
+
+                <Box bg={combinedProps.bg || "white"} safeAreaTop={combinedProps?.safeAreaTop} />
+
                 <KeyboardAvoidingView flex={1} {...props}>
                     <Animated.View
                         style={[
                             {
-                                height: '90%',
-                                marginTop: 'auto',
-                                backgroundColor: '#fff',
+                                height: "90%",
+                                marginTop: "auto",
+                                backgroundColor: "#fff",
                                 borderTopRightRadius: 20,
                                 borderTopLeftRadius: 20,
                                 transform: [
@@ -113,9 +130,9 @@ export const Modal = forwardRef<BSModalRef, BSModalProps>(({ ...props }, ref) =>
                                         translateY: slideAnim.interpolate({
                                             inputRange: [0, 1],
                                             outputRange: [800, 0],
-                                        })
-                                    }
-                                ]
+                                        }),
+                                    },
+                                ],
                             },
                             combinedProps?._contentStyle?.style,
                             ...contentStyle,
@@ -131,6 +148,7 @@ export const Modal = forwardRef<BSModalRef, BSModalProps>(({ ...props }, ref) =>
                                 {...combinedProps.header}
                             />
                         )}
+
                         {combinedProps.iconClose === true ? (
                             <Button
                                 variant="ghost"
@@ -139,18 +157,43 @@ export const Modal = forwardRef<BSModalRef, BSModalProps>(({ ...props }, ref) =>
                                 rounded={50}
                                 right={0}
                                 m={2}
-                                icon={<Icon name="close" as="AntDesign" {...combinedProps._icon?.icon} />}
+                                icon={
+                                    <Icon
+                                        name="close"
+                                        as="AntDesign"
+                                        {...combinedProps._icon?.icon}
+                                    />
+                                }
                                 onPress={close}
                                 {...combinedProps._icon}
                             />
                         ) : (
-                            combinedProps.iconClose && React.cloneElement(combinedProps.iconClose, { onPress: close, ...combinedProps._icon })
+                            combinedProps.iconClose &&
+                            React.cloneElement(combinedProps.iconClose, {
+                                onPress: close,
+                                ...combinedProps._icon,
+                            })
                         )}
+
                         {combinedProps.children}
                     </Animated.View>
                 </KeyboardAvoidingView>
-                <Box bg={combinedProps.bg || 'white'} safeAreaBottom={combinedProps?.safeAreaBottom !== undefined ? combinedProps?.safeAreaBottom : true} />
+
+                <Box
+                    bg={combinedProps.bg || "white"}
+                    safeAreaBottom={
+                        combinedProps?.safeAreaBottom !== undefined
+                            ? combinedProps?.safeAreaBottom
+                            : true
+                    }
+                />
             </Box>
         </RootSiblingPortal>
     );
 });
+
+// 🔥🔥🔥 LA LÍNEA MÁGICA 🔥🔥🔥
+// Fuerza a TypeScript a generar el .d.ts correcto.
+export const Modal = ModalInner as React.ForwardRefExoticComponent<
+    BSModalProps & React.RefAttributes<BSModalRef>
+>;

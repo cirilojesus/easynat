@@ -14,4 +14,4 @@ export type CollapseProps = BSBoxProps & {
     _open?: BSButtonProps;
     _trigger?: BSButtonProps;
 };
-export declare const Collapse: import("react").ForwardRefExoticComponent<Omit<any, "ref"> & import("react").RefAttributes<CollapseHandle>>;
+export declare const Collapse: import("react").ForwardRefExoticComponent<any>;

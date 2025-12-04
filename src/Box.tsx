@@ -40,7 +40,24 @@ export const Box: React.FC<BSBoxProps> = ({
     const styles_default = theme?.components?.Box || {};
 
     const variantStyle: VARIANTS_TYPE = {
-        badge: { rounded: 40, _text: { fontSize: 12 }, px: 2, py: 1, bg: 'light', flexDir: 'row', alignItems: 'center', gap: 4 },
+        badge: {
+            rounded: 40,
+            _text: { fontSize: 12 },
+            px: 2,
+            py: 1,
+            bg: 'light',
+            flexDir: 'row',
+            alignItems: 'center',
+            gap: 4
+        },
+        card: {
+            borderWidth: 1,
+            borderColor: 'light.100',
+            p: 4,
+            rounded: 4,
+            bg: 'white',
+            shadow: 1
+        },
         ...theme?.components?.Box?.variants
     }
 

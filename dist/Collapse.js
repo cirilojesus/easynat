@@ -40,15 +40,13 @@ const react_native_reanimated_1 = __importStar(require("react-native-reanimated"
 const Box_1 = require("./Box");
 const Icon_1 = require("./Icon");
 const IconAnimated = react_native_reanimated_1.default.createAnimatedComponent(Icon_1.Icon);
-exports.Collapse = (0, react_1.forwardRef)((_a, ref) => {
+const CollapseInner = (0, react_1.forwardRef)((_a, ref) => {
     var _b;
     var { trigger } = _a, props = __rest(_a, ["trigger"]);
     const height = (0, react_native_reanimated_1.useSharedValue)(0);
     const isExpanded = (0, react_native_reanimated_1.useSharedValue)(false);
     const [openState, setOpenState] = (0, react_1.useState)(false);
-    (0, react_native_reanimated_1.useAnimatedReaction)(() => isExpanded.value, (val) => {
-        (0, react_native_reanimated_1.runOnJS)(setOpenState)(val);
-    });
+    (0, react_native_reanimated_1.useAnimatedReaction)(() => isExpanded.value, (val) => (0, react_native_reanimated_1.runOnJS)(setOpenState)(val));
     const derivedHeight = (0, react_native_reanimated_1.useDerivedValue)(() => (0, react_native_reanimated_1.withTiming)(isExpanded.value ? height.value : 0, { duration: 300 }));
     const bodyStyle = (0, react_native_reanimated_1.useAnimatedStyle)(() => ({
         height: derivedHeight.value,
@@ -60,20 +58,22 @@ exports.Collapse = (0, react_1.forwardRef)((_a, ref) => {
         ]
     }));
     (0, react_1.useImperativeHandle)(ref, () => ({
-        open: () => isExpanded.value = true,
-        close: () => isExpanded.value = false,
-        toggle: () => isExpanded.value = !isExpanded.value,
+        open: () => (isExpanded.value = true),
+        close: () => (isExpanded.value = false),
+        toggle: () => (isExpanded.value = !isExpanded.value),
     }));
     return (<Box_1.Box {...props}>
-            {trigger(Object.assign({ onPress: () => {
+                {trigger(Object.assign({ onPress: () => {
                 isExpanded.value = !isExpanded.value;
-            }, isOpen: openState, p: 3, borderWidth: 1, borderColor: 'light', rounded: 1, flexDir: 'row', justifyContent: 'space-between', icon: <IconAnimated as="Feather" name="chevron-down" {...(_b = props._trigger) === null || _b === void 0 ? void 0 : _b._icon} style={iconStyle}/> }, (openState ? props._open : props._trigger)))}
-            <react_native_reanimated_1.default.View style={bodyStyle}>
-                <Box_1.Box onLayout={(e) => {
+            }, isOpen: openState, p: 3, borderWidth: 1, borderColor: 'light', rounded: 1, flexDir: 'row', justifyContent: 'space-between', icon: (<IconAnimated as="Feather" name="chevron-down" {...(_b = props._trigger) === null || _b === void 0 ? void 0 : _b._icon} style={iconStyle}/>) }, (openState ? props._open : props._trigger)))}
+
+                <react_native_reanimated_1.default.View style={bodyStyle}>
+                    <Box_1.Box onLayout={(e) => {
             height.value = e.nativeEvent.layout.height;
         }} style={{ width: '100%', position: 'absolute' }} {...props._contentStyle}>
-                    {props.children}
-                </Box_1.Box>
-            </react_native_reanimated_1.default.View>
-        </Box_1.Box>);
+                        {props.children}
+                    </Box_1.Box>
+                </react_native_reanimated_1.default.View>
+            </Box_1.Box>);
 });
+exports.Collapse = CollapseInner;

@@ -25,4 +25,4 @@ export type BSModalProps = BSKeyboardAvoidingProps & {
     _backdrop?: PressableProps & BSDefaultProps;
     static?: boolean;
 };
-export declare const Modal: React.ForwardRefExoticComponent<Omit<any, "ref"> & React.RefAttributes<BSModalRef>>;
+export declare const Modal: React.ForwardRefExoticComponent<any>;

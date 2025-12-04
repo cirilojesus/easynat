@@ -23,7 +23,23 @@ const Box = (_a) => {
     const { theme } = (0, theme_provider_1.useTheme)();
     const insets = (0, react_native_safe_area_context_1.useSafeAreaInsets)();
     const styles_default = ((_b = theme === null || theme === void 0 ? void 0 : theme.components) === null || _b === void 0 ? void 0 : _b.Box) || {};
-    const variantStyle = Object.assign({ badge: { rounded: 40, _text: { fontSize: 12 }, px: 2, py: 1, bg: 'light', flexDir: 'row', alignItems: 'center', gap: 4 } }, (_d = (_c = theme === null || theme === void 0 ? void 0 : theme.components) === null || _c === void 0 ? void 0 : _c.Box) === null || _d === void 0 ? void 0 : _d.variants);
+    const variantStyle = Object.assign({ badge: {
+            rounded: 40,
+            _text: { fontSize: 12 },
+            px: 2,
+            py: 1,
+            bg: 'light',
+            flexDir: 'row',
+            alignItems: 'center',
+            gap: 4
+        }, card: {
+            borderWidth: 1,
+            borderColor: 'light.100',
+            p: 4,
+            rounded: 4,
+            bg: 'white',
+            shadow: 1
+        } }, (_d = (_c = theme === null || theme === void 0 ? void 0 : theme.components) === null || _c === void 0 ? void 0 : _c.Box) === null || _d === void 0 ? void 0 : _d.variants);
     const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, styles_default), props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
     const styles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(Object.assign(Object.assign({}, variantStyle[combinedProps.variant]), combinedProps), theme);
     const baseStyle = react_native_1.StyleSheet.flatten([

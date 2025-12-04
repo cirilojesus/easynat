@@ -22,17 +22,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Modal = void 0;
 // Modal.tsx
@@ -46,9 +35,8 @@ const KeyboardAvoidingView_1 = require("./KeyboardAvoidingView");
 const DEFAULT_PROPS_1 = require("./utils/DEFAULT_PROPS");
 const theme_provider_1 = require("./theme-provider");
 const AnimatedPressable = react_native_1.Animated.createAnimatedComponent(react_native_1.Pressable);
-exports.Modal = (0, react_1.forwardRef)((_a, ref) => {
-    var _b, _c, _d;
-    var props = __rest(_a, []);
+const ModalInner = (0, react_1.forwardRef)((props, ref) => {
+    var _a, _b, _c;
     const { theme } = (0, theme_provider_1.useTheme)();
     const [visible, setVisible] = (0, react_1.useState)(false);
     const slideAnim = (0, react_1.useRef)(new react_native_1.Animated.Value(0)).current;
@@ -65,13 +53,13 @@ exports.Modal = (0, react_1.forwardRef)((_a, ref) => {
     const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign({}, props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
     const contentStyle = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)((combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._contentStyle) || {}, theme);
     const backdropStyle = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)((combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._backdrop) || {}, theme);
-    const animate = (toValue, callBack) => {
+    const animate = (toValue, cb) => {
         react_native_1.Animated.timing(slideAnim, {
             toValue,
             duration: toValue ? 250 : 200,
             easing: toValue ? react_native_1.Easing.out(react_native_1.Easing.ease) : react_native_1.Easing.in(react_native_1.Easing.ease),
             useNativeDriver: true,
-        }).start(({ finished }) => finished && (callBack === null || callBack === void 0 ? void 0 : callBack()));
+        }).start(({ finished }) => finished && (cb === null || cb === void 0 ? void 0 : cb()));
     };
     const open = () => {
         setVisible(true);
@@ -90,22 +78,24 @@ exports.Modal = (0, react_1.forwardRef)((_a, ref) => {
                 <AnimatedPressable style={[
             { backgroundColor: "#0003" },
             react_native_1.StyleSheet.absoluteFill,
-            (_b = combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._backdrop) === null || _b === void 0 ? void 0 : _b.style,
+            (_a = combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._backdrop) === null || _a === void 0 ? void 0 : _a.style,
             ...backdropStyle,
             {
                 opacity: slideAnim.interpolate({
                     inputRange: [0, 1],
                     outputRange: [0, 1],
                 }),
-            }
+            },
         ]} onPress={!(combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps.static) ? handleRequestClose : null}/>
-                <Box_1.Box bg={combinedProps.bg || 'white'} safeAreaTop={combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps.safeAreaTop}/>
+
+                <Box_1.Box bg={combinedProps.bg || "white"} safeAreaTop={combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps.safeAreaTop}/>
+
                 <KeyboardAvoidingView_1.KeyboardAvoidingView flex={1} {...props}>
                     <react_native_1.Animated.View style={[
             {
-                height: '90%',
-                marginTop: 'auto',
-                backgroundColor: '#fff',
+                height: "90%",
+                marginTop: "auto",
+                backgroundColor: "#fff",
                 borderTopRightRadius: 20,
                 borderTopLeftRadius: 20,
                 transform: [
@@ -113,19 +103,28 @@ exports.Modal = (0, react_1.forwardRef)((_a, ref) => {
                         translateY: slideAnim.interpolate({
                             inputRange: [0, 1],
                             outputRange: [800, 0],
-                        })
-                    }
-                ]
+                        }),
+                    },
+                ],
             },
-            (_c = combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._contentStyle) === null || _c === void 0 ? void 0 : _c.style,
+            (_b = combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._contentStyle) === null || _b === void 0 ? void 0 : _b.style,
             ...contentStyle,
         ]}>
                         {combinedProps.header && (<Box_1.Box px={5} pb={4} pt={2} borderBottomWidth={1} borderBottomColor="light" {...combinedProps.header}/>)}
-                        {combinedProps.iconClose === true ? (<Button_1.Button variant="ghost" position="absolute" zIndex={100} rounded={50} right={0} m={2} icon={<Icon_1.Icon name="close" as="AntDesign" {...(_d = combinedProps._icon) === null || _d === void 0 ? void 0 : _d.icon}/>} onPress={close} {...combinedProps._icon}/>) : (combinedProps.iconClose && react_1.default.cloneElement(combinedProps.iconClose, Object.assign({ onPress: close }, combinedProps._icon)))}
+
+                        {combinedProps.iconClose === true ? (<Button_1.Button variant="ghost" position="absolute" zIndex={100} rounded={50} right={0} m={2} icon={<Icon_1.Icon name="close" as="AntDesign" {...(_c = combinedProps._icon) === null || _c === void 0 ? void 0 : _c.icon}/>} onPress={close} {...combinedProps._icon}/>) : (combinedProps.iconClose &&
+            react_1.default.cloneElement(combinedProps.iconClose, Object.assign({ onPress: close }, combinedProps._icon)))}
+
                         {combinedProps.children}
                     </react_native_1.Animated.View>
                 </KeyboardAvoidingView_1.KeyboardAvoidingView>
-                <Box_1.Box bg={combinedProps.bg || 'white'} safeAreaBottom={(combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps.safeAreaBottom) !== undefined ? combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps.safeAreaBottom : true}/>
+
+                <Box_1.Box bg={combinedProps.bg || "white"} safeAreaBottom={(combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps.safeAreaBottom) !== undefined
+            ? combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps.safeAreaBottom
+            : true}/>
             </Box_1.Box>
         </react_native_root_siblings_1.RootSiblingPortal>);
 });
+// 🔥🔥🔥 LA LÍNEA MÁGICA 🔥🔥🔥
+// Fuerza a TypeScript a generar el .d.ts correcto.
+exports.Modal = ModalInner;
