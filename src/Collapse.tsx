@@ -30,81 +30,69 @@ export type CollapseProps = BSBoxProps & {
     _trigger?: BSButtonProps;
 };
 
-const IconAnimated = Animated.createAnimatedComponent(Icon);
+const IconAnimated = Animated.createAnimatedComponent(Icon)
 
-const CollapseInner = forwardRef<CollapseHandle, CollapseProps>(
-    ({ trigger, ...props }, ref) => {
+export const Collapse = forwardRef<CollapseHandle, CollapseProps>(({ trigger, ...props }, ref) => {
+    const height = useSharedValue(0);
+    const isExpanded = useSharedValue(false);
+    const [openState, setOpenState] = useState(false);
 
-        const height = useSharedValue(0);
-        const isExpanded = useSharedValue(false);
-        const [openState, setOpenState] = useState(false);
+    useAnimatedReaction(
+        () => isExpanded.value,
+        (val) => {
+            runOnJS(setOpenState)(val);
+        }
+    );
 
-        useAnimatedReaction(
-            () => isExpanded.value,
-            (val) => runOnJS(setOpenState)(val)
-        );
+    const derivedHeight = useDerivedValue(() =>
+        withTiming(isExpanded.value ? height.value : 0, { duration: 300 })
+    );
 
-        const derivedHeight = useDerivedValue(() =>
-            withTiming(isExpanded.value ? height.value : 0, { duration: 300 })
-        );
+    const bodyStyle = useAnimatedStyle(() => ({
+        height: derivedHeight.value,
+        overflow: 'hidden',
+    }));
 
-        const bodyStyle = useAnimatedStyle(() => ({
-            height: derivedHeight.value,
-            overflow: 'hidden',
-        }));
+    const iconStyle = useAnimatedStyle(() => ({
+        transform: [
+            { rotate: withTiming(`${!isExpanded.value ? 0 : 180}deg`, { duration: 200 }) },
+        ]
+    }));
 
-        const iconStyle = useAnimatedStyle(() => ({
-            transform: [
-                { rotate: withTiming(`${!isExpanded.value ? 0 : 180}deg`, { duration: 200 }) },
-            ]
-        }));
+    useImperativeHandle(ref, () => ({
+        open: () => isExpanded.value = true,
+        close: () => isExpanded.value = false,
+        toggle: () => isExpanded.value = !isExpanded.value,
+    }));
 
-        useImperativeHandle(ref, () => ({
-            open: () => (isExpanded.value = true),
-            close: () => (isExpanded.value = false),
-            toggle: () => (isExpanded.value = !isExpanded.value),
-        }));
-
-        return (
-            <Box {...props}>
-                {trigger({
-                    onPress: () => {
-                        isExpanded.value = !isExpanded.value;
-                    },
-                    isOpen: openState,
-                    p: 3,
-                    borderWidth: 1,
-                    borderColor: 'light',
-                    rounded: 1,
-                    flexDir: 'row',
-                    justifyContent: 'space-between',
-                    icon: (
-                        <IconAnimated
-                            as="Feather"
-                            name="chevron-down"
-                            {...props._trigger?._icon}
-                            style={iconStyle}
-                        />
-                    ),
-                    ...(openState ? props._open : props._trigger),
-                })}
-
-                <Animated.View style={bodyStyle}>
-                    <Box
-                        onLayout={(e) => {
-                            height.value = e.nativeEvent.layout.height;
-                        }}
-                        style={{ width: '100%', position: 'absolute' }}
-                        {...props._contentStyle}
-                    >
-                        {props.children}
-                    </Box>
-                </Animated.View>
-            </Box>
-        );
-    }
+    return (
+        <Box {...props}>
+            {trigger({
+                onPress: () => {
+                    isExpanded.value = !isExpanded.value;
+                },
+                isOpen: openState,
+                p: 3,
+                borderWidth: 1,
+                borderColor: 'light',
+                rounded: 1,
+                flexDir: 'row',
+                justifyContent: 'space-between',
+                icon: <IconAnimated as="Feather" name="chevron-down" {...props._trigger?._icon} style={iconStyle} />,
+                ...(openState ? props._open : props._trigger)
+            })}
+            <Animated.View style={bodyStyle}>
+                <Box
+                    onLayout={(e) => {
+                        height.value = e.nativeEvent.layout.height;
+                    }}
+                    style={{ width: '100%', position: 'absolute' }}
+                    {...props._contentStyle}
+                >
+                    {props.children}
+                </Box>
+            </Animated.View>
+        </Box>
+    );
+}
 );
-
-export const Collapse = CollapseInner as React.ForwardRefExoticComponent<
-    CollapseProps & React.RefAttributes<CollapseHandle>
->;

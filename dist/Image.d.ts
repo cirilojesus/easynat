@@ -8,5 +8,6 @@ export type BSImageProps = ImageProps & BSDefaultProps & {
     _android?: BSImageProps;
     _web?: BSImageProps;
     fallback?: ImageSourcePropType;
+    size?: number;
 };
 export declare const Image: React.FC<BSImageProps>;

@@ -12,14 +12,14 @@ import { useTheme } from "./theme-provider";
 import { BSDefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
 import { Box, BSBoxProps } from "./Box";
 
-export type BSImageProps = ImageProps &
-    BSDefaultProps & {
-        _alt?: BSBoxProps; // texto fallback si no carga la imagen
-        _ios?: BSImageProps;
-        _android?: BSImageProps;
-        _web?: BSImageProps;
-        fallback?: ImageSourcePropType; // nodo alternativo si falla la imagen
-    };
+export type BSImageProps = ImageProps & BSDefaultProps & {
+    _alt?: BSBoxProps; // texto fallback si no carga la imagen
+    _ios?: BSImageProps;
+    _android?: BSImageProps;
+    _web?: BSImageProps;
+    fallback?: ImageSourcePropType; // nodo alternativo si falla la imagen
+    size?: number
+};
 
 export const Image: React.FC<BSImageProps> = ({
     style,
@@ -38,7 +38,14 @@ export const Image: React.FC<BSImageProps> = ({
     };
 
     const styles = DEFAULT_PROPS(combinedProps, theme);
-    const baseStyle = StyleSheet.flatten<ImageStyle>([style, ...styles]);
+    const baseStyle = StyleSheet.flatten<ImageStyle>([
+        {
+            width: combinedProps?.size || 50,
+            height: combinedProps?.size || 50
+        },
+        style,
+        ...styles
+    ]);
 
     if (error == 'fallback') {
         return (

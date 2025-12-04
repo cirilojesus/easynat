@@ -14,7 +14,7 @@ import {
     Pressable,
     Platform,
     ViewProps,
-    PressableProps,
+    PressableProps
 } from "react-native";
 import { RootSiblingPortal } from "react-native-root-siblings";
 import { Box, BSBoxProps } from "./Box";
@@ -46,7 +46,13 @@ export type BSModalProps = BSKeyboardAvoidingProps & {
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-const ModalInner = forwardRef<BSModalRef, BSModalProps>((props, ref) => {
+/* -------------------------------------------
+   Internal Component
+-------------------------------------------- */
+function InternalModal(
+    { ...props }: BSModalProps,
+    ref: React.Ref<BSModalRef>
+) {
     const { theme } = useTheme();
     const [visible, setVisible] = useState(false);
     const slideAnim = useRef(new Animated.Value(0)).current;
@@ -72,13 +78,13 @@ const ModalInner = forwardRef<BSModalRef, BSModalProps>((props, ref) => {
     const contentStyle = DEFAULT_PROPS(combinedProps?._contentStyle || {}, theme);
     const backdropStyle = DEFAULT_PROPS(combinedProps?._backdrop || {}, theme);
 
-    const animate = (toValue: 0 | 1, cb?: () => void) => {
+    const animate = (toValue: 0 | 1, callBack?: () => void) => {
         Animated.timing(slideAnim, {
             toValue,
             duration: toValue ? 250 : 200,
             easing: toValue ? Easing.out(Easing.ease) : Easing.in(Easing.ease),
             useNativeDriver: true,
-        }).start(({ finished }) => finished && cb?.());
+        }).start(({ finished }) => finished && callBack?.());
     };
 
     const open = () => {
@@ -109,12 +115,15 @@ const ModalInner = forwardRef<BSModalRef, BSModalProps>((props, ref) => {
                                 inputRange: [0, 1],
                                 outputRange: [0, 1],
                             }),
-                        },
+                        }
                     ]}
                     onPress={!combinedProps?.static ? handleRequestClose : null}
                 />
 
-                <Box bg={combinedProps.bg || "white"} safeAreaTop={combinedProps?.safeAreaTop} />
+                <Box
+                    bg={combinedProps.bg || "white"}
+                    safeAreaTop={combinedProps?.safeAreaTop}
+                />
 
                 <KeyboardAvoidingView flex={1} {...props}>
                     <Animated.View
@@ -190,10 +199,14 @@ const ModalInner = forwardRef<BSModalRef, BSModalProps>((props, ref) => {
             </Box>
         </RootSiblingPortal>
     );
-});
+}
 
-// 🔥🔥🔥 LA LÍNEA MÁGICA 🔥🔥🔥
-// Fuerza a TypeScript a generar el .d.ts correcto.
-export const Modal = ModalInner as React.ForwardRefExoticComponent<
-    BSModalProps & React.RefAttributes<BSModalRef>
->;
+/* -------------------------------------------
+   CAST CORRECTO PARA AUTOCOMPLETADO
+-------------------------------------------- */
+
+export type ModalComponent = React.FC<BSModalProps> & {
+    ref?: React.Ref<BSModalRef>;
+};
+
+export const Modal = forwardRef(InternalModal) as ModalComponent;

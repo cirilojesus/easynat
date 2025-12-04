@@ -17,9 +17,10 @@ const Pressable_1 = require("./Pressable");
 const react_1 = require("react");
 const helpers_1 = require("./utils/helpers");
 const Button = (_a) => {
-    var _b, _c, _d, _e;
+    var _b, _c, _d, _e, _f;
     var { colorScheme = "primary", variant = "solid" } = _a, props = __rest(_a, ["colorScheme", "variant"]);
     const { theme } = (0, theme_provider_1.useTheme)();
+    const props_default = ((_b = theme === null || theme === void 0 ? void 0 : theme.components) === null || _b === void 0 ? void 0 : _b.Button) || {};
     const variantStyles = Object.assign({ solid: {
             bg: theme.colors[colorScheme + '.100'],
             _pressed: {
@@ -51,13 +52,31 @@ const Button = (_a) => {
                     color: theme.colors[colorScheme + '.100'],
                 }
             }
-        } }, (_c = (_b = theme === null || theme === void 0 ? void 0 : theme.components) === null || _b === void 0 ? void 0 : _b.Button) === null || _c === void 0 ? void 0 : _c.variants);
-    return (<Pressable_1.Pressable p={3} rounded={2} flexDir={'row'} alignItems={'center'} gap={8} justifyContent={'center'} {...Object.assign(Object.assign({}, variantStyles[variant]), props)} _pressed={Object.assign(Object.assign({}, (_d = variantStyles[variant]) === null || _d === void 0 ? void 0 : _d._pressed), props._pressed)} _text={Object.assign(Object.assign({ textAlign: 'center' }, (_e = variantStyles[variant]) === null || _e === void 0 ? void 0 : _e._text), props._text)}>
+        } }, (_d = (_c = theme === null || theme === void 0 ? void 0 : theme.components) === null || _c === void 0 ? void 0 : _c.Button) === null || _d === void 0 ? void 0 : _d.variants);
+    const sizeStyle = {
+        sm: {
+            p: 2,
+            _text: { fontSize: 12 }
+        },
+        md: {
+            p: 3,
+            _text: { fontSize: 14 }
+        },
+        lg: {
+            p: 14,
+            _text: { fontSize: 16 }
+        },
+        xl: {
+            p: 4,
+            _text: { fontSize: 18 }
+        },
+    };
+    return (<Pressable_1.Pressable p={3} rounded={2} flexDir={'row'} alignItems={'center'} gap={8} justifyContent={'center'} {...Object.assign(Object.assign(Object.assign(Object.assign({}, props_default), variantStyles[variant]), sizeStyle[props === null || props === void 0 ? void 0 : props.size]), props)} _pressed={Object.assign(Object.assign(Object.assign({}, props_default === null || props_default === void 0 ? void 0 : props_default._pressed), (_e = variantStyles[variant]) === null || _e === void 0 ? void 0 : _e._pressed), props._pressed)} _text={Object.assign(Object.assign(Object.assign({ textAlign: 'center' }, props_default === null || props_default === void 0 ? void 0 : props_default._text), (_f = variantStyles[variant]) === null || _f === void 0 ? void 0 : _f._text), props._text)}>
             {(_a) => {
             var _b, _c, _d, _e, _f, _g;
             var { pressed } = _a, e = __rest(_a, ["pressed"]);
             return <>
-                    {e.icon && (0, react_1.cloneElement)(e.icon, Object.assign(Object.assign(Object.assign(Object.assign({}, (_b = variantStyles[variant]) === null || _b === void 0 ? void 0 : _b._icon), props._icon), (pressed ? (_c = props._pressed) === null || _c === void 0 ? void 0 : _c._icon : {})), (_d = e.icon) === null || _d === void 0 ? void 0 : _d.props))}
+                    {e.icon && (0, react_1.cloneElement)(e.icon, Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, props_default === null || props_default === void 0 ? void 0 : props_default._icon), (_b = variantStyles[variant]) === null || _b === void 0 ? void 0 : _b._icon), props._icon), (pressed ? (_c = props._pressed) === null || _c === void 0 ? void 0 : _c._icon : {})), (_d = e.icon) === null || _d === void 0 ? void 0 : _d.props))}
                     {(0, helpers_1.renderChild)(props.children, pressed ? Object.assign(Object.assign({}, e._text), (_e = e._pressed) === null || _e === void 0 ? void 0 : _e._text) : e._text)}
                     {e.iconRight && (0, react_1.cloneElement)(e.iconRight, Object.assign(Object.assign(Object.assign({}, (_f = variantStyles[variant]) === null || _f === void 0 ? void 0 : _f._iconRight), props._iconRight), (pressed ? (_g = props._pressed) === null || _g === void 0 ? void 0 : _g._iconRight : {})))}
                 </>;
