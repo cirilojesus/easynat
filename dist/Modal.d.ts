@@ -25,7 +25,11 @@ export type BSModalProps = BSKeyboardAvoidingProps & {
     _backdrop?: PressableProps & BSDefaultProps;
     static?: boolean;
 };
-export type ModalComponent = React.FC<BSModalProps> & {
+export type ModalComponent = (props: BSModalProps & {
     ref?: React.Ref<BSModalRef>;
-};
+}) => React.ReactElement | null;
+/**
+ * El cast correcto:
+ * `forwardRef` pierde los tipos, así que lo restauramos manualmente.
+ */
 export declare const Modal: ModalComponent;

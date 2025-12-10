@@ -46,9 +46,7 @@ const KeyboardAvoidingView_1 = require("./KeyboardAvoidingView");
 const DEFAULT_PROPS_1 = require("./utils/DEFAULT_PROPS");
 const theme_provider_1 = require("./theme-provider");
 const AnimatedPressable = react_native_1.Animated.createAnimatedComponent(react_native_1.Pressable);
-/* -------------------------------------------
-   Internal Component
--------------------------------------------- */
+/* ---------------- INTERNAL COMPONENT ---------------- */
 function InternalModal(_a, ref) {
     var _b, _c, _d;
     var props = __rest(_a, []);
@@ -100,7 +98,7 @@ function InternalModal(_a, ref) {
                     inputRange: [0, 1],
                     outputRange: [0, 1],
                 }),
-            }
+            },
         ]} onPress={!(combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps.static) ? handleRequestClose : null}/>
 
                 <Box_1.Box bg={combinedProps.bg || "white"} safeAreaTop={combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps.safeAreaTop}/>
@@ -140,4 +138,8 @@ function InternalModal(_a, ref) {
             </Box_1.Box>
         </react_native_root_siblings_1.RootSiblingPortal>);
 }
+/**
+ * El cast correcto:
+ * `forwardRef` pierde los tipos, así que lo restauramos manualmente.
+ */
 exports.Modal = (0, react_1.forwardRef)(InternalModal);

@@ -18,7 +18,7 @@ const DEFAULT_PROPS_1 = require("./utils/DEFAULT_PROPS");
 const react_native_safe_area_context_1 = require("react-native-safe-area-context");
 const helpers_1 = require("./utils/helpers");
 const Box = (_a) => {
-    var _b, _c, _d, _e, _f, _g;
+    var _b, _c, _d, _e, _f;
     var { children, safeArea, safeAreaTop, safeAreaBottom, safeAreaLeft, safeAreaRight } = _a, props = __rest(_a, ["children", "safeArea", "safeAreaTop", "safeAreaBottom", "safeAreaLeft", "safeAreaRight"]);
     const { theme } = (0, theme_provider_1.useTheme)();
     const insets = (0, react_native_safe_area_context_1.useSafeAreaInsets)();
@@ -47,7 +47,7 @@ const Box = (_a) => {
         ...styles
     ]);
     return (<react_native_1.View {...combinedProps} style={Object.assign(Object.assign({}, baseStyle), { paddingTop: (baseStyle.padding || baseStyle.paddingVertical || baseStyle.paddingTop || 0) + ((safeArea || safeAreaTop) ? insets.top : 0), paddingBottom: (baseStyle.padding || baseStyle.paddingVertical || baseStyle.paddingBottom || 0) + ((safeArea || safeAreaBottom) ? insets.bottom : 0), paddingLeft: (baseStyle.padding || baseStyle.paddingHorizontal || baseStyle.paddingLeft || 0) + ((safeArea || safeAreaLeft) ? insets.left : 0), paddingRight: (baseStyle.padding || baseStyle.paddingHorizontal || baseStyle.paddingRight || 0) + ((safeArea || safeAreaRight) ? insets.right : 0) })}>
-            {(0, helpers_1.renderChild)(children, Object.assign(Object.assign({}, (_g = (_f = (_e = theme === null || theme === void 0 ? void 0 : theme.components) === null || _e === void 0 ? void 0 : _e.Box) === null || _f === void 0 ? void 0 : _f.variants[props.variant]) === null || _g === void 0 ? void 0 : _g._text), combinedProps._text))}
+            {(0, helpers_1.renderChild)(children, Object.assign(Object.assign(Object.assign({}, (_e = styles_default === null || styles_default === void 0 ? void 0 : styles_default.variants[props.variant]) === null || _e === void 0 ? void 0 : _e._text), (_f = variantStyle[combinedProps.variant]) === null || _f === void 0 ? void 0 : _f._text), combinedProps._text))}
         </react_native_1.View>);
 };
 exports.Box = Box;
