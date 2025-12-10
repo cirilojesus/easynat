@@ -87,7 +87,7 @@ export const Box: React.FC<BSBoxProps> = ({
                 paddingRight: (baseStyle.padding || baseStyle.paddingHorizontal || baseStyle.paddingRight || 0) + ((safeArea || safeAreaRight) ? insets.right : 0),
             }}
         >
-            {renderChild(children, { ...theme?.components?.Box?.variants[props.variant]?._text, ...combinedProps._text })}
+            {renderChild(children, { ...styles_default?.variants[props.variant]?._text, ...variantStyle[combinedProps.variant]?._text, ...combinedProps._text })}
         </View>
     );
 };

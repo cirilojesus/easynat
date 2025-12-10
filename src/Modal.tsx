@@ -24,6 +24,8 @@ import { BSKeyboardAvoidingProps, KeyboardAvoidingView } from "./KeyboardAvoidin
 import { BSDefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
 import { useTheme } from "./theme-provider";
 
+/* --------------------- TYPES ----------------------- */
+
 export type BSModalRef = {
     open: () => void;
     close: () => void;
@@ -46,9 +48,8 @@ export type BSModalProps = BSKeyboardAvoidingProps & {
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-/* -------------------------------------------
-   Internal Component
--------------------------------------------- */
+/* ---------------- INTERNAL COMPONENT ---------------- */
+
 function InternalModal(
     { ...props }: BSModalProps,
     ref: React.Ref<BSModalRef>
@@ -61,10 +62,12 @@ function InternalModal(
 
     useEffect(() => {
         if (!visible) return;
+
         const sub = BackHandler.addEventListener("hardwareBackPress", () => {
             handleRequestClose();
             return true;
         });
+
         return () => sub.remove();
     }, [visible]);
 
@@ -115,7 +118,7 @@ function InternalModal(
                                 inputRange: [0, 1],
                                 outputRange: [0, 1],
                             }),
-                        }
+                        },
                     ]}
                     onPress={!combinedProps?.static ? handleRequestClose : null}
                 />
@@ -201,12 +204,14 @@ function InternalModal(
     );
 }
 
-/* -------------------------------------------
-   CAST CORRECTO PARA AUTOCOMPLETADO
--------------------------------------------- */
+/* --------------------- FIX PARA AUTOCOMPLETADO ----------------------- */
 
-export type ModalComponent = React.FC<BSModalProps> & {
-    ref?: React.Ref<BSModalRef>;
-};
+export type ModalComponent = (
+    props: BSModalProps & { ref?: React.Ref<BSModalRef> }
+) => React.ReactElement | null;
 
-export const Modal = forwardRef(InternalModal) as ModalComponent;
+/**  
+ * El cast correcto:  
+ * `forwardRef` pierde los tipos, así que lo restauramos manualmente.
+ */
+export const Modal = forwardRef(InternalModal) as unknown as ModalComponent;

@@ -15,9 +15,11 @@ export type EAProgressBarProps = BSBoxProps & BSDefaultProps & {
 
 export const ProgressBar: React.FC<EAProgressBarProps> = ({ ...props }) => {
     const { theme } = useTheme();
+    const props_default = theme?.components?.ProgressBar || {}
 
     const combinedProps: EAProgressBarProps = {
-        ...{ text: true },
+        ...{ text: true, color: 'primary.100' },
+        ...props_default,
         ...props,
         ...(Platform.OS === "ios" ? props._ios : {}),
         ...(Platform.OS === "android" ? props._android : {}),
@@ -30,11 +32,11 @@ export const ProgressBar: React.FC<EAProgressBarProps> = ({ ...props }) => {
         <Box
             rounded={40}
             borderWidth={1}
-            borderColor={'light'}
+            borderColor={'light.100'}
             overflow="hidden"
-            _text={{ textAlign: "center" }}
-            w={100}
+            w={'100%'}
             {...props}
+            _text={{ textAlign: "center", ...combinedProps._text }}
         >
             <Box
                 bg={color}

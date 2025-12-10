@@ -92,7 +92,7 @@ export const Button: React.FC<BSButtonProps> = ({ colorScheme = "primary", varia
             justifyContent={'center'}
             {...{ ...props_default, ...variantStyles[variant], ...sizeStyle[props?.size], ...props }}
             _pressed={{ ...props_default?._pressed, ...variantStyles[variant]?._pressed, ...props._pressed }}
-            _text={{ textAlign: 'center', ...props_default?._text, ...variantStyles[variant]?._text, ...props._text }}
+            _text={{ textAlign: 'center', ...props_default?._text, ...variantStyles[variant]?._text, ...sizeStyle[props?.size]?._text, ...props._text }}
         >
             {({ pressed, ...e }: BSButtonProps & { pressed: boolean }) =>
                 <>
