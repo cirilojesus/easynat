@@ -49,7 +49,7 @@ const AnimatedPressable = react_native_1.Animated.createAnimatedComponent(react_
 /* ---------------- INTERNAL COMPONENT ---------------- */
 function InternalModal(_a, ref) {
     var _b, _c;
-    var props = __rest(_a, []);
+    var { buttonClose = true } = _a, props = __rest(_a, ["buttonClose"]);
     const { theme } = (0, theme_provider_1.useTheme)();
     const [visible, setVisible] = (0, react_1.useState)(false);
     const slideAnim = (0, react_1.useRef)(new react_native_1.Animated.Value(0)).current;
@@ -111,6 +111,7 @@ function InternalModal(_a, ref) {
                 backgroundColor: "#fff",
                 borderTopRightRadius: 20,
                 borderTopLeftRadius: 20,
+                overflow: 'hidden',
                 transform: [
                     {
                         translateY: slideAnim.interpolate({
@@ -123,9 +124,9 @@ function InternalModal(_a, ref) {
             (_c = combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._contentStyle) === null || _c === void 0 ? void 0 : _c.style,
             ...contentStyle,
         ]}>
-                        {combinedProps.header && (<Box_1.Box px={5} py={3} borderBottomWidth={1} borderBottomColor="light.100" {...combinedProps.header}/>)}
+                        {combinedProps.header && (<Box_1.Box px={5} py={4} borderBottomWidth={1} borderBottomColor="light.100" {...combinedProps.header}/>)}
 
-                        {combinedProps.buttonClose === true ? (<Button_1.Button variant="ghost" position="absolute" zIndex={100} rounded={50} right={0} m={2} icon={<Icon_1.Icon name="close" as="AntDesign"/>} onPress={close} {...combinedProps._buttonClose}/>) : (combinedProps.buttonClose &&
+                        {buttonClose === true ? (<Button_1.Button variant="ghost" position="absolute" zIndex={100} rounded={50} right={0} m={2} icon={<Icon_1.Icon name="close" as="AntDesign"/>} onPress={close} {...combinedProps._buttonClose}/>) : (buttonClose &&
             react_1.default.cloneElement(combinedProps.buttonClose, Object.assign({ onPress: close }, combinedProps._buttonClose)))}
 
                         {combinedProps.children}

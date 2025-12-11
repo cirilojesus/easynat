@@ -51,7 +51,7 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 /* ---------------- INTERNAL COMPONENT ---------------- */
 
 function InternalModal(
-    { ...props }: BSModalProps,
+    { buttonClose = true, ...props }: BSModalProps,
     ref: React.Ref<BSModalRef>
 ) {
     const { theme } = useTheme();
@@ -137,6 +137,7 @@ function InternalModal(
                                 backgroundColor: "#fff",
                                 borderTopRightRadius: 20,
                                 borderTopLeftRadius: 20,
+                                overflow: 'hidden',
                                 transform: [
                                     {
                                         translateY: slideAnim.interpolate({
@@ -153,14 +154,14 @@ function InternalModal(
                         {combinedProps.header && (
                             <Box
                                 px={5}
-                                py={3}
+                                py={4}
                                 borderBottomWidth={1}
                                 borderBottomColor="light.100"
                                 {...combinedProps.header}
                             />
                         )}
 
-                        {combinedProps.buttonClose === true ? (
+                        {buttonClose === true ? (
                             <Button
                                 variant="ghost"
                                 position="absolute"
@@ -178,7 +179,7 @@ function InternalModal(
                                 {...combinedProps._buttonClose}
                             />
                         ) : (
-                            combinedProps.buttonClose &&
+                            buttonClose &&
                             React.cloneElement(combinedProps.buttonClose, {
                                 onPress: close,
                                 ...combinedProps._buttonClose,

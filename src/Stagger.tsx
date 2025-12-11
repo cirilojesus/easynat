@@ -16,6 +16,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Box, BSBoxProps } from './Box';
 
+/* -------------------- TYPES -------------------- */
+
 type AnimatedStyles = {
     opacity?: number;
     translateX?: number;
@@ -35,7 +37,7 @@ type AnimatedStyles = {
     letterSpacing?: number;
     width?: number;
     height?: number;
-}
+};
 
 type AnimValues = AnimatedStyles & {
     delay?: number;
@@ -45,7 +47,12 @@ type AnimValues = AnimatedStyles & {
     durationAnimation?: Partial<Record<keyof AnimatedStyles, number>>;
 };
 
-type StaggerProps = BSBoxProps & {
+export type StaggerRef = {
+    show: () => void;
+    hide: () => void;
+};
+
+export type StaggerProps = BSBoxProps & {
     children: React.ReactElement[] | React.ReactElement;
     from: AnimValues;
     to: AnimValues;
@@ -56,75 +63,27 @@ type StaggerProps = BSBoxProps & {
     easing?: EasingFunctionFactory;
 };
 
-export type StaggerRef = {
-    show: () => void;
-    hide: () => void;
-};
-
-const DEFAULT_DURATION = 400;
-const DEFAULT_DELAY = 0;
-const DEFAULT_EASING = Easing.bezier(0.4, 0, 0.2, 1);
-
-export const Stagger = forwardRef<StaggerRef, StaggerProps>(
-    (
-        {
-            children,
-            from = { opacity: 0, translateY: 20, scale: 0.95 },
-            to = { opacity: 1, translateY: 0, scale: 1 },
-            animateOnInit,
-            staggerDelay = 80,
-            delay,
-            duration,
-            easing,
-            ...props
-        },
-        ref
-    ) => {
-        const showRefs = useRef<(() => void)[]>([]);
-        const hideRefs = useRef<(() => void)[]>([]);
-
-        useImperativeHandle(ref, () => ({
-            show: () => showRefs.current.forEach((fn) => fn?.()),
-            hide: () => hideRefs.current.slice().reverse().forEach((fn) => fn?.()),
-        }));
-
-        return (
-            <Box {...props}>
-                {React.Children.map(children, (child, index) => (
-                    <StaggerItem
-                        key={index}
-                        index={index}
-                        from={from}
-                        to={to}
-                        animateOnInit={animateOnInit}
-                        staggerDelay={staggerDelay}
-                        delayGlobal={delay}
-                        durationGlobal={duration}
-                        easingGlobal={easing}
-                        registerShow={(fn) => (showRefs.current[index] = fn)}
-                        registerHide={(fn) => (hideRefs.current[index] = fn)}
-                    >
-                        {child}
-                    </StaggerItem>
-                ))}
-            </Box>
-        );
-    }
-);
-
 type ItemProps = {
     from: AnimValues;
     to: AnimValues;
     index: number;
     staggerDelay: number;
-    animateOnInit: boolean;
-    durationGlobal: number,
-    easingGlobal: EasingFunctionFactory;
-    delayGlobal: number,
+    animateOnInit?: boolean;
+    durationGlobal?: number;
+    easingGlobal?: EasingFunctionFactory;
+    delayGlobal?: number;
     registerShow: (fn: () => void) => void;
     registerHide: (fn: () => void) => void;
     children: React.ReactElement;
 };
+
+/* -------------------- CONSTANTS -------------------- */
+
+const DEFAULT_DURATION = 400;
+const DEFAULT_DELAY = 0;
+const DEFAULT_EASING = Easing.bezier(0.4, 0, 0.2, 1);
+
+/* -------------------- ITEM COMPONENT -------------------- */
 
 const StaggerItem = ({
     from,
@@ -144,11 +103,20 @@ const StaggerItem = ({
     const animateTo = (v: number) => {
         const isForward = v === 1;
 
-        const duration = (isForward ? to.duration : from.duration) || durationGlobal || DEFAULT_DURATION
+        const duration =
+            (isForward ? to.duration : from.duration) ||
+            durationGlobal ||
+            DEFAULT_DURATION;
 
-        const delayBase = (isForward ? to.delay : from.delay) || delayGlobal || DEFAULT_DELAY
+        const delayBase =
+            (isForward ? to.delay : from.delay) ||
+            delayGlobal ||
+            DEFAULT_DELAY;
 
-        const easing = (isForward ? to.easing : from.easing) || easingGlobal || DEFAULT_EASING
+        const easing =
+            (isForward ? to.easing : from.easing) ||
+            easingGlobal ||
+            DEFAULT_EASING;
 
         const delay = delayBase + index * staggerDelay;
 
@@ -169,6 +137,7 @@ const StaggerItem = ({
         const sc = interpolate(progress.value, [0, 1], [from.scale ?? 1, to.scale ?? from.scale ?? 1]);
         transforms.push({ translateX: tx }, { translateY: ty }, { scale: sc });
 
+        // Rotations & skew
         const rotateProps = ['rotate', 'rotateX', 'rotateY', 'rotateZ', 'skewX', 'skewY'] as const;
         for (const prop of rotateProps) {
             const f = from[prop];
@@ -230,7 +199,7 @@ const StaggerItem = ({
         };
     });
 
-    const styleText = useAnimatedStyle(() => {
+    const textStyle = useAnimatedStyle(() => {
         const color =
             from.color || to.color
                 ? interpolateColor(
@@ -249,9 +218,9 @@ const StaggerItem = ({
         return { color, letterSpacing };
     });
 
-    const childsChildren = React.Children.map(children.props['children'], (x) => {
+    const childsChildren = React.Children.map(children.props.children, (x) => {
         if (typeof x === 'string') {
-            return <Animated.Text style={styleText}>{x}</Animated.Text>;
+            return <Animated.Text style={textStyle}>{x}</Animated.Text>;
         }
         return x;
     });
@@ -262,6 +231,61 @@ const StaggerItem = ({
         </Animated.View>
     );
 };
+
+/* -------------------- INTERNAL STAGGER (REAL COMPONENT) -------------------- */
+
+function InternalStagger(
+    {
+        children,
+        from = { opacity: 0, translateY: 20, scale: 0.95 },
+        to = { opacity: 1, translateY: 0, scale: 1 },
+        animateOnInit,
+        staggerDelay = 80,
+        delay,
+        duration,
+        easing,
+        ...props
+    }: StaggerProps,
+    ref: React.Ref<StaggerRef>
+) {
+    const showRefs = useRef<(() => void)[]>([]);
+    const hideRefs = useRef<(() => void)[]>([]);
+
+    useImperativeHandle(ref, () => ({
+        show: () => showRefs.current.forEach((fn) => fn?.()),
+        hide: () => hideRefs.current.slice().reverse().forEach((fn) => fn?.()),
+    }));
+
+    return (
+        <Box {...props}>
+            {React.Children.map(children, (child, index) => (
+                <StaggerItem
+                    key={index}
+                    index={index}
+                    from={from}
+                    to={to}
+                    animateOnInit={animateOnInit}
+                    staggerDelay={staggerDelay}
+                    delayGlobal={delay}
+                    durationGlobal={duration}
+                    easingGlobal={easing}
+                    registerShow={(fn) => (showRefs.current[index] = fn)}
+                    registerHide={(fn) => (hideRefs.current[index] = fn)}
+                >
+                    {child}
+                </StaggerItem>
+            ))}
+        </Box>
+    );
+}
+
+/* -------------------- FIX DE AUTOCOMPLETADO -------------------- */
+
+export type StaggerComponent = (
+    props: StaggerProps & { ref?: React.Ref<StaggerRef> }
+) => React.ReactElement | null;
+
+export const Stagger = forwardRef(InternalStagger) as unknown as StaggerComponent;
 
 
 // import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
