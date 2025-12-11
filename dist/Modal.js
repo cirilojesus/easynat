@@ -45,6 +45,7 @@ const Button_1 = require("./Button");
 const KeyboardAvoidingView_1 = require("./KeyboardAvoidingView");
 const DEFAULT_PROPS_1 = require("./utils/DEFAULT_PROPS");
 const theme_provider_1 = require("./theme-provider");
+const useAndroidKeyboardPadding_1 = require("./utils/useAndroidKeyboardPadding");
 const AnimatedPressable = react_native_1.Animated.createAnimatedComponent(react_native_1.Pressable);
 /* ---------------- INTERNAL COMPONENT ---------------- */
 function InternalModal(_a, ref) {
@@ -53,6 +54,8 @@ function InternalModal(_a, ref) {
     const { theme } = (0, theme_provider_1.useTheme)();
     const [visible, setVisible] = (0, react_1.useState)(false);
     const slideAnim = (0, react_1.useRef)(new react_native_1.Animated.Value(0)).current;
+    const modalContentRef = (0, react_1.useRef)(null);
+    (0, useAndroidKeyboardPadding_1.useAndroidKeyboardPadding)(modalContentRef);
     (0, react_1.useImperativeHandle)(ref, () => ({ open, close }));
     (0, react_1.useEffect)(() => {
         if (!visible)
@@ -103,8 +106,8 @@ function InternalModal(_a, ref) {
 
                 <Box_1.Box bg={combinedProps.bg || "white"} safeAreaTop={combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps.safeAreaTop}/>
 
-                <KeyboardAvoidingView_1.KeyboardAvoidingView flex={1} {...props}>
-                    <react_native_1.Animated.View style={[
+                <KeyboardAvoidingView_1.KeyboardAvoidingView flex={1} _ios={{ behavior: 'padding' }} {...props}>
+                    <react_native_1.Animated.View ref={modalContentRef} style={[
             {
                 height: "90%",
                 marginTop: "auto",
@@ -124,7 +127,7 @@ function InternalModal(_a, ref) {
             (_c = combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._contentStyle) === null || _c === void 0 ? void 0 : _c.style,
             ...contentStyle,
         ]}>
-                        {combinedProps.header && (<Box_1.Box px={5} py={4} borderBottomWidth={1} borderBottomColor="light.100" {...combinedProps.header}/>)}
+                        {combinedProps.header && (<Box_1.Box px={5} py={5} borderBottomWidth={1} borderBottomColor="light.100" {...combinedProps.header}/>)}
 
                         {buttonClose === true ? (<Button_1.Button variant="ghost" position="absolute" zIndex={100} rounded={50} right={0} m={2} icon={<Icon_1.Icon name="close" as="AntDesign"/>} onPress={close} {...combinedProps._buttonClose}/>) : (buttonClose &&
             react_1.default.cloneElement(combinedProps.buttonClose, Object.assign({ onPress: close }, combinedProps._buttonClose)))}

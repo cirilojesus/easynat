@@ -18,6 +18,7 @@ __exportStar(require("./theme"), exports);
 __exportStar(require("./theme-provider"), exports);
 __exportStar(require("./utils/helpers"), exports);
 __exportStar(require("./utils/useKeyboardHeight"), exports);
+__exportStar(require("./utils/useAndroidKeyboardPadding"), exports);
 __exportStar(require("./utils/translate"), exports);
 __exportStar(require("./Box"), exports);
 __exportStar(require("./Text"), exports);

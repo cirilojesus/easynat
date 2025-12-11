@@ -23,6 +23,7 @@ import { Button, BSButtonProps } from "./Button";
 import { BSKeyboardAvoidingProps, KeyboardAvoidingView } from "./KeyboardAvoidingView";
 import { BSDefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
 import { useTheme } from "./theme-provider";
+import { useAndroidKeyboardPadding } from "./utils/useAndroidKeyboardPadding";
 
 /* --------------------- TYPES ----------------------- */
 
@@ -57,6 +58,8 @@ function InternalModal(
     const { theme } = useTheme();
     const [visible, setVisible] = useState(false);
     const slideAnim = useRef(new Animated.Value(0)).current;
+    const modalContentRef = useRef(null);
+    useAndroidKeyboardPadding(modalContentRef);
 
     useImperativeHandle(ref, () => ({ open, close }));
 
@@ -128,8 +131,9 @@ function InternalModal(
                     safeAreaTop={combinedProps?.safeAreaTop}
                 />
 
-                <KeyboardAvoidingView flex={1} {...props}>
+                <KeyboardAvoidingView flex={1} _ios={{ behavior: 'padding' }} {...props}>
                     <Animated.View
+                        ref={modalContentRef}
                         style={[
                             {
                                 height: "90%",
@@ -154,7 +158,7 @@ function InternalModal(
                         {combinedProps.header && (
                             <Box
                                 px={5}
-                                py={4}
+                                py={5}
                                 borderBottomWidth={1}
                                 borderBottomColor="light.100"
                                 {...combinedProps.header}
