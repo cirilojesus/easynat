@@ -48,7 +48,7 @@ const theme_provider_1 = require("./theme-provider");
 const AnimatedPressable = react_native_1.Animated.createAnimatedComponent(react_native_1.Pressable);
 /* ---------------- INTERNAL COMPONENT ---------------- */
 function InternalModal(_a, ref) {
-    var _b, _c, _d;
+    var _b, _c;
     var props = __rest(_a, []);
     const { theme } = (0, theme_provider_1.useTheme)();
     const [visible, setVisible] = (0, react_1.useState)(false);
@@ -123,10 +123,10 @@ function InternalModal(_a, ref) {
             (_c = combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._contentStyle) === null || _c === void 0 ? void 0 : _c.style,
             ...contentStyle,
         ]}>
-                        {combinedProps.header && (<Box_1.Box px={5} pb={4} pt={2} borderBottomWidth={1} borderBottomColor="light" {...combinedProps.header}/>)}
+                        {combinedProps.header && (<Box_1.Box px={5} py={3} borderBottomWidth={1} borderBottomColor="light.100" {...combinedProps.header}/>)}
 
-                        {combinedProps.iconClose === true ? (<Button_1.Button variant="ghost" position="absolute" zIndex={100} rounded={50} right={0} m={2} icon={<Icon_1.Icon name="close" as="AntDesign" {...(_d = combinedProps._icon) === null || _d === void 0 ? void 0 : _d.icon}/>} onPress={close} {...combinedProps._icon}/>) : (combinedProps.iconClose &&
-            react_1.default.cloneElement(combinedProps.iconClose, Object.assign({ onPress: close }, combinedProps._icon)))}
+                        {combinedProps.buttonClose === true ? (<Button_1.Button variant="ghost" position="absolute" zIndex={100} rounded={50} right={0} m={2} icon={<Icon_1.Icon name="close" as="AntDesign"/>} onPress={close} {...combinedProps._buttonClose}/>) : (combinedProps.buttonClose &&
+            react_1.default.cloneElement(combinedProps.buttonClose, Object.assign({ onPress: close }, combinedProps._buttonClose)))}
 
                         {combinedProps.children}
                     </react_native_1.Animated.View>

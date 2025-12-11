@@ -36,7 +36,7 @@ export const ProgressBar: React.FC<EAProgressBarProps> = ({ ...props }) => {
             overflow="hidden"
             w={'100%'}
             {...props}
-            _text={{ textAlign: "center", ...combinedProps._text }}
+            _text={{ textAlign: "center", fontSize: 12, ...combinedProps._text }}
         >
             <Box
                 bg={color}

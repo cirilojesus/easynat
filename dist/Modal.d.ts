@@ -1,7 +1,6 @@
 import React from "react";
 import { ViewProps, PressableProps } from "react-native";
 import { BSBoxProps } from "./Box";
-import { IconProps } from "./Icon";
 import { BSButtonProps } from "./Button";
 import { BSKeyboardAvoidingProps } from "./KeyboardAvoidingView";
 import { BSDefaultProps } from "./utils/DEFAULT_PROPS";
@@ -11,10 +10,8 @@ export type BSModalRef = {
 };
 export type BSModalProps = BSKeyboardAvoidingProps & {
     header?: BSBoxProps;
-    iconClose?: boolean | React.ReactElement<any>;
-    _icon?: BSButtonProps & {
-        icon: Partial<IconProps>;
-    };
+    buttonClose?: boolean | React.ReactElement<any>;
+    _buttonClose?: BSButtonProps;
     _contentStyle?: ViewProps & BSDefaultProps;
     safeAreaTop?: boolean;
     safeAreaBottom?: boolean;

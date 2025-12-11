@@ -69,7 +69,7 @@ export const Carousel = <T extends React.ReactElement>({ tabs = true, arrows = t
                     i.value = Math.round(e.nativeEvent.contentOffset.x / width.value);
                 }}
                 renderItem={({ item, index }) => {
-                    console.log('RENDERITEM', index)
+                    // console.log('RENDERITEM', index)
                     return (
                         <BoxAnimated style={bodyStyle} {...item.props as any} />
                     )

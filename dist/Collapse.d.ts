@@ -9,9 +9,18 @@ export type CollapseHandle = {
 export type CollapseProps = BSBoxProps & {
     trigger: (props: {
         isOpen: boolean;
+        onPress: () => void;
     } & BSButtonProps) => React.ReactNode;
     _contentStyle?: BSBoxProps;
     _open?: BSButtonProps;
     _trigger?: BSButtonProps;
 };
-export declare const Collapse: import("react").ForwardRefExoticComponent<Omit<any, "ref"> & import("react").RefAttributes<CollapseHandle>>;
+export type CollapseComponent = (props: CollapseProps & {
+    ref?: React.Ref<CollapseHandle>;
+}) => React.ReactElement | null;
+/**
+ * forwardRef pierde los tipos al compilar.
+ * Aquí los restauramos para que funcione el autocompletado
+ * en el proyecto donde usas la librería.
+ */
+export declare const Collapse: CollapseComponent;

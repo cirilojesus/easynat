@@ -39,9 +39,9 @@ const react_1 = require("react");
 const react_native_reanimated_1 = __importStar(require("react-native-reanimated"));
 const Box_1 = require("./Box");
 const Icon_1 = require("./Icon");
-/* --------------------------- Component --------------------------------- */
 const IconAnimated = react_native_reanimated_1.default.createAnimatedComponent(Icon_1.Icon);
-const CollapseBase = (0, react_1.forwardRef)((_a, ref) => {
+/* ---------------- INTERNAL COMPONENT ------------------- */
+function InternalCollapse(_a, ref) {
     var _b;
     var { trigger } = _a, props = __rest(_a, ["trigger"]);
     const height = (0, react_native_reanimated_1.useSharedValue)(0);
@@ -55,8 +55,10 @@ const CollapseBase = (0, react_1.forwardRef)((_a, ref) => {
     }));
     const iconStyle = (0, react_native_reanimated_1.useAnimatedStyle)(() => ({
         transform: [
-            { rotate: (0, react_native_reanimated_1.withTiming)(`${!isExpanded.value ? 0 : 180}deg`, { duration: 200 }) },
-        ],
+            {
+                rotate: (0, react_native_reanimated_1.withTiming)(`${!isExpanded.value ? 0 : 180}deg`, { duration: 200 })
+            },
+        ]
     }));
     (0, react_1.useImperativeHandle)(ref, () => ({
         open: () => (isExpanded.value = true),
@@ -64,18 +66,18 @@ const CollapseBase = (0, react_1.forwardRef)((_a, ref) => {
         toggle: () => (isExpanded.value = !isExpanded.value),
     }));
     return (<Box_1.Box {...props}>
-                {trigger(Object.assign({ onPress: () => {
-                isExpanded.value = !isExpanded.value;
-            }, isOpen: openState, p: 3, borderWidth: 1, borderColor: 'light', rounded: 1, flexDir: 'row', justifyContent: 'space-between', icon: (<IconAnimated as="Feather" name="chevron-down" {...(_b = props._trigger) === null || _b === void 0 ? void 0 : _b._icon} style={iconStyle}/>) }, (openState ? props._open : props._trigger)))}
+            {trigger(Object.assign({ onPress: () => (isExpanded.value = !isExpanded.value), isOpen: openState, p: 3, borderWidth: 1, borderColor: 'light', rounded: 1, flexDir: 'row', justifyContent: 'space-between', icon: (<IconAnimated as="Feather" name="chevron-down" {...(_b = props._trigger) === null || _b === void 0 ? void 0 : _b._icon} style={iconStyle}/>) }, (openState ? props._open : props._trigger)))}
 
-                <react_native_reanimated_1.default.View style={bodyStyle}>
-                    <Box_1.Box onLayout={(e) => {
-            height.value = e.nativeEvent.layout.height;
-        }} style={{ width: '100%', position: 'absolute' }} {...props._contentStyle}>
-                        {props.children}
-                    </Box_1.Box>
-                </react_native_reanimated_1.default.View>
-            </Box_1.Box>);
-});
-/* ----------------------------- Export ----------------------------------- */
-exports.Collapse = CollapseBase;
+            <react_native_reanimated_1.default.View style={bodyStyle}>
+                <Box_1.Box onLayout={(e) => (height.value = e.nativeEvent.layout.height)} style={{ width: '100%', position: 'absolute' }} {...props._contentStyle}>
+                    {props.children}
+                </Box_1.Box>
+            </react_native_reanimated_1.default.View>
+        </Box_1.Box>);
+}
+/**
+ * forwardRef pierde los tipos al compilar.
+ * Aquí los restauramos para que funcione el autocompletado
+ * en el proyecto donde usas la librería.
+ */
+exports.Collapse = (0, react_1.forwardRef)(InternalCollapse);

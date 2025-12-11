@@ -33,8 +33,8 @@ export type BSModalRef = {
 
 export type BSModalProps = BSKeyboardAvoidingProps & {
     header?: BSBoxProps;
-    iconClose?: boolean | React.ReactElement<any>;
-    _icon?: BSButtonProps & { icon: Partial<IconProps> };
+    buttonClose?: boolean | React.ReactElement<any>;
+    _buttonClose?: BSButtonProps;
     _contentStyle?: ViewProps & BSDefaultProps;
     safeAreaTop?: boolean;
     safeAreaBottom?: boolean;
@@ -153,15 +153,14 @@ function InternalModal(
                         {combinedProps.header && (
                             <Box
                                 px={5}
-                                pb={4}
-                                pt={2}
+                                py={3}
                                 borderBottomWidth={1}
-                                borderBottomColor="light"
+                                borderBottomColor="light.100"
                                 {...combinedProps.header}
                             />
                         )}
 
-                        {combinedProps.iconClose === true ? (
+                        {combinedProps.buttonClose === true ? (
                             <Button
                                 variant="ghost"
                                 position="absolute"
@@ -173,17 +172,16 @@ function InternalModal(
                                     <Icon
                                         name="close"
                                         as="AntDesign"
-                                        {...combinedProps._icon?.icon}
                                     />
                                 }
                                 onPress={close}
-                                {...combinedProps._icon}
+                                {...combinedProps._buttonClose}
                             />
                         ) : (
-                            combinedProps.iconClose &&
-                            React.cloneElement(combinedProps.iconClose, {
+                            combinedProps.buttonClose &&
+                            React.cloneElement(combinedProps.buttonClose, {
                                 onPress: close,
-                                ...combinedProps._icon,
+                                ...combinedProps._buttonClose,
                             })
                         )}
 

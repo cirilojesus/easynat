@@ -22,7 +22,7 @@ const ProgressBar = (_a) => {
     const props_default = ((_b = theme === null || theme === void 0 ? void 0 : theme.components) === null || _b === void 0 ? void 0 : _b.ProgressBar) || {};
     const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({ text: true, color: 'primary.100' }, props_default), props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
     const { progress, color, text } = combinedProps;
-    return (<Box_1.Box rounded={40} borderWidth={1} borderColor={'light.100'} overflow="hidden" w={'100%'} {...props} _text={Object.assign({ textAlign: "center" }, combinedProps._text)}>
+    return (<Box_1.Box rounded={40} borderWidth={1} borderColor={'light.100'} overflow="hidden" w={'100%'} {...props} _text={Object.assign({ textAlign: "center", fontSize: 12 }, combinedProps._text)}>
             <Box_1.Box bg={color} w={`${progress}%`} position="absolute" maxW="100%" h="100%"/>
             {text === true ? progress + "%" : text}
         </Box_1.Box>);

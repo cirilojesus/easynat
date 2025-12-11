@@ -188,8 +188,6 @@ export function DatePicker({
     _icon,
     ...props
 }: DatePickerType) {
-    console.log(props.borderColor)
-
     const defaultCfg: DateConfigType = type === "month-year" ? { locale, separate, config: { day: undefined, ...config } }
         : type === "datetime" ? { locale, separate, config: { hour: "2-digit", minute: "2-digit", hourCycle: "h24", ...config } }
             : type === "year" ? { locale, separate, config: { day: undefined, month: undefined, ...config } }

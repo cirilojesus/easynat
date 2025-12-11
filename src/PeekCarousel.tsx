@@ -98,7 +98,7 @@ const CarouselItem = ({ item, index, scrollX }) => {
 
 const A = ({ item }) => {
 
-    console.log('RENDERITEMPEEEK')
+    // console.log('RENDERITEMPEEEK')
 
     return (
         <Box bg={item.color} h={300} rounded={10} p={3}>

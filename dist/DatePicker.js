@@ -61,7 +61,6 @@ const AnimatedText = react_native_1.Animated.createAnimatedComponent(Text_1.Text
 function DatePicker(_a) {
     var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z;
     var { value, placeholder, onChange, _months, _weekdays, _years, _days, _time, locale = "en-US", colorScheme = "primary", _buttonCancel, _buttonDone, type = "calendar", unSelect = false, config, separate = "-", minValue, maxValue, icon = true, _icon } = _a, props = __rest(_a, ["value", "placeholder", "onChange", "_months", "_weekdays", "_years", "_days", "_time", "locale", "colorScheme", "_buttonCancel", "_buttonDone", "type", "unSelect", "config", "separate", "minValue", "maxValue", "icon", "_icon"]);
-    console.log(props.borderColor);
     const defaultCfg = type === "month-year" ? { locale, separate, config: Object.assign({ day: undefined }, config) }
         : type === "datetime" ? { locale, separate, config: Object.assign({ hour: "2-digit", minute: "2-digit", hourCycle: "h24" }, config) }
             : type === "year" ? { locale, separate, config: Object.assign({ day: undefined, month: undefined }, config) }

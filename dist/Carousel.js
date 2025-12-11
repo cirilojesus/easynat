@@ -61,7 +61,7 @@ const Carousel = (_a) => {
         }} horizontal pagingEnabled showsHorizontalScrollIndicator={false} keyExtractor={(_, i) => i.toString()} onMomentumScrollEnd={e => {
             i.value = Math.round(e.nativeEvent.contentOffset.x / width.value);
         }} renderItem={({ item, index }) => {
-            console.log('RENDERITEM', index);
+            // console.log('RENDERITEM', index)
             return (<BoxAnimated style={bodyStyle} {...item.props}/>);
         }} {...props._contentStyle}/>
             {arrows &&
