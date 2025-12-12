@@ -19,13 +19,18 @@ const Icon_1 = require("./Icon");
 const Modal_1 = require("./Modal");
 const Box_1 = require("./Box");
 const Text_1 = require("./Text");
+const src_1 = require("src");
 const SelectItem = () => null;
 const AnimatedText = react_native_1.Animated.createAnimatedComponent(Text_1.Text);
 const Select = (_a) => {
+    var _b;
     var { children, defaultValue, onChange, _option, _selected, _menu, icon = true, _icon } = _a, props = __rest(_a, ["children", "defaultValue", "onChange", "_option", "_selected", "_menu", "icon", "_icon"]);
     const [selected, setSelected] = (0, react_1.useState)();
     const modal = (0, react_1.useRef)(null);
     const animation = (0, react_1.useRef)(new react_native_1.Animated.Value(0)).current;
+    const { theme } = (0, src_1.useTheme)();
+    const styles_default = ((_b = theme === null || theme === void 0 ? void 0 : theme.components) === null || _b === void 0 ? void 0 : _b.Select) || {};
+    const { isFloat, label, _label, isRequired } = Object.assign(Object.assign({}, styles_default), props);
     (0, react_1.useEffect)(() => {
         var _a;
         animate(defaultValue);
@@ -47,9 +52,9 @@ const Select = (_a) => {
         }).start();
     };
     return (<>
-            {props.label &&
+            {label &&
             <AnimatedText pointerEvents="none" style={[
-                    (props.isFloat ?
+                    (isFloat ?
                         {
                             padding: 3,
                             marginLeft: 10,
@@ -67,8 +72,8 @@ const Select = (_a) => {
                             ]
                         } :
                         { marginBottom: 4 }),
-                ]} {...props._label}>
-                    {props.label} {props.isRequired && <Text_1.Text color={'danger'}>*</Text_1.Text>}
+                ]} {..._label}>
+                    {label} {isRequired && <Text_1.Text color={'danger'}>*</Text_1.Text>}
                 </AnimatedText>}
             <Pressable_1.Pressable flexDir="row" alignItems="center" justifyContent="space-between" p={2} borderWidth={1} borderColor="light" _pressed={{ opacity: .5 }} rounded={1} {...props} onPress={e => { var _a; react_native_1.Keyboard.dismiss(), modal.current.open(); (_a = props.onPress) === null || _a === void 0 ? void 0 : _a.call(props, e); }}>
                 {(selected === null || selected === void 0 ? void 0 : selected.props.label) || props.placeholder || ''}

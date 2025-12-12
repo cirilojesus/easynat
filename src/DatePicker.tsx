@@ -8,6 +8,7 @@ import { BSButtonProps, Button } from "./Button";
 import { COLOR_SCHEME } from "./theme";
 import { BSFlatListInstance, FlatList } from "./FlatList";
 import { Animated } from "react-native";
+import { useTheme } from "src";
 
 export type DateDetailsType = {
     year: number | null;
@@ -188,6 +189,10 @@ export function DatePicker({
     _icon,
     ...props
 }: DatePickerType) {
+    const { theme } = useTheme();
+    const styles_default = theme?.components?.DatePicker || {};
+    const { label, _label, isRequired } = { ...styles_default, ...props }
+
     const defaultCfg: DateConfigType = type === "month-year" ? { locale, separate, config: { day: undefined, ...config } }
         : type === "datetime" ? { locale, separate, config: { hour: "2-digit", minute: "2-digit", hourCycle: "h24", ...config } }
             : type === "year" ? { locale, separate, config: { day: undefined, month: undefined, ...config } }
@@ -298,7 +303,7 @@ export function DatePicker({
 
     return (
         <>
-            {props.label &&
+            {label &&
                 <AnimatedText
                     pointerEvents="none"
                     style={[
@@ -321,9 +326,9 @@ export function DatePicker({
                             } :
                             { marginBottom: 4 }),
                     ]}
-                    {...props._label}
+                    {..._label}
                 >
-                    {props.label} {props.isRequired && <Text color={'danger'}>*</Text>}
+                    {label} {isRequired && <Text color={'danger'}>*</Text>}
                 </AnimatedText>
             }
             <Pressable

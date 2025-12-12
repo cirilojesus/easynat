@@ -21,8 +21,10 @@ export type EASwitchProps = RNSwitchProps & BSDefaultProps & {
 
 export const Switch: React.FC<EASwitchProps> = (props) => {
     const { theme } = useTheme();
+    const styles_default = theme?.components?.Switch || {};
 
     const combinedProps: EASwitchProps = {
+        ...styles_default,
         ...props,
         ...(Platform.OS === "ios" ? props._ios : {}),
         ...(Platform.OS === "android" ? props._android : {}),

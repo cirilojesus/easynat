@@ -18,11 +18,12 @@ const Box_1 = require("./Box");
 const Icon_1 = require("./Icon");
 const Button_1 = require("./Button");
 const CheckBox = (props) => {
-    var _a;
+    var _a, _b;
     const { theme } = (0, theme_provider_1.useTheme)();
-    const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign({ colorScheme: 'primary' }, props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
+    const styles_default = ((_a = theme === null || theme === void 0 ? void 0 : theme.components) === null || _a === void 0 ? void 0 : _a.CheckBox) || {};
+    const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({ colorScheme: 'primary' }, styles_default), props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
     const { checked = false, onChange, label, pointerBox = false } = combinedProps, rest = __rest(combinedProps, ["checked", "onChange", "label", "pointerBox"]);
-    return (<Button_1.Button variant={'unstyle'} flexDir="row" alignItems={'center'} pointerEvents={pointerBox ? 'box-only' : 'box-none'} p={0} {...rest} _pressed={Object.assign(Object.assign({}, combinedProps._pressed), { _icon: Object.assign({ bg: checked ? theme.colors[combinedProps.colorScheme + '.200'] : theme.colors[combinedProps.colorScheme + '.50'] }, (_a = combinedProps._pressed) === null || _a === void 0 ? void 0 : _a._icon) })} onPress={(e) => {
+    return (<Button_1.Button variant={'unstyle'} flexDir="row" alignItems={'center'} pointerEvents={pointerBox ? 'box-only' : 'box-none'} p={0} {...rest} _pressed={Object.assign(Object.assign({}, combinedProps._pressed), { _icon: Object.assign({ bg: checked ? theme.colors[combinedProps.colorScheme + '.200'] : theme.colors[combinedProps.colorScheme + '.50'] }, (_b = combinedProps._pressed) === null || _b === void 0 ? void 0 : _b._icon) })} onPress={(e) => {
             var _a;
             onChange === null || onChange === void 0 ? void 0 : onChange(!checked);
             (_a = rest.onPress) === null || _a === void 0 ? void 0 : _a.call(rest, e);

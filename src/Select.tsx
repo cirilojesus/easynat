@@ -5,6 +5,7 @@ import { Icon, IconProps } from "./Icon";
 import { BSModalRef, Modal } from "./Modal";
 import { Box, BSBoxProps } from "./Box";
 import { BSTextProps, Text } from "./Text";
+import { useTheme } from "src";
 
 export type BSSelectProps = BSPressableProps & {
     placeholder?: string;
@@ -45,6 +46,9 @@ export const Select: React.FC<BSSelectProps> & { Item: React.FC<BSSelectItemProp
     const [selected, setSelected] = useState<React.ReactElement<BSSelectItemProps>>();
     const modal = useRef<BSModalRef>(null);
     const animation = useRef(new Animated.Value(0)).current;
+    const { theme } = useTheme();
+    const styles_default = theme?.components?.Select || {};
+    const { isFloat, label, _label, isRequired } = { ...styles_default, ...props, }
 
     useEffect(() => {
         animate(defaultValue)
@@ -70,11 +74,11 @@ export const Select: React.FC<BSSelectProps> & { Item: React.FC<BSSelectItemProp
 
     return (
         <>
-            {props.label &&
+            {label &&
                 <AnimatedText
                     pointerEvents="none"
                     style={[
-                        (props.isFloat ?
+                        (isFloat ?
                             {
                                 padding: 3,
                                 marginLeft: 10,
@@ -93,9 +97,9 @@ export const Select: React.FC<BSSelectProps> & { Item: React.FC<BSSelectItemProp
                             } :
                             { marginBottom: 4 }),
                     ]}
-                    {...props._label}
+                    {..._label}
                 >
-                    {props.label} {props.isRequired && <Text color={'danger'}>*</Text>}
+                    {label} {isRequired && <Text color={'danger'}>*</Text>}
                 </AnimatedText>
             }
             <Pressable

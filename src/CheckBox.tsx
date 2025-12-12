@@ -18,9 +18,11 @@ export type EACheckBoxProps = BSButtonProps & {
 
 export const CheckBox: React.FC<EACheckBoxProps> = (props) => {
     const { theme } = useTheme();
+    const styles_default = theme?.components?.CheckBox || {};
 
     const combinedProps: EACheckBoxProps = {
         ...{ colorScheme: 'primary' },
+        ...styles_default,
         ...props,
         ...(Platform.OS === "ios" ? props._ios : {}),
         ...(Platform.OS === "android" ? props._android : {}),

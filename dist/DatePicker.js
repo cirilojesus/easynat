@@ -21,6 +21,7 @@ const Box_1 = require("./Box");
 const Button_1 = require("./Button");
 const FlatList_1 = require("./FlatList");
 const react_native_1 = require("react-native");
+const src_1 = require("src");
 const formatDate = (d, cfg) => d.toLocaleString((cfg === null || cfg === void 0 ? void 0 : cfg.locale) || "en-US", Object.assign({ day: "2-digit", month: "2-digit", year: "numeric" }, ((cfg === null || cfg === void 0 ? void 0 : cfg.config) || {}))).replaceAll("/", (cfg === null || cfg === void 0 ? void 0 : cfg.separate) || "/");
 const toDetails = (d, cfg) => ({
     year: d.getFullYear(),
@@ -59,8 +60,11 @@ function Stepper(_a) {
 }
 const AnimatedText = react_native_1.Animated.createAnimatedComponent(Text_1.Text);
 function DatePicker(_a) {
-    var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z;
+    var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0;
     var { value, placeholder, onChange, _months, _weekdays, _years, _days, _time, locale = "en-US", colorScheme = "primary", _buttonCancel, _buttonDone, type = "calendar", unSelect = false, config, separate = "-", minValue, maxValue, icon = true, _icon } = _a, props = __rest(_a, ["value", "placeholder", "onChange", "_months", "_weekdays", "_years", "_days", "_time", "locale", "colorScheme", "_buttonCancel", "_buttonDone", "type", "unSelect", "config", "separate", "minValue", "maxValue", "icon", "_icon"]);
+    const { theme } = (0, src_1.useTheme)();
+    const styles_default = ((_b = theme === null || theme === void 0 ? void 0 : theme.components) === null || _b === void 0 ? void 0 : _b.DatePicker) || {};
+    const { label, _label, isRequired } = Object.assign(Object.assign({}, styles_default), props);
     const defaultCfg = type === "month-year" ? { locale, separate, config: Object.assign({ day: undefined }, config) }
         : type === "datetime" ? { locale, separate, config: Object.assign({ hour: "2-digit", minute: "2-digit", hourCycle: "h24" }, config) }
             : type === "year" ? { locale, separate, config: Object.assign({ day: undefined, month: undefined }, config) }
@@ -154,7 +158,7 @@ function DatePicker(_a) {
         }).start();
     };
     return (<>
-            {props.label &&
+            {label &&
             <AnimatedText pointerEvents="none" style={[
                     (props.isFloat ?
                         {
@@ -174,15 +178,15 @@ function DatePicker(_a) {
                             ]
                         } :
                         { marginBottom: 4 }),
-                ]} {...props._label}>
-                    {props.label} {props.isRequired && <Text_1.Text color={'danger'}>*</Text_1.Text>}
+                ]} {..._label}>
+                    {label} {isRequired && <Text_1.Text color={'danger'}>*</Text_1.Text>}
                 </AnimatedText>}
             <Pressable_1.Pressable _pressed={{ opacity: 0.7 }} borderWidth={1} borderColor="light" rounded={1} py={2} px={3} flexDir="row" justifyContent={'space-between'} alignItems="center" {...props} onPress={e => {
             var _a;
             open();
             (_a = props.onPress) === null || _a === void 0 ? void 0 : _a.call(props, e);
         }}>
-                {`${((_b = confirmed === null || confirmed === void 0 ? void 0 : confirmed.start) === null || _b === void 0 ? void 0 : _b.format) || (confirmed === null || confirmed === void 0 ? void 0 : confirmed.format) || placeholder}${((_c = confirmed === null || confirmed === void 0 ? void 0 : confirmed.end) === null || _c === void 0 ? void 0 : _c.format) ? " - " + confirmed.end.format : ""}`}
+                {`${((_c = confirmed === null || confirmed === void 0 ? void 0 : confirmed.start) === null || _c === void 0 ? void 0 : _c.format) || (confirmed === null || confirmed === void 0 ? void 0 : confirmed.format) || placeholder}${((_d = confirmed === null || confirmed === void 0 ? void 0 : confirmed.end) === null || _d === void 0 ? void 0 : _d.format) ? " - " + confirmed.end.format : ""}`}
                 {icon === true ? <Icon_1.Icon name="calendar" as={'Feather'} color={'dark.50'} {..._icon}/> : icon}
             </Pressable_1.Pressable>
 
@@ -240,12 +244,12 @@ function DatePicker(_a) {
                     </>}
 
                 {type === "datetime" && (<Box_1.Box flexDir="row" p={3} gap={12} alignItems="center">
-                        <Stepper value={hour} min={0} max={23} borderWidth={1} borderColor="light" rounded={2} maxValue={new Date((_e = (((_d = state.draft) === null || _d === void 0 ? void 0 : _d.start) || state.draft)) === null || _e === void 0 ? void 0 : _e.timestamp).setHours(((_g = (((_f = state.draft) === null || _f === void 0 ? void 0 : _f.start) || state.draft)) === null || _g === void 0 ? void 0 : _g.hour) + 1) > ((_h = state.max) === null || _h === void 0 ? void 0 : _h.timestamp)} minValue={new Date((_k = (((_j = state.draft) === null || _j === void 0 ? void 0 : _j.start) || state.draft)) === null || _k === void 0 ? void 0 : _k.timestamp).setHours(((_m = (((_l = state.draft) === null || _l === void 0 ? void 0 : _l.start) || state.draft)) === null || _m === void 0 ? void 0 : _m.hour) - 1) < ((_o = state.min) === null || _o === void 0 ? void 0 : _o.timestamp)} onChange={v => adjustTime("hour", v - hour)} format={h => {
+                        <Stepper value={hour} min={0} max={23} borderWidth={1} borderColor="light" rounded={2} maxValue={new Date((_f = (((_e = state.draft) === null || _e === void 0 ? void 0 : _e.start) || state.draft)) === null || _f === void 0 ? void 0 : _f.timestamp).setHours(((_h = (((_g = state.draft) === null || _g === void 0 ? void 0 : _g.start) || state.draft)) === null || _h === void 0 ? void 0 : _h.hour) + 1) > ((_j = state.max) === null || _j === void 0 ? void 0 : _j.timestamp)} minValue={new Date((_l = (((_k = state.draft) === null || _k === void 0 ? void 0 : _k.start) || state.draft)) === null || _l === void 0 ? void 0 : _l.timestamp).setHours(((_o = (((_m = state.draft) === null || _m === void 0 ? void 0 : _m.start) || state.draft)) === null || _o === void 0 ? void 0 : _o.hour) - 1) < ((_p = state.min) === null || _p === void 0 ? void 0 : _p.timestamp)} onChange={v => adjustTime("hour", v - hour)} format={h => {
                 var _a, _b;
                 return new Date(year, month, day, h, minute).toLocaleTimeString((_time === null || _time === void 0 ? void 0 : _time.locale) || locale, { hour: ((_a = _time === null || _time === void 0 ? void 0 : _time.config) === null || _a === void 0 ? void 0 : _a.hour) || "2-digit", hourCycle: ((_b = _time === null || _time === void 0 ? void 0 : _time.config) === null || _b === void 0 ? void 0 : _b.hourCycle) || 'h24' });
             }} colorScheme={colorScheme}/>
                         :
-                        <Stepper value={minute} min={0} max={59} borderWidth={1} borderColor="light" rounded={2} maxValue={((_q = (((_p = state.draft) === null || _p === void 0 ? void 0 : _p.start) || state.draft)) === null || _q === void 0 ? void 0 : _q.timestamp) >= ((_r = state.max) === null || _r === void 0 ? void 0 : _r.timestamp)} minValue={((_t = (((_s = state.draft) === null || _s === void 0 ? void 0 : _s.start) || state.draft)) === null || _t === void 0 ? void 0 : _t.timestamp) <= ((_u = state.min) === null || _u === void 0 ? void 0 : _u.timestamp)} onChange={v => adjustTime("minute", v - minute)} format={m => {
+                        <Stepper value={minute} min={0} max={59} borderWidth={1} borderColor="light" rounded={2} maxValue={((_r = (((_q = state.draft) === null || _q === void 0 ? void 0 : _q.start) || state.draft)) === null || _r === void 0 ? void 0 : _r.timestamp) >= ((_s = state.max) === null || _s === void 0 ? void 0 : _s.timestamp)} minValue={((_u = (((_t = state.draft) === null || _t === void 0 ? void 0 : _t.start) || state.draft)) === null || _u === void 0 ? void 0 : _u.timestamp) <= ((_v = state.min) === null || _v === void 0 ? void 0 : _v.timestamp)} onChange={v => adjustTime("minute", v - minute)} format={m => {
                 var _a;
                 return new Date(year, month, day, hour, m).toLocaleTimeString((_time === null || _time === void 0 ? void 0 : _time.locale) || locale, { minute: ((_a = _time === null || _time === void 0 ? void 0 : _time.config) === null || _a === void 0 ? void 0 : _a.minute) || "2-digit" });
             }} colorScheme={colorScheme}/>
@@ -254,13 +258,13 @@ function DatePicker(_a) {
                 {(type == 'month-year' || type == 'year' || type == 'month') &&
             <Box_1.Box flexDir="row" px={1} pt={4}>
                         {(type == 'month-year' || type == 'year') &&
-                    <ListYears year={(_v = state.draft) === null || _v === void 0 ? void 0 : _v.year} colorScheme={colorScheme} onChange={e => {
+                    <ListYears year={(_w = state.draft) === null || _w === void 0 ? void 0 : _w.year} colorScheme={colorScheme} onChange={e => {
                             var _a;
                             const date = toDetails(new Date(e, ((_a = state.draft) === null || _a === void 0 ? void 0 : _a.month) || 0), defaultCfg);
                             setPart('draft', date);
                         }}/>}
                         {(type == 'month-year' || type == 'month') &&
-                    <ListMonths month={(_w = state.draft) === null || _w === void 0 ? void 0 : _w.month} locale={(_months === null || _months === void 0 ? void 0 : _months.locale) || locale} config={_months === null || _months === void 0 ? void 0 : _months.config} colorScheme={colorScheme} onChange={e => {
+                    <ListMonths month={(_x = state.draft) === null || _x === void 0 ? void 0 : _x.month} locale={(_months === null || _months === void 0 ? void 0 : _months.locale) || locale} config={_months === null || _months === void 0 ? void 0 : _months.config} colorScheme={colorScheme} onChange={e => {
                             var _a;
                             const date = toDetails(new Date(((_a = state.draft) === null || _a === void 0 ? void 0 : _a.year) || 0, e), defaultCfg);
                             setPart('draft', date);
@@ -269,12 +273,12 @@ function DatePicker(_a) {
 
                 {type == 'time' &&
             <Box_1.Box flexDir="row" px={1} pt={4}>
-                        <ListHours hour={(_x = state.draft) === null || _x === void 0 ? void 0 : _x.hour} colorScheme={colorScheme} locale={locale} config={_time === null || _time === void 0 ? void 0 : _time.config} onChange={e => {
+                        <ListHours hour={(_y = state.draft) === null || _y === void 0 ? void 0 : _y.hour} colorScheme={colorScheme} locale={locale} config={_time === null || _time === void 0 ? void 0 : _time.config} onChange={e => {
                     var _a, _b;
                     const date = toDetails(new Date(2000, 0, 1, e, ((_a = state.draft) === null || _a === void 0 ? void 0 : _a.minute) || 0), defaultCfg);
                     setPart('draft', Object.assign(Object.assign({}, date), { minute: (_b = state.draft) === null || _b === void 0 ? void 0 : _b.minute }));
                 }}/>
-                        <ListMinutes minute={(_y = state.draft) === null || _y === void 0 ? void 0 : _y.minute} colorScheme={colorScheme} locale={locale} config={_time === null || _time === void 0 ? void 0 : _time.config} onChange={e => {
+                        <ListMinutes minute={(_z = state.draft) === null || _z === void 0 ? void 0 : _z.minute} colorScheme={colorScheme} locale={locale} config={_time === null || _time === void 0 ? void 0 : _time.config} onChange={e => {
                     var _a, _b;
                     const date = toDetails(new Date(2000, 0, 1, ((_a = state.draft) === null || _a === void 0 ? void 0 : _a.hour) || 0, e), defaultCfg);
                     setPart('draft', Object.assign(Object.assign({}, date), { hour: (_b = state.draft) === null || _b === void 0 ? void 0 : _b.hour }));
@@ -283,7 +287,7 @@ function DatePicker(_a) {
 
                 {type == 'weekday' &&
             <Box_1.Box px={1} pt={4}>
-                        <ListWeekDays weekday={(_z = state.draft) === null || _z === void 0 ? void 0 : _z.weekday} colorScheme={colorScheme} locale={locale} config={_time === null || _time === void 0 ? void 0 : _time.config} onChange={e => {
+                        <ListWeekDays weekday={(_0 = state.draft) === null || _0 === void 0 ? void 0 : _0.weekday} colorScheme={colorScheme} locale={locale} config={_time === null || _time === void 0 ? void 0 : _time.config} onChange={e => {
                     const date = toDetails(new Date(2012, 0, e), defaultCfg);
                     setPart('draft', date);
                 }}/>
