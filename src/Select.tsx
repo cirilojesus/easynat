@@ -60,9 +60,10 @@ export const Select: React.FC<BSSelectProps> & { Item: React.FC<BSSelectItemProp
     }, [defaultValue, children]);
 
     const handleSelect = (item: React.ReactElement<BSSelectItemProps>) => {
+        modal.current.close();
         setSelected(item);
         onChange?.(item.props.value);
-        modal.current.close();
+        animate(item.props.value)
     };
 
     const animate = (text) => {

@@ -40,9 +40,10 @@ const Select = (_a) => {
         }
     }, [defaultValue, children]);
     const handleSelect = (item) => {
+        modal.current.close();
         setSelected(item);
         onChange === null || onChange === void 0 ? void 0 : onChange(item.props.value);
-        modal.current.close();
+        animate(item.props.value);
     };
     const animate = (text) => {
         react_native_1.Animated.timing(animation, {
