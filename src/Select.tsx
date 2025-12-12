@@ -21,6 +21,7 @@ export type BSSelectProps = BSPressableProps & {
     _label?: BSTextProps,
     isFloat?: boolean;
     isRequired?: boolean;
+    _containerStyle?: BSBoxProps
 };
 
 export type BSSelectItemProps = BSPressableProps & {
@@ -48,7 +49,7 @@ export const Select: React.FC<BSSelectProps> & { Item: React.FC<BSSelectItemProp
     const animation = useRef(new Animated.Value(0)).current;
     const { theme } = useTheme();
     const styles_default = theme?.components?.Select || {};
-    const { isFloat, label, _label, isRequired } = { ...styles_default, ...props, }
+    const { isFloat, label, _label, isRequired, _containerStyle } = { ...styles_default, ...props, }
 
     useEffect(() => {
         animate(defaultValue)
@@ -73,7 +74,7 @@ export const Select: React.FC<BSSelectProps> & { Item: React.FC<BSSelectItemProp
     }
 
     return (
-        <>
+        <Box {..._containerStyle}>
             {label &&
                 <AnimatedText
                     pointerEvents="none"
@@ -112,6 +113,7 @@ export const Select: React.FC<BSSelectProps> & { Item: React.FC<BSSelectItemProp
                 _pressed={{ opacity: .5 }}
                 rounded={1}
                 {...props}
+                _text={{ flexShrink: 1, ...props._text }}
                 onPress={e => { Keyboard.dismiss(), modal.current.open(); props.onPress?.(e) }}
             >
                 {selected?.props.label || props.placeholder || ''}
@@ -150,7 +152,7 @@ export const Select: React.FC<BSSelectProps> & { Item: React.FC<BSSelectItemProp
                     }}
                 />
             </Modal>
-        </>
+        </Box>
     );
 };
 

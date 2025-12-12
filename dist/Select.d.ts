@@ -17,6 +17,7 @@ export type BSSelectProps = BSPressableProps & {
     _label?: BSTextProps;
     isFloat?: boolean;
     isRequired?: boolean;
+    _containerStyle?: BSBoxProps;
 };
 export type BSSelectItemProps = BSPressableProps & {
     label: string | number;
