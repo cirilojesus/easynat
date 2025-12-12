@@ -5,7 +5,7 @@ import { Icon, IconProps } from "./Icon";
 import { BSModalRef, Modal } from "./Modal";
 import { Box, BSBoxProps } from "./Box";
 import { BSTextProps, Text } from "./Text";
-import { useTheme } from "src";
+import { useTheme } from "./theme-provider";
 
 export type BSSelectProps = BSPressableProps & {
     placeholder?: string;

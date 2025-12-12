@@ -19,7 +19,7 @@ const Icon_1 = require("./Icon");
 const Modal_1 = require("./Modal");
 const Box_1 = require("./Box");
 const Text_1 = require("./Text");
-const src_1 = require("src");
+const theme_provider_1 = require("./theme-provider");
 const SelectItem = () => null;
 const AnimatedText = react_native_1.Animated.createAnimatedComponent(Text_1.Text);
 const Select = (_a) => {
@@ -28,7 +28,7 @@ const Select = (_a) => {
     const [selected, setSelected] = (0, react_1.useState)();
     const modal = (0, react_1.useRef)(null);
     const animation = (0, react_1.useRef)(new react_native_1.Animated.Value(0)).current;
-    const { theme } = (0, src_1.useTheme)();
+    const { theme } = (0, theme_provider_1.useTheme)();
     const styles_default = ((_b = theme === null || theme === void 0 ? void 0 : theme.components) === null || _b === void 0 ? void 0 : _b.Select) || {};
     const { isFloat, label, _label, isRequired } = Object.assign(Object.assign({}, styles_default), props);
     (0, react_1.useEffect)(() => {

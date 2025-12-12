@@ -8,7 +8,7 @@ import { BSButtonProps, Button } from "./Button";
 import { COLOR_SCHEME } from "./theme";
 import { BSFlatListInstance, FlatList } from "./FlatList";
 import { Animated } from "react-native";
-import { useTheme } from "src";
+import { useTheme } from "./theme-provider";
 
 export type DateDetailsType = {
     year: number | null;

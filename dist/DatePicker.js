@@ -21,7 +21,7 @@ const Box_1 = require("./Box");
 const Button_1 = require("./Button");
 const FlatList_1 = require("./FlatList");
 const react_native_1 = require("react-native");
-const src_1 = require("src");
+const theme_provider_1 = require("./theme-provider");
 const formatDate = (d, cfg) => d.toLocaleString((cfg === null || cfg === void 0 ? void 0 : cfg.locale) || "en-US", Object.assign({ day: "2-digit", month: "2-digit", year: "numeric" }, ((cfg === null || cfg === void 0 ? void 0 : cfg.config) || {}))).replaceAll("/", (cfg === null || cfg === void 0 ? void 0 : cfg.separate) || "/");
 const toDetails = (d, cfg) => ({
     year: d.getFullYear(),
@@ -62,7 +62,7 @@ const AnimatedText = react_native_1.Animated.createAnimatedComponent(Text_1.Text
 function DatePicker(_a) {
     var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0;
     var { value, placeholder, onChange, _months, _weekdays, _years, _days, _time, locale = "en-US", colorScheme = "primary", _buttonCancel, _buttonDone, type = "calendar", unSelect = false, config, separate = "-", minValue, maxValue, icon = true, _icon } = _a, props = __rest(_a, ["value", "placeholder", "onChange", "_months", "_weekdays", "_years", "_days", "_time", "locale", "colorScheme", "_buttonCancel", "_buttonDone", "type", "unSelect", "config", "separate", "minValue", "maxValue", "icon", "_icon"]);
-    const { theme } = (0, src_1.useTheme)();
+    const { theme } = (0, theme_provider_1.useTheme)();
     const styles_default = ((_b = theme === null || theme === void 0 ? void 0 : theme.components) === null || _b === void 0 ? void 0 : _b.DatePicker) || {};
     const { label, _label, isRequired } = Object.assign(Object.assign({}, styles_default), props);
     const defaultCfg = type === "month-year" ? { locale, separate, config: Object.assign({ day: undefined }, config) }
