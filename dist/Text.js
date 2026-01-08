@@ -16,7 +16,7 @@ const react_native_1 = require("react-native");
 const theme_provider_1 = require("./theme-provider");
 const DEFAULT_PROPS_1 = require("./utils/DEFAULT_PROPS");
 const Text = (_a) => {
-    var _b, _c, _d, _e;
+    var _b, _c, _d, _e, _f;
     var { style, children } = _a, props = __rest(_a, ["style", "children"]);
     const { theme } = (0, theme_provider_1.useTheme)();
     const styles_default = ((_b = theme === null || theme === void 0 ? void 0 : theme.components) === null || _b === void 0 ? void 0 : _b.Text) || {};
@@ -28,7 +28,11 @@ const Text = (_a) => {
         ...styles,
         { color: theme.colors[((_e = variantStyle[combinedProps.variant]) === null || _e === void 0 ? void 0 : _e.color) || combinedProps.color] || variantStyle[combinedProps.variant] || combinedProps.color },
     ]);
-    return (<react_native_1.Text style={[theme.fontFamily && { fontFamily: theme.fontFamily + (textStyle.fontWeight || '400') }, textStyle]} {...props}>
+    return (<react_native_1.Text style={[
+            theme.fontFamily && { fontFamily: ((_f = theme === null || theme === void 0 ? void 0 : theme.fonts) === null || _f === void 0 ? void 0 : _f[theme.fontFamily + '_' + ((textStyle === null || textStyle === void 0 ? void 0 : textStyle.fontWeight) || '400')]) || theme.fontFamily + '_' + ((textStyle === null || textStyle === void 0 ? void 0 : textStyle.fontWeight) || '400') },
+            textStyle,
+            theme.fontFamily && { fontWeight: undefined }
+        ]} {...props}>
             {children}
         </react_native_1.Text>);
 };

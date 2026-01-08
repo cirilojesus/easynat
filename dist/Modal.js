@@ -78,6 +78,7 @@ function InternalModal(_a, ref) {
         }).start(({ finished }) => finished && (callBack === null || callBack === void 0 ? void 0 : callBack()));
     };
     const open = () => {
+        console.log(visible);
         setVisible(true);
         animate(1);
     };

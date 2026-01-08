@@ -94,6 +94,7 @@ function InternalModal(
     };
 
     const open = () => {
+        console.log(visible)
         setVisible(true);
         animate(1);
     };

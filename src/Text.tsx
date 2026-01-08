@@ -51,7 +51,14 @@ export const Text: React.FC<BSTextProps> = ({ style, children, ...props }) => {
     ]);
 
     return (
-        <RNText style={[theme.fontFamily && { fontFamily: theme.fontFamily + (textStyle.fontWeight || '400') }, textStyle]} {...props}>
+        <RNText
+            style={[
+                theme.fontFamily && { fontFamily: theme?.fonts?.[theme.fontFamily + '_' + (textStyle?.fontWeight || '400')] || theme.fontFamily + '_' + (textStyle?.fontWeight || '400') },
+                textStyle,
+                theme.fontFamily && { fontWeight: undefined }
+            ]}
+            {...props}
+        >
             {children}
         </RNText>
     );

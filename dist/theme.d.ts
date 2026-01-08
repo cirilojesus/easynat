@@ -33,6 +33,7 @@ export declare const defaultTheme: {
     colors?: Partial<Record<keyof typeof COLORS_THEME | (string & {}), string>>;
     shadows?: Record<1 | 2 | 3 | 4 | 5 | 6 | string, any>;
     fontFamily?: string;
+    fonts?: Record<string, string>;
     components?: Partial<Omit<Record<keyof typeof COMPONENTS, Partial<Record<'variants', VARIANTS_TYPE> & Partial<ALL_PROPS>>>, "theme" | "defaultTheme" | "ThemeProvider" | "useTheme">>;
 };
 export declare const theme: {

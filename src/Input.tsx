@@ -117,7 +117,11 @@ export const InputText: React.FC<BSTextInputProps> = ({ style, ...props }) => {
                 <TextInput
                     {...combinedProps}
                     secureTextEntry={combinedProps.isPassword && !showPassword}
-                    style={[theme.fontFamily && { fontFamily: theme.fontFamily + (inputStyle.fontWeight || '400') }, inputStyle]}
+                    style={[
+                        theme.fontFamily && { fontFamily: theme?.fonts?.[theme.fontFamily + '_' + (inputStyle?.fontWeight || '400')] || theme.fontFamily + '_' + (inputStyle?.fontWeight || '400') },
+                        inputStyle,
+                        theme.fontFamily && { fontWeight: undefined }
+                    ]}
                     onFocus={e => {
                         animate(true)
                         props.onFocus?.(e)
