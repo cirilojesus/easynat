@@ -14,18 +14,20 @@ const calcSize = (size) => {
 };
 exports.calcSize = calcSize;
 const mergeTheme = (libTheme, theme) => {
-    const merge = Object.assign(Object.assign({}, theme), libTheme);
-    Object.keys(merge).map(x => {
-        Object.keys(libTheme[x]).map(y => {
-            merge[x][y] = Object.assign(Object.assign({}, merge[x][y]), theme[x][y]);
-        });
-        Object.keys(theme[x]).map(y => {
-            merge[x][y] = Object.assign(Object.assign({}, merge[x][y]), theme[x][y]);
-        });
+    const merge = Object.assign(Object.assign({}, libTheme), theme);
+    Object.keys(merge).forEach(key => {
+        const libValue = libTheme === null || libTheme === void 0 ? void 0 : libTheme[key];
+        const themeValue = theme === null || theme === void 0 ? void 0 : theme[key];
+        if (isPlainObject(libValue) && isPlainObject(themeValue)) {
+            merge[key] = Object.assign(Object.assign({}, libValue), themeValue);
+        }
     });
     return merge;
 };
 exports.mergeTheme = mergeTheme;
+const isPlainObject = (v) => typeof v === 'object' &&
+    v !== null &&
+    !Array.isArray(v);
 const renderChild = (children, props) => react_1.default.Children.map(children, (child) => {
     if (typeof child === "string" || typeof child === 'number')
         return <Text_1.Text {...props}>{child}</Text_1.Text>;

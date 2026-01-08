@@ -3,6 +3,6 @@ import { BSTextProps } from "../Text";
 import React from "react";
 export declare const calcSize: (size: DimensionValue) => any;
 export declare const mergeTheme: (libTheme: any, theme: any) => ThemeType;
-export declare const renderChild: (children: React.ReactNode, props: BSTextProps) => (bigint | React.JSX.Element | Iterable<React.ReactNode> | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode>>)[];
+export declare const renderChild: (children: React.ReactNode, props: BSTextProps) => (bigint | Iterable<React.ReactNode> | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode>> | React.JSX.Element)[];
 export declare function getDeviceLanguage(): string;
 export declare function getDeviceLocaleInfo(options?: Intl.DateTimeFormatOptions): Intl.ResolvedDateTimeFormatOptions;

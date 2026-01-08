@@ -10,17 +10,27 @@ export const calcSize = (size: DimensionValue) => {
 }
 
 export const mergeTheme = (libTheme, theme): ThemeType => {
-    const merge = { ...theme, ...libTheme }
-    Object.keys(merge).map(x => {
-        Object.keys(libTheme[x]).map(y => {
-            merge[x][y] = { ...merge[x][y], ...theme[x][y] }
-        })
-        Object.keys(theme[x]).map(y => {
-            merge[x][y] = { ...merge[x][y], ...theme[x][y] }
-        })
-    })
-    return merge
+    const merge = { ...libTheme, ...theme };
+
+    Object.keys(merge).forEach(key => {
+        const libValue = libTheme?.[key];
+        const themeValue = theme?.[key];
+
+        if (isPlainObject(libValue) && isPlainObject(themeValue)) {
+            merge[key] = {
+                ...libValue,
+                ...themeValue,
+            };
+        }
+    });
+
+    return merge;
 }
+
+const isPlainObject = (v: any) =>
+    typeof v === 'object' &&
+    v !== null &&
+    !Array.isArray(v);
 
 export const renderChild = (children: React.ReactNode, props: BSTextProps) => React.Children.map(children, (child) => {
     if (typeof child === "string" || typeof child === 'number') return <Text {...props}>{child}</Text>;
