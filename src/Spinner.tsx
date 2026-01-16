@@ -23,7 +23,7 @@ export const Spinner: React.FC<EASpinnerProps> = ({ ...props }) => {
     return (
         <ActivityIndicator
             {...combinedProps}
-            color={theme.colors[combinedProps.color] || combinedProps.color || theme.colors['primary']}
+            color={theme.colors[combinedProps.color] || combinedProps.color || theme.colors['primary.100']}
         />
     );
 };

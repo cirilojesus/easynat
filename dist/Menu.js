@@ -63,7 +63,7 @@ function InternalMenu(_a, ref) {
     });
     const [menuSize, setMenuSize] = (0, react_1.useState)({ w: 0, h: 0 });
     const animation = (0, react_1.useRef)(new react_native_1.Animated.Value(0)).current;
-    const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign({ shadow: 3, borderWidth: 1, borderColor: "light", bg: "white", py: 3, rounded: 3, backdrop: true }, props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
+    const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign({ shadow: 3, borderWidth: 1, borderColor: "light.100", bg: "white", py: 3, rounded: 3, backdrop: true }, props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
     const styles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(combinedProps, theme);
     const calcMaxHeightBottom = height - insets.bottom - triggerLayout.y - triggerLayout.height - keyboardHeight;
     placement = (calcMaxHeightBottom < 96 && placement == 'bottom') ? 'top' : placement;

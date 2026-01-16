@@ -54,13 +54,13 @@ export const Switch: React.FC<EASwitchProps> = (props) => {
         >
             <RNSwitch
                 trackColor={{
-                    false: theme.colors['light'],
+                    false: theme.colors['light.100'],
                     true: theme.colors[colorScheme + '.100'],
                 }}
                 thumbColor={
                     combinedProps.value
                         ? theme.colors[colorScheme + '.100']
-                        : theme.colors['light']
+                        : theme.colors['light.100']
                 }
                 {...rest}
                 style={[

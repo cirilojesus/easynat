@@ -31,11 +31,11 @@ const Switch = (props) => {
     const rightOffset = ((52 * (scale - 1)) / 2);
     return (<Button_1.Button variant="unstyle" height={36 + size * 4} onPress={() => props.onValueChange(!props.value)} _text={{ ml: 1 }} _pressed={{ _text: { color: theme.colors[colorScheme + '.100'] } }} p={0} ml={-10} flexDir="row" alignItems="center" pointerEvents={pointerBox ? 'auto' : 'box-none'} {..._containerStyle}>
             <react_native_1.Switch trackColor={{
-            false: theme.colors['light'],
+            false: theme.colors['light.100'],
             true: theme.colors[colorScheme + '.100'],
         }} thumbColor={combinedProps.value
             ? theme.colors[colorScheme + '.100']
-            : theme.colors['light']} {...rest} style={[
+            : theme.colors['light.100']} {...rest} style={[
             {
                 width: 52 + (rightOffset / 2),
                 marginRight: (rightOffset * 2),

@@ -53,7 +53,7 @@ export const Radio: React.FC<EARadioProps> = (props) => {
                 rest.onPress?.(e)
             }}
             icon={
-                <Box w={22} height={22} borderWidth={1} bg={checked ? 'primary' : 'transparent'} borderColor={'light'} rounded={40}>
+                <Box w={22} height={22} borderWidth={1} bg={checked ? 'primary.100' : 'transparent'} borderColor={'light.100'} rounded={40}>
                     {checked ? combinedProps.icon || <Icon name={'circle'} as={'Feather'} color="white" {...combinedProps._icon} /> : ''}
                 </Box>
             }

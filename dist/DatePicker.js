@@ -179,9 +179,9 @@ function DatePicker(_a) {
                         } :
                         { marginBottom: 4 }),
                 ]} {..._label}>
-                    {label} {isRequired && <Text_1.Text color={'danger'}>*</Text_1.Text>}
+                    {label} {isRequired && <Text_1.Text color={'danger.100'}>*</Text_1.Text>}
                 </AnimatedText>}
-            <Pressable_1.Pressable _pressed={{ opacity: 0.7 }} borderWidth={1} borderColor="light" rounded={1} py={2} px={3} flexDir="row" justifyContent={'space-between'} alignItems="center" {...props} onPress={e => {
+            <Pressable_1.Pressable _pressed={{ opacity: 0.7 }} borderWidth={1} borderColor="light.100" rounded={1} py={2} px={3} flexDir="row" justifyContent={'space-between'} alignItems="center" {...props} onPress={e => {
             var _a;
             open();
             (_a = props.onPress) === null || _a === void 0 ? void 0 : _a.call(props, e);
@@ -217,7 +217,7 @@ function DatePicker(_a) {
                     const s = type === "date-range" ? ((_a = draft === null || draft === void 0 ? void 0 : draft.start) === null || _a === void 0 ? void 0 : _a.timestamp) === details.timestamp : (draft === null || draft === void 0 ? void 0 : draft.timestamp) === details.timestamp;
                     const e = type === "date-range" ? ((_b = draft === null || draft === void 0 ? void 0 : draft.end) === null || _b === void 0 ? void 0 : _b.timestamp) === details.timestamp : false;
                     const range = inRange(d);
-                    return (<Button_1.Button colorScheme={colorScheme} variant={s || e ? "solid" : range ? "outline" : "ghost"} w={'11%'} mx="1.5%" my={1} px={1} py={10} borderWidth={1} disabled={details.timestamp > ((_c = state.max) === null || _c === void 0 ? void 0 : _c.timestamp) || details.timestamp < ((_d = state.min) === null || _d === void 0 ? void 0 : _d.timestamp)} _text={{ color: s || e ? "white" : "dark", textAlign: "center", numberOfLines: 1 }} {...((s || e || !range) ? { borderColor: "transparent" } : {})} {..._days === null || _days === void 0 ? void 0 : _days._button} onPress={() => {
+                    return (<Button_1.Button colorScheme={colorScheme} variant={s || e ? "solid" : range ? "outline" : "ghost"} w={'11%'} mx="1.5%" my={1} px={1} py={10} borderWidth={1} disabled={details.timestamp > ((_c = state.max) === null || _c === void 0 ? void 0 : _c.timestamp) || details.timestamp < ((_d = state.min) === null || _d === void 0 ? void 0 : _d.timestamp)} _text={{ color: s || e ? "white.100" : "dark.100", textAlign: "center", numberOfLines: 1 }} {...((s || e || !range) ? { borderColor: "transparent" } : {})} {..._days === null || _days === void 0 ? void 0 : _days._button} onPress={() => {
                             if (s && unSelect)
                                 return setPart("draft", null);
                             if (type !== "date-range")
@@ -244,12 +244,12 @@ function DatePicker(_a) {
                     </>}
 
                 {type === "datetime" && (<Box_1.Box flexDir="row" p={3} gap={12} alignItems="center">
-                        <Stepper value={hour} min={0} max={23} borderWidth={1} borderColor="light" rounded={2} maxValue={new Date((_f = (((_e = state.draft) === null || _e === void 0 ? void 0 : _e.start) || state.draft)) === null || _f === void 0 ? void 0 : _f.timestamp).setHours(((_h = (((_g = state.draft) === null || _g === void 0 ? void 0 : _g.start) || state.draft)) === null || _h === void 0 ? void 0 : _h.hour) + 1) > ((_j = state.max) === null || _j === void 0 ? void 0 : _j.timestamp)} minValue={new Date((_l = (((_k = state.draft) === null || _k === void 0 ? void 0 : _k.start) || state.draft)) === null || _l === void 0 ? void 0 : _l.timestamp).setHours(((_o = (((_m = state.draft) === null || _m === void 0 ? void 0 : _m.start) || state.draft)) === null || _o === void 0 ? void 0 : _o.hour) - 1) < ((_p = state.min) === null || _p === void 0 ? void 0 : _p.timestamp)} onChange={v => adjustTime("hour", v - hour)} format={h => {
+                        <Stepper value={hour} min={0} max={23} borderWidth={1} borderColor="light.100" rounded={2} maxValue={new Date((_f = (((_e = state.draft) === null || _e === void 0 ? void 0 : _e.start) || state.draft)) === null || _f === void 0 ? void 0 : _f.timestamp).setHours(((_h = (((_g = state.draft) === null || _g === void 0 ? void 0 : _g.start) || state.draft)) === null || _h === void 0 ? void 0 : _h.hour) + 1) > ((_j = state.max) === null || _j === void 0 ? void 0 : _j.timestamp)} minValue={new Date((_l = (((_k = state.draft) === null || _k === void 0 ? void 0 : _k.start) || state.draft)) === null || _l === void 0 ? void 0 : _l.timestamp).setHours(((_o = (((_m = state.draft) === null || _m === void 0 ? void 0 : _m.start) || state.draft)) === null || _o === void 0 ? void 0 : _o.hour) - 1) < ((_p = state.min) === null || _p === void 0 ? void 0 : _p.timestamp)} onChange={v => adjustTime("hour", v - hour)} format={h => {
                 var _a, _b;
                 return new Date(year, month, day, h, minute).toLocaleTimeString((_time === null || _time === void 0 ? void 0 : _time.locale) || locale, { hour: ((_a = _time === null || _time === void 0 ? void 0 : _time.config) === null || _a === void 0 ? void 0 : _a.hour) || "2-digit", hourCycle: ((_b = _time === null || _time === void 0 ? void 0 : _time.config) === null || _b === void 0 ? void 0 : _b.hourCycle) || 'h24' });
             }} colorScheme={colorScheme}/>
                         :
-                        <Stepper value={minute} min={0} max={59} borderWidth={1} borderColor="light" rounded={2} maxValue={((_r = (((_q = state.draft) === null || _q === void 0 ? void 0 : _q.start) || state.draft)) === null || _r === void 0 ? void 0 : _r.timestamp) >= ((_s = state.max) === null || _s === void 0 ? void 0 : _s.timestamp)} minValue={((_u = (((_t = state.draft) === null || _t === void 0 ? void 0 : _t.start) || state.draft)) === null || _u === void 0 ? void 0 : _u.timestamp) <= ((_v = state.min) === null || _v === void 0 ? void 0 : _v.timestamp)} onChange={v => adjustTime("minute", v - minute)} format={m => {
+                        <Stepper value={minute} min={0} max={59} borderWidth={1} borderColor="light.100" rounded={2} maxValue={((_r = (((_q = state.draft) === null || _q === void 0 ? void 0 : _q.start) || state.draft)) === null || _r === void 0 ? void 0 : _r.timestamp) >= ((_s = state.max) === null || _s === void 0 ? void 0 : _s.timestamp)} minValue={((_u = (((_t = state.draft) === null || _t === void 0 ? void 0 : _t.start) || state.draft)) === null || _u === void 0 ? void 0 : _u.timestamp) <= ((_v = state.min) === null || _v === void 0 ? void 0 : _v.timestamp)} onChange={v => adjustTime("minute", v - minute)} format={m => {
                 var _a;
                 return new Date(year, month, day, hour, m).toLocaleTimeString((_time === null || _time === void 0 ? void 0 : _time.locale) || locale, { minute: ((_a = _time === null || _time === void 0 ? void 0 : _time.config) === null || _a === void 0 ? void 0 : _a.minute) || "2-digit" });
             }} colorScheme={colorScheme}/>

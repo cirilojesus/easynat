@@ -27,7 +27,7 @@ const CheckBox = (props) => {
             var _a;
             onChange === null || onChange === void 0 ? void 0 : onChange(!checked);
             (_a = rest.onPress) === null || _a === void 0 ? void 0 : _a.call(rest, e);
-        }} icon={<Box_1.Box w={22} height={22} borderWidth={1} bg={checked ? 'primary' : 'transparent'} borderColor={'light'} rounded={1}>
+        }} icon={<Box_1.Box w={22} height={22} borderWidth={1} bg={checked ? 'primary.100' : 'transparent'} borderColor={'light.100'} rounded={1}>
                     {checked ? combinedProps.icon || <Icon_1.Icon name={'check'} as={'Feather'} color="white" {...combinedProps._icon}/> : ''}
                 </Box_1.Box>} _text={Object.assign({ ml: 2, textAlign: 'left' }, combinedProps._text)}>
             {label}

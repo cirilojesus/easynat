@@ -18,6 +18,6 @@ const Spinner = (_a) => {
     var props = __rest(_a, []);
     const { theme } = (0, theme_provider_1.useTheme)();
     const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign({}, props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
-    return (<react_native_1.ActivityIndicator {...combinedProps} color={theme.colors[combinedProps.color] || combinedProps.color || theme.colors['primary']}/>);
+    return (<react_native_1.ActivityIndicator {...combinedProps} color={theme.colors[combinedProps.color] || combinedProps.color || theme.colors['primary.100']}/>);
 };
 exports.Spinner = Spinner;

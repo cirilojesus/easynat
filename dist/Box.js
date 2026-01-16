@@ -28,7 +28,7 @@ const Box = (_a) => {
             _text: { fontSize: 12 },
             px: 2,
             py: 1,
-            bg: 'light',
+            bg: 'light.100',
             flexDir: 'row',
             alignItems: 'center',
             gap: 4

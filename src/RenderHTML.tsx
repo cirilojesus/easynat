@@ -190,7 +190,7 @@ function renderNode(node: { name: string; attrs: any; children: React.ReactNode[
                     px={1}
                     mr={1}
                     _text={{ color: "white", fontWeight: "bold" }}
-                    bg={node.attrs?.checked == '' ? 'primary' : "transparent"}>
+                    bg={node.attrs?.checked == '' ? 'primary.100' : "transparent"}>
                     ✓
                 </Box>
             );

@@ -79,7 +79,7 @@ const TabItem = ({ item, index, i, width, contentRef, tabStyle, tabActiveStyle }
         const active = val === index;
         (0, react_native_reanimated_1.runOnJS)(setIsActive)(active);
     });
-    return (<Button_1.Button variant={isActive ? 'solid' : 'outline'} borderWidth={1} borderColor={isActive ? 'transparent' : 'light'} p={6.5} rounded={40} onPress={e => {
+    return (<Button_1.Button variant={isActive ? 'solid' : 'outline'} borderWidth={1} borderColor={isActive ? 'transparent' : 'light.100'} p={6.5} rounded={40} onPress={e => {
             i.value = index;
             contentRef.current.scrollToOffset({ offset: width.value * index, animated: true });
         }} children={(_a = item.props) === null || _a === void 0 ? void 0 : _a['tab']} {...tabStyle} {...(isActive ? tabActiveStyle : {})}/>);

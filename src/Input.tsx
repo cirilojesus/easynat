@@ -102,7 +102,7 @@ export const InputText: React.FC<BSTextInputProps> = ({ style, ...props }) => {
                     ]}
                     {...combinedProps._label}
                 >
-                    {combinedProps.label}{combinedProps.isRequired && <Text color={'danger'}> *</Text>}
+                    {combinedProps.label}{combinedProps.isRequired && <Text color={'danger.100'}> *</Text>}
                 </AnimatedText>
             }
             <Box
@@ -111,7 +111,7 @@ export const InputText: React.FC<BSTextInputProps> = ({ style, ...props }) => {
                 rounded={1}
                 borderWidth={1}
                 {...{ ...styles_default._containerStyle, ...combinedProps._containerStyle }}
-                borderColor={styles_default?._containerStyle?.borderColor || combinedProps._containerStyle?.borderColor || (focus ? 'primary' : 'light')}
+                borderColor={styles_default?._containerStyle?.borderColor || combinedProps._containerStyle?.borderColor || (focus ? 'primary.100' : 'light.100')}
             >
                 {combinedProps.iconLeft}
                 <TextInput

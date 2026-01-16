@@ -54,7 +54,7 @@ export const CheckBox: React.FC<EACheckBoxProps> = (props) => {
                 rest.onPress?.(e)
             }}
             icon={
-                <Box w={22} height={22} borderWidth={1} bg={checked ? 'primary' : 'transparent'} borderColor={'light'} rounded={1}>
+                <Box w={22} height={22} borderWidth={1} bg={checked ? 'primary.100' : 'transparent'} borderColor={'light.100'} rounded={1}>
                     {checked ? combinedProps.icon || <Icon name={'check'} as={'Feather'} color="white" {...combinedProps._icon} /> : ''}
                 </Box>
             }

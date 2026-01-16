@@ -66,7 +66,7 @@ function InternalCollapse(_a, ref) {
         toggle: () => (isExpanded.value = !isExpanded.value),
     }));
     return (<Box_1.Box {...props}>
-            {trigger(Object.assign({ onPress: () => (isExpanded.value = !isExpanded.value), isOpen: openState, p: 3, borderWidth: 1, borderColor: 'light', rounded: 1, flexDir: 'row', justifyContent: 'space-between', icon: (<IconAnimated as="Feather" name="chevron-down" {...(_b = props._trigger) === null || _b === void 0 ? void 0 : _b._icon} style={iconStyle}/>) }, (openState ? props._open : props._trigger)))}
+            {trigger(Object.assign({ onPress: () => (isExpanded.value = !isExpanded.value), isOpen: openState, p: 2.5, borderWidth: 1, borderColor: 'light.100', rounded: 1, flexDir: 'row', justifyContent: 'space-between', icon: (<IconAnimated as="Feather" name="chevron-down" {...(_b = props._trigger) === null || _b === void 0 ? void 0 : _b._icon} style={iconStyle}/>) }, (openState ? props._open : props._trigger)))}
 
             <react_native_reanimated_1.default.View style={bodyStyle}>
                 <Box_1.Box onLayout={(e) => (height.value = e.nativeEvent.layout.height)} style={{ width: '100%', position: 'absolute' }} {...props._contentStyle}>

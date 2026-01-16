@@ -111,7 +111,7 @@ const TabItem = ({ item, index, i, width, contentRef, tabStyle, tabActiveStyle }
         <Button
             variant={isActive ? 'solid' : 'outline'}
             borderWidth={1}
-            borderColor={isActive ? 'transparent' : 'light'}
+            borderColor={isActive ? 'transparent' : 'light.100'}
             p={6.5}
             rounded={40}
             onPress={e => {

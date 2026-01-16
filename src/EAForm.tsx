@@ -194,7 +194,7 @@ export const Control = <T extends Record<string, [any, InputValidation?]>>({
                 <Select
                     defaultValue={control.value}
                     onChange={e => control.setValue(e)}
-                    borderColor={control.error ? 'danger' : 'light'}
+                    borderColor={control.error ? 'danger.100' : 'light.100'}
                     {...props}
                 />
                 : props.isCheckBox ?
@@ -205,24 +205,24 @@ export const Control = <T extends Record<string, [any, InputValidation?]>>({
                             props.children.map(x => <Radio key={x.props.value} checked={control.value == x.props.value} onChange={e => control.setValue(e)} {...props} {...x.props} />)
                             :
                             props.isDate ?
-                                <DatePicker value={control.value} borderColor={control.error ? 'danger' : 'light'} onChange={props?.onChange} {...props} />
+                                <DatePicker value={control.value} borderColor={control.error ? 'danger.100' : 'light.100'} onChange={props?.onChange} {...props} />
                                 :
                                 props.isSearch ?
                                     <SearchInput
                                         value={control.value}
                                         onChange={e => control.setValue(e)}
                                         {...props}
-                                        _input={{ label: props.label, isFloat: props.isFloat, _containerStyle: control.error ? { borderColor: 'danger' } : {}, ...props._input }}
+                                        _input={{ label: props.label, isFloat: props.isFloat, _containerStyle: control.error ? { borderColor: 'danger.100' } : {}, ...props._input }}
                                     />
                                     :
                                     <InputText
                                         value={control.value}
                                         onChangeText={e => control.setValue(e)}
-                                        _containerStyle={control.error ? { borderColor: 'danger' } : {}}
+                                        _containerStyle={control.error ? { borderColor: 'danger.100' } : {}}
                                         {...props}
                                     />
             }
-            {control.error ? <Text color={'danger'}>{control.error}</Text> : null}
+            {control.error ? <Text color={'danger.100'}>{control.error}</Text> : null}
         </Box>
     );
 };

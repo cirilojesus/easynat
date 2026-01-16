@@ -95,7 +95,7 @@ function InternalMenu<T>(
     const combinedProps: BSMenuProps<T> = {
         shadow: 3,
         borderWidth: 1,
-        borderColor: "light",
+        borderColor: "light.100",
         bg: "white",
         py: 3,
         rounded: 3,

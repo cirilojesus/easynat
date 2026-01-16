@@ -74,16 +74,16 @@ const Select = (_a) => {
                         } :
                         { marginBottom: 4 }),
                 ]} {..._label}>
-                    {label} {isRequired && <Text_1.Text color={'danger'}>*</Text_1.Text>}
+                    {label} {isRequired && <Text_1.Text color={'danger.100'}>*</Text_1.Text>}
                 </AnimatedText>}
-            <Pressable_1.Pressable flexDir="row" alignItems="center" justifyContent="space-between" p={2} borderWidth={1} borderColor="light" _pressed={{ opacity: .5 }} rounded={1} {...props} _text={Object.assign({ flexShrink: 1 }, props._text)} onPress={e => { var _a; react_native_1.Keyboard.dismiss(), modal.current.open(); (_a = props.onPress) === null || _a === void 0 ? void 0 : _a.call(props, e); }}>
+            <Pressable_1.Pressable flexDir="row" alignItems="center" justifyContent="space-between" p={2} borderWidth={1} borderColor="light.100" _pressed={{ opacity: .5 }} rounded={1} {...props} _text={Object.assign({ flexShrink: 1 }, props._text)} onPress={e => { var _a; react_native_1.Keyboard.dismiss(), modal.current.open(); (_a = props.onPress) === null || _a === void 0 ? void 0 : _a.call(props, e); }}>
                 {(selected === null || selected === void 0 ? void 0 : selected.props.label) || props.placeholder || ''}
                 {icon === true ? <Icon_1.Icon as="Feather" name="chevron-down" size={20} {..._icon}/> : icon && icon}
             </Pressable_1.Pressable>
-            <Modal_1.Modal ref={modal} header={{ children: <Box_1.Box height={3.5} mx="auto" w={60} bg="dark"/>, py: 2 }} _contentStyle={Object.assign(Object.assign({}, _menu), { h: "auto", maxH: "90%", roundedTop: 40 })} buttonClose={false}>
+            <Modal_1.Modal ref={modal} header={{ children: <Box_1.Box height={3.5} mx="auto" w={60} bg="dark.100"/>, py: 2 }} _contentStyle={Object.assign(Object.assign({}, _menu), { h: "auto", maxH: "90%", roundedTop: 40 })} buttonClose={false}>
                 <react_native_1.FlatList data={children} initialNumToRender={1} maxToRenderPerBatch={10} updateCellsBatchingPeriod={10} windowSize={10} keyExtractor={i => i.props.value.toString()} renderItem={({ item }) => {
             const isSelected = item.props.value === (selected === null || selected === void 0 ? void 0 : selected.props.value);
-            return (<Pressable_1.Pressable p={3} borderBottomWidth={1} borderBottomColor="light" bg={isSelected ? "primary.50" : undefined} onPress={() => handleSelect(item)} _pressed={{ opacity: 0.5 }} {..._option} {...item.props} {...(isSelected ? _selected : {})}>
+            return (<Pressable_1.Pressable p={3} borderBottomWidth={1} borderBottomColor="light.100" bg={isSelected ? "primary.50" : undefined} onPress={() => handleSelect(item)} _pressed={{ opacity: 0.5 }} {..._option} {...item.props} {...(isSelected ? _selected : {})}>
                                 {item.props.label}
                             </Pressable_1.Pressable>);
         }}/>

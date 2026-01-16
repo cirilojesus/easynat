@@ -328,13 +328,13 @@ export function DatePicker({
                     ]}
                     {..._label}
                 >
-                    {label} {isRequired && <Text color={'danger'}>*</Text>}
+                    {label} {isRequired && <Text color={'danger.100'}>*</Text>}
                 </AnimatedText>
             }
             <Pressable
                 _pressed={{ opacity: 0.7 }}
                 borderWidth={1}
-                borderColor="light"
+                borderColor="light.100"
                 rounded={1}
                 py={2}
                 px={3}
@@ -420,7 +420,7 @@ export function DatePicker({
                                         py={10}
                                         borderWidth={1}
                                         disabled={details.timestamp > state.max?.timestamp || details.timestamp < state.min?.timestamp}
-                                        _text={{ color: s || e ? "white" : "dark", textAlign: "center", numberOfLines: 1 }}
+                                        _text={{ color: s || e ? "white.100" : "dark.100", textAlign: "center", numberOfLines: 1 }}
                                         {...((s || e || !range) ? { borderColor: "transparent" } : {})}
                                         {..._days?._button}
                                         onPress={() => {
@@ -461,7 +461,7 @@ export function DatePicker({
                             min={0}
                             max={23}
                             borderWidth={1}
-                            borderColor="light"
+                            borderColor="light.100"
                             rounded={2}
                             maxValue={new Date(((state.draft as any)?.start || state.draft)?.timestamp).setHours(((state.draft as any)?.start || state.draft)?.hour + 1) > state.max?.timestamp}
                             minValue={new Date(((state.draft as any)?.start || state.draft)?.timestamp).setHours(((state.draft as any)?.start || state.draft)?.hour - 1) < state.min?.timestamp}
@@ -480,7 +480,7 @@ export function DatePicker({
                             min={0}
                             max={59}
                             borderWidth={1}
-                            borderColor="light"
+                            borderColor="light.100"
                             rounded={2}
                             maxValue={((state.draft as any)?.start || state.draft)?.timestamp >= state.max?.timestamp}
                             minValue={((state.draft as any)?.start || state.draft)?.timestamp <= state.min?.timestamp}

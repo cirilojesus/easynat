@@ -83,9 +83,9 @@ function InternalCollapse(
             {trigger({
                 onPress: () => (isExpanded.value = !isExpanded.value),
                 isOpen: openState,
-                p: 3,
+                p: 2.5,
                 borderWidth: 1,
-                borderColor: 'light',
+                borderColor: 'light.100',
                 rounded: 1,
                 flexDir: 'row',
                 justifyContent: 'space-between',

@@ -154,7 +154,7 @@ const Control = (_a) => {
     }, []);
     return (<_1.Box {...props._box}>
             {props.isSelect ?
-            <_1.Select defaultValue={control.value} onChange={e => control.setValue(e)} borderColor={control.error ? 'danger' : 'light'} {...props}/>
+            <_1.Select defaultValue={control.value} onChange={e => control.setValue(e)} borderColor={control.error ? 'danger.100' : 'light.100'} {...props}/>
             : props.isCheckBox ?
                 <_1.CheckBox checked={control.value} onChange={e => control.setValue(e)} {...props}/>
                 : props.isSwitch ?
@@ -163,13 +163,13 @@ const Control = (_a) => {
                         props.children.map(x => <_1.Radio key={x.props.value} checked={control.value == x.props.value} onChange={e => control.setValue(e)} {...props} {...x.props}/>)
                         :
                             props.isDate ?
-                                <DatePicker_1.DatePicker value={control.value} borderColor={control.error ? 'danger' : 'light'} onChange={props === null || props === void 0 ? void 0 : props.onChange} {...props}/>
+                                <DatePicker_1.DatePicker value={control.value} borderColor={control.error ? 'danger.100' : 'light.100'} onChange={props === null || props === void 0 ? void 0 : props.onChange} {...props}/>
                                 :
                                     props.isSearch ?
-                                        <SearchInput_1.SearchInput value={control.value} onChange={e => control.setValue(e)} {...props} _input={Object.assign({ label: props.label, isFloat: props.isFloat, _containerStyle: control.error ? { borderColor: 'danger' } : {} }, props._input)}/>
+                                        <SearchInput_1.SearchInput value={control.value} onChange={e => control.setValue(e)} {...props} _input={Object.assign({ label: props.label, isFloat: props.isFloat, _containerStyle: control.error ? { borderColor: 'danger.100' } : {} }, props._input)}/>
                                         :
-                                            <_1.InputText value={control.value} onChangeText={e => control.setValue(e)} _containerStyle={control.error ? { borderColor: 'danger' } : {}} {...props}/>}
-            {control.error ? <_1.Text color={'danger'}>{control.error}</_1.Text> : null}
+                                            <_1.InputText value={control.value} onChangeText={e => control.setValue(e)} _containerStyle={control.error ? { borderColor: 'danger.100' } : {}} {...props}/>}
+            {control.error ? <_1.Text color={'danger.100'}>{control.error}</_1.Text> : null}
         </_1.Box>);
 };
 exports.Control = Control;

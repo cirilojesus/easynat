@@ -78,9 +78,9 @@ const InputText = (_a) => {
                         } :
                         { marginBottom: 4 }),
                 ]} {...combinedProps._label}>
-                    {combinedProps.label}{combinedProps.isRequired && <Text_1.Text color={'danger'}> *</Text_1.Text>}
+                    {combinedProps.label}{combinedProps.isRequired && <Text_1.Text color={'danger.100'}> *</Text_1.Text>}
                 </AnimatedText>}
-            <Box_1.Box alignItems={'center'} flexDir="row" rounded={1} borderWidth={1} {...Object.assign(Object.assign({}, styles_default._containerStyle), combinedProps._containerStyle)} borderColor={((_c = styles_default === null || styles_default === void 0 ? void 0 : styles_default._containerStyle) === null || _c === void 0 ? void 0 : _c.borderColor) || ((_d = combinedProps._containerStyle) === null || _d === void 0 ? void 0 : _d.borderColor) || (focus ? 'primary' : 'light')}>
+            <Box_1.Box alignItems={'center'} flexDir="row" rounded={1} borderWidth={1} {...Object.assign(Object.assign({}, styles_default._containerStyle), combinedProps._containerStyle)} borderColor={((_c = styles_default === null || styles_default === void 0 ? void 0 : styles_default._containerStyle) === null || _c === void 0 ? void 0 : _c.borderColor) || ((_d = combinedProps._containerStyle) === null || _d === void 0 ? void 0 : _d.borderColor) || (focus ? 'primary.100' : 'light.100')}>
                 {combinedProps.iconLeft}
                 <react_native_1.TextInput {...combinedProps} secureTextEntry={combinedProps.isPassword && !showPassword} style={[
             theme.fontFamily && { fontFamily: ((_e = theme === null || theme === void 0 ? void 0 : theme.fonts) === null || _e === void 0 ? void 0 : _e[theme.fontFamily + '_' + ((inputStyle === null || inputStyle === void 0 ? void 0 : inputStyle.fontWeight) || '400')]) || theme.fontFamily + '_' + ((inputStyle === null || inputStyle === void 0 ? void 0 : inputStyle.fontWeight) || '400') },

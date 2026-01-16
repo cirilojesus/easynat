@@ -34,7 +34,7 @@ const IconBase = (0, react_1.forwardRef)((props, ref) => {
     const { theme } = (0, theme_provider_1.useTheme)();
     const styles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(props, theme);
     const IconComponent = ICONS[props.as];
-    return (<IconComponent {...props} ref={ref} size={props.size || 16} color={((_a = theme.colors) === null || _a === void 0 ? void 0 : _a[props.color]) || props.color} style={[props.style, ...styles]}/>);
+    return (<IconComponent {...props} ref={ref} size={props.size || 18} color={((_a = theme.colors) === null || _a === void 0 ? void 0 : _a[props.color]) || props.color} style={[props.style, ...styles]}/>);
 });
 /** --- 3. Export final con genéricos preservados --- */
 exports.Icon = IconBase;

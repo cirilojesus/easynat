@@ -101,7 +101,7 @@ export const Select: React.FC<BSSelectProps> & { Item: React.FC<BSSelectItemProp
                     ]}
                     {..._label}
                 >
-                    {label} {isRequired && <Text color={'danger'}>*</Text>}
+                    {label} {isRequired && <Text color={'danger.100'}>*</Text>}
                 </AnimatedText>
             }
             <Pressable
@@ -110,7 +110,7 @@ export const Select: React.FC<BSSelectProps> & { Item: React.FC<BSSelectItemProp
                 justifyContent="space-between"
                 p={2}
                 borderWidth={1}
-                borderColor="light"
+                borderColor="light.100"
                 _pressed={{ opacity: .5 }}
                 rounded={1}
                 {...props}
@@ -122,7 +122,7 @@ export const Select: React.FC<BSSelectProps> & { Item: React.FC<BSSelectItemProp
             </Pressable>
             <Modal
                 ref={modal}
-                header={{ children: <Box height={3.5} mx="auto" w={60} bg="dark" />, py: 2 }}
+                header={{ children: <Box height={3.5} mx="auto" w={60} bg="dark.100" />, py: 2 }}
                 _contentStyle={{ ..._menu, h: "auto", maxH: "90%", roundedTop: 40 }}
                 buttonClose={false}
             >
@@ -139,7 +139,7 @@ export const Select: React.FC<BSSelectProps> & { Item: React.FC<BSSelectItemProp
                             <Pressable
                                 p={3}
                                 borderBottomWidth={1}
-                                borderBottomColor="light"
+                                borderBottomColor="light.100"
                                 bg={isSelected ? "primary.50" : undefined}
                                 onPress={() => handleSelect(item)}
                                 _pressed={{ opacity: 0.5 }}
