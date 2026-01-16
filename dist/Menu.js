@@ -99,6 +99,7 @@ function InternalMenu(_a, ref) {
         if (show) {
             clearInterval(awaitConfigMenu);
             awaitConfigMenu = setTimeout(() => animate(1), 10);
+            animate(1);
         }
     }, [show, menuSize]);
     const close = () => animate(0, () => setShow(false));
@@ -106,6 +107,9 @@ function InternalMenu(_a, ref) {
         open,
         close,
         isOpen: () => show,
+        toggle: () => {
+            show ? close() : open();
+        }
     }));
     const renderItemDefault = ({ item }) => {
         var _a, _b;

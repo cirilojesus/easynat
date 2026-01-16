@@ -4,7 +4,7 @@ import { BSTextProps, Text } from "../Text"
 import React from "react"
 
 export const calcSize = (size: DimensionValue) => {
-    const sizes = [1, 2, 3, 4, 5, 6]
+    const sizes = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6]
     if (typeof size == "number" && sizes.includes(size)) return size * 4
     return size
 }

@@ -102,7 +102,7 @@ export const InputText: React.FC<BSTextInputProps> = ({ style, ...props }) => {
                     ]}
                     {...combinedProps._label}
                 >
-                    {combinedProps.label} {combinedProps.isRequired && <Text color={'danger'}>*</Text>}
+                    {combinedProps.label}{combinedProps.isRequired && <Text color={'danger'}> *</Text>}
                 </AnimatedText>
             }
             <Box

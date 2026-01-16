@@ -31,7 +31,7 @@ const IconBase = forwardRef(<L extends IconLibrary>(props: IconProps<L>, ref: Re
         <IconComponent
             {...props}
             ref={ref}
-            size={props.size || 20}
+            size={props.size || 16}
             color={theme.colors?.[props.color] || props.color}
             style={[props.style, ...styles]}
         />

@@ -136,8 +136,8 @@ function Stepper({
     max?: number;
     format: (v: number) => string;
     colorScheme: COLOR_SCHEME;
-    iconLeft?: React.ReactElement<IconProps>;   // 👈 icono izquierdo
-    iconRight?: React.ReactElement<IconProps>;  // 👈 icono derecho
+    iconLeft?: React.ReactElement<IconProps<any>>;   // 👈 icono izquierdo
+    iconRight?: React.ReactElement<IconProps<any>>;  // 👈 icono derecho
     minValue?: boolean;
     maxValue?: boolean;
 } & BSBoxProps) {

@@ -45,6 +45,7 @@ export type BSModalProps = BSKeyboardAvoidingProps & {
     _web?: BSModalProps;
     _backdrop?: PressableProps & BSDefaultProps;
     static?: boolean;
+    variant?: (string & {});
 };
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -56,6 +57,7 @@ function InternalModal(
     ref: React.Ref<BSModalRef>
 ) {
     const { theme } = useTheme();
+    const props_default = theme?.components?.Modal || {}
     const [visible, setVisible] = useState(false);
     const slideAnim = useRef(new Animated.Value(0)).current;
     const modalContentRef = useRef(null);
@@ -75,6 +77,8 @@ function InternalModal(
     }, [visible]);
 
     const combinedProps: BSModalProps = {
+        ...props_default,
+        ...props_default?.variants?.[props?.variant],
         ...props,
         ...(Platform.OS === "ios" ? props._ios : {}),
         ...(Platform.OS === "android" ? props._android : {}),
@@ -95,7 +99,7 @@ function InternalModal(
 
     const open = () => {
         console.log(visible)
-        setVisible(true);
+        setVisible(!visible);
         animate(1);
     };
 
@@ -156,41 +160,32 @@ function InternalModal(
                             ...contentStyle,
                         ]}
                     >
-                        {combinedProps.header && (
-                            <Box
-                                px={5}
-                                py={5}
-                                borderBottomWidth={1}
-                                borderBottomColor="light.100"
-                                {...combinedProps.header}
-                            />
-                        )}
-
-                        {buttonClose === true ? (
-                            <Button
-                                variant="ghost"
-                                position="absolute"
-                                zIndex={100}
-                                rounded={50}
-                                right={0}
-                                m={2}
-                                icon={
-                                    <Icon
-                                        name="close"
-                                        as="AntDesign"
-                                    />
-                                }
-                                onPress={close}
-                                {...combinedProps._buttonClose}
-                            />
-                        ) : (
-                            buttonClose &&
-                            React.cloneElement(combinedProps.buttonClose, {
-                                onPress: close,
-                                ...combinedProps._buttonClose,
-                            })
-                        )}
-
+                        <Box zIndex={100} flexDir={'row'} gap={2} {...{ ...props_default?.variants?.[props?.variant]?.header, ...combinedProps?.header }}>
+                            {combinedProps?.header?.children}
+                            {buttonClose === true ? (
+                                <Button
+                                    variant="ghost"
+                                    position="absolute"
+                                    rounded={50}
+                                    right={0}
+                                    m={2}
+                                    icon={
+                                        <Icon
+                                            name="close"
+                                            as="AntDesign"
+                                        />
+                                    }
+                                    onPress={handleRequestClose}
+                                    {...{ ...props_default?.variants?.[props?.variant]?._buttonClose, ...combinedProps._buttonClose }}
+                                />
+                            ) : (
+                                buttonClose &&
+                                React.cloneElement(combinedProps.buttonClose, {
+                                    onPress: handleRequestClose,
+                                    ...combinedProps._buttonClose,
+                                })
+                            )}
+                        </Box>
                         {combinedProps.children}
                     </Animated.View>
                 </KeyboardAvoidingView>

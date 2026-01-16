@@ -79,6 +79,7 @@ export const DEFAULT_PROPS = (props: BSDefaultProps, theme: Theme) => {
         shadow, flexDir, opacity, pointerEvents,
         // size
         w, h, maxW, maxH, minW, minH,
+        gap,
         ...others
     } = props;
 
@@ -174,6 +175,7 @@ export const DEFAULT_PROPS = (props: BSDefaultProps, theme: Theme) => {
         flexDir !== undefined && { flexDirection: flexDir },
         pointerEvents !== undefined && { pointerEvents },
         opacity !== undefined && { opacity },
+        gap !== undefined && { gap: calcSize(gap) },
         others
     ];
 };

@@ -37,41 +37,74 @@ const Button = (_a) => {
             borderColor: theme.colors[colorScheme + '.100'],
             _pressed: {
                 bg: theme.colors[colorScheme + '.50']
+            },
+            _text: {
+                color: theme.colors[colorScheme + '.100']
+            },
+            _icon: {
+                color: theme.colors[colorScheme + '.100']
             }
         }, ghost: {
             _pressed: {
                 bg: theme.colors[colorScheme + '.50']
+            },
+            _text: {
+                color: theme.colors[colorScheme + '.100']
+            },
+            _icon: {
+                color: theme.colors[colorScheme + '.100']
             }
         }, link: {
             _pressed: {
                 _text: {
-                    color: theme.colors[colorScheme + '.100'],
+                    color: theme.colors[colorScheme + '.200'],
                     textDecorationLine: 'underline'
                 },
                 _icon: {
-                    color: theme.colors[colorScheme + '.100'],
+                    color: theme.colors[colorScheme + '.200'],
                 }
+            },
+            _text: {
+                color: theme.colors[colorScheme + '.100']
+            },
+            _icon: {
+                color: theme.colors[colorScheme + '.100']
+            }
+        }, subtle: {
+            bg: theme.colors[colorScheme + '.50'],
+            _pressed: {
+                bg: theme.colors[colorScheme + '.100']
+            },
+            _text: {
+                color: theme.colors[colorScheme + '.200']
+            },
+            _icon: {
+                color: theme.colors[colorScheme + '.200']
             }
         } }, (_d = (_c = theme === null || theme === void 0 ? void 0 : theme.components) === null || _c === void 0 ? void 0 : _c.Button) === null || _d === void 0 ? void 0 : _d.variants);
     const sizeStyle = {
         sm: {
-            p: 2,
-            _text: { fontSize: 12 }
+            p: 1.5,
+            _text: { fontSize: 12 },
+            _icon: { size: 14 }
         },
         md: {
-            p: 3,
-            _text: { fontSize: 14 }
+            p: 2.5,
+            _text: { fontSize: 14 },
+            _icon: { size: 16 }
         },
         lg: {
-            p: 14,
-            _text: { fontSize: 16 }
+            p: 3.5,
+            _text: { fontSize: 16 },
+            _icon: { size: 18 }
         },
         xl: {
-            p: 4,
-            _text: { fontSize: 18 }
+            p: 4.5,
+            _text: { fontSize: 18 },
+            _icon: { size: 20 }
         },
     };
-    return (<Pressable_1.Pressable p={3} rounded={2} flexDir={'row'} alignItems={'center'} gap={8} justifyContent={'center'} {...Object.assign(Object.assign(Object.assign(Object.assign({}, props_default), variantStyles[variant]), sizeStyle[props === null || props === void 0 ? void 0 : props.size]), props)} _pressed={Object.assign(Object.assign(Object.assign({}, props_default === null || props_default === void 0 ? void 0 : props_default._pressed), (_e = variantStyles[variant]) === null || _e === void 0 ? void 0 : _e._pressed), props._pressed)} _text={Object.assign(Object.assign(Object.assign(Object.assign({ textAlign: 'center' }, props_default === null || props_default === void 0 ? void 0 : props_default._text), (_f = variantStyles[variant]) === null || _f === void 0 ? void 0 : _f._text), (_g = sizeStyle[props === null || props === void 0 ? void 0 : props.size]) === null || _g === void 0 ? void 0 : _g._text), props._text)}>
+    return (<Pressable_1.Pressable p={2.5} rounded={2} flexDir={'row'} alignItems={'center'} gap={8} justifyContent={'center'} {...Object.assign(Object.assign(Object.assign(Object.assign({}, props_default), variantStyles[variant]), sizeStyle[props === null || props === void 0 ? void 0 : props.size]), props)} _pressed={Object.assign(Object.assign(Object.assign({}, props_default === null || props_default === void 0 ? void 0 : props_default._pressed), (_e = variantStyles[variant]) === null || _e === void 0 ? void 0 : _e._pressed), props._pressed)} _text={Object.assign(Object.assign(Object.assign(Object.assign({ textAlign: 'center' }, props_default === null || props_default === void 0 ? void 0 : props_default._text), (_f = variantStyles[variant]) === null || _f === void 0 ? void 0 : _f._text), (_g = sizeStyle[props === null || props === void 0 ? void 0 : props.size]) === null || _g === void 0 ? void 0 : _g._text), props._text)}>
             {(_a) => {
             var _b, _c, _d, _e, _f, _g;
             var { pressed } = _a, e = __rest(_a, ["pressed"]);

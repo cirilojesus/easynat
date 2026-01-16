@@ -39,6 +39,7 @@ export type EAMenuItemType = BSButtonProps & {
 export type MenuRef = {
     open: () => void;
     close: () => void;
+    toggle: () => void;
     isOpen: () => boolean;
 };
 
@@ -51,7 +52,7 @@ export type BSMenuProps<T = unknown> = ViewProps & BSDefaultProps & {
     _android?: BSMenuProps<T>;
     _web?: BSMenuProps<T>;
     children?: React.ReactElement<any> | React.ReactElement<any>[];
-    _contentStyle?: BSFlatListProps<T>;
+    _contentStyle?: Partial<BSFlatListProps<T>>;
     data?: T[];
     renderItem?: ListRenderItem<T>,
     backdrop?: boolean | 'static';
@@ -151,6 +152,7 @@ function InternalMenu<T>(
         if (show) {
             clearInterval(awaitConfigMenu)
             awaitConfigMenu = setTimeout(() => animate(1), 10)
+            animate(1)
         }
     }, [show, menuSize])
 
@@ -160,6 +162,9 @@ function InternalMenu<T>(
         open,
         close,
         isOpen: () => show,
+        toggle: () => {
+            show ? close() : open()
+        }
     }));
 
 

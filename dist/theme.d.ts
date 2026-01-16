@@ -27,7 +27,7 @@ export declare const COLORS_THEME: {
     'danger.100': string;
     'danger.200': string;
 };
-export type ALL_PROPS = COMPONENTS.BSTextProps & COMPONENTS.BSTextInputProps & COMPONENTS.BSBoxProps & COMPONENTS.BSFlatListProps<any> & COMPONENTS.BSPressableProps;
+export type ALL_PROPS = COMPONENTS.BSTextProps & COMPONENTS.BSTextInputProps & COMPONENTS.BSBoxProps & COMPONENTS.BSFlatListProps<any> & COMPONENTS.BSPressableProps & COMPONENTS.BSModalProps;
 export type VARIANTS_TYPE = Record<string, Partial<ALL_PROPS>>;
 export declare const defaultTheme: {
     colors?: Partial<Record<keyof typeof COLORS_THEME | (string & {}), string>>;

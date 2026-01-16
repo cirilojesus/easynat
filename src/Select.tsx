@@ -122,8 +122,8 @@ export const Select: React.FC<BSSelectProps> & { Item: React.FC<BSSelectItemProp
             </Pressable>
             <Modal
                 ref={modal}
-                header={{ children: <Box h={3.5} mx="auto" w={60} bg="dark" />, py: 1 }}
-                _contentStyle={{ ..._menu, h: "auto", maxH: "90%", pt: 7, roundedTop: 40 }}
+                header={{ children: <Box height={3.5} mx="auto" w={60} bg="dark" />, py: 2 }}
+                _contentStyle={{ ..._menu, h: "auto", maxH: "90%", roundedTop: 40 }}
                 buttonClose={false}
             >
                 <FlatList

@@ -21,6 +21,7 @@ export type BSModalProps = BSKeyboardAvoidingProps & {
     _web?: BSModalProps;
     _backdrop?: PressableProps & BSDefaultProps;
     static?: boolean;
+    variant?: (string & {});
 };
 export type ModalComponent = (props: BSModalProps & {
     ref?: React.Ref<BSModalRef>;

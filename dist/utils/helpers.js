@@ -7,7 +7,7 @@ exports.getDeviceLocaleInfo = exports.getDeviceLanguage = exports.renderChild = 
 const Text_1 = require("../Text");
 const react_1 = __importDefault(require("react"));
 const calcSize = (size) => {
-    const sizes = [1, 2, 3, 4, 5, 6];
+    const sizes = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6];
     if (typeof size == "number" && sizes.includes(size))
         return size * 4;
     return size;

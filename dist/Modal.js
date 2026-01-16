@@ -49,9 +49,10 @@ const useAndroidKeyboardPadding_1 = require("./utils/useAndroidKeyboardPadding")
 const AnimatedPressable = react_native_1.Animated.createAnimatedComponent(react_native_1.Pressable);
 /* ---------------- INTERNAL COMPONENT ---------------- */
 function InternalModal(_a, ref) {
-    var _b, _c;
+    var _b, _c, _d, _e, _f, _g, _h, _j, _k;
     var { buttonClose = true } = _a, props = __rest(_a, ["buttonClose"]);
     const { theme } = (0, theme_provider_1.useTheme)();
+    const props_default = ((_b = theme === null || theme === void 0 ? void 0 : theme.components) === null || _b === void 0 ? void 0 : _b.Modal) || {};
     const [visible, setVisible] = (0, react_1.useState)(false);
     const slideAnim = (0, react_1.useRef)(new react_native_1.Animated.Value(0)).current;
     const modalContentRef = (0, react_1.useRef)(null);
@@ -66,7 +67,7 @@ function InternalModal(_a, ref) {
         });
         return () => sub.remove();
     }, [visible]);
-    const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign({}, props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
+    const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, props_default), (_c = props_default === null || props_default === void 0 ? void 0 : props_default.variants) === null || _c === void 0 ? void 0 : _c[props === null || props === void 0 ? void 0 : props.variant]), props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
     const contentStyle = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)((combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._contentStyle) || {}, theme);
     const backdropStyle = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)((combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._backdrop) || {}, theme);
     const animate = (toValue, callBack) => {
@@ -79,7 +80,7 @@ function InternalModal(_a, ref) {
     };
     const open = () => {
         console.log(visible);
-        setVisible(true);
+        setVisible(!visible);
         animate(1);
     };
     const close = () => animate(0, () => setVisible(false));
@@ -95,7 +96,7 @@ function InternalModal(_a, ref) {
                 <AnimatedPressable style={[
             { backgroundColor: "#0003" },
             react_native_1.StyleSheet.absoluteFill,
-            (_b = combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._backdrop) === null || _b === void 0 ? void 0 : _b.style,
+            (_d = combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._backdrop) === null || _d === void 0 ? void 0 : _d.style,
             ...backdropStyle,
             {
                 opacity: slideAnim.interpolate({
@@ -125,14 +126,14 @@ function InternalModal(_a, ref) {
                     },
                 ],
             },
-            (_c = combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._contentStyle) === null || _c === void 0 ? void 0 : _c.style,
+            (_e = combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._contentStyle) === null || _e === void 0 ? void 0 : _e.style,
             ...contentStyle,
         ]}>
-                        {combinedProps.header && (<Box_1.Box px={5} py={5} borderBottomWidth={1} borderBottomColor="light.100" {...combinedProps.header}/>)}
-
-                        {buttonClose === true ? (<Button_1.Button variant="ghost" position="absolute" zIndex={100} rounded={50} right={0} m={2} icon={<Icon_1.Icon name="close" as="AntDesign"/>} onPress={close} {...combinedProps._buttonClose}/>) : (buttonClose &&
-            react_1.default.cloneElement(combinedProps.buttonClose, Object.assign({ onPress: close }, combinedProps._buttonClose)))}
-
+                        <Box_1.Box zIndex={100} flexDir={'row'} gap={2} {...Object.assign(Object.assign({}, (_g = (_f = props_default === null || props_default === void 0 ? void 0 : props_default.variants) === null || _f === void 0 ? void 0 : _f[props === null || props === void 0 ? void 0 : props.variant]) === null || _g === void 0 ? void 0 : _g.header), combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps.header)}>
+                            {(_h = combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps.header) === null || _h === void 0 ? void 0 : _h.children}
+                            {buttonClose === true ? (<Button_1.Button variant="ghost" position="absolute" rounded={50} right={0} m={2} icon={<Icon_1.Icon name="close" as="AntDesign"/>} onPress={handleRequestClose} {...Object.assign(Object.assign({}, (_k = (_j = props_default === null || props_default === void 0 ? void 0 : props_default.variants) === null || _j === void 0 ? void 0 : _j[props === null || props === void 0 ? void 0 : props.variant]) === null || _k === void 0 ? void 0 : _k._buttonClose), combinedProps._buttonClose)}/>) : (buttonClose &&
+            react_1.default.cloneElement(combinedProps.buttonClose, Object.assign({ onPress: handleRequestClose }, combinedProps._buttonClose)))}
+                        </Box_1.Box>
                         {combinedProps.children}
                     </react_native_1.Animated.View>
                 </KeyboardAvoidingView_1.KeyboardAvoidingView>

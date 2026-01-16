@@ -25,7 +25,7 @@ const DEFAULT_PROPS = (props, theme) => {
     // shadows & misc
     shadow, flexDir, opacity, pointerEvents, 
     // size
-    w, h, maxW, maxH, minW, minH } = props, others = __rest(props, ["p", "m", "px", "py", "pt", "pb", "pl", "pr", "mx", "my", "mt", "mb", "ml", "mr", "bg", "rounded", "roundedTop", "roundedBottom", "roundedLeft", "roundedRight", "roundedX", "roundedY", "borderWidth", "borderColor", "borderTopWidth", "borderBottomWidth", "borderLeftWidth", "borderRightWidth", "borderTopColor", "borderBottomColor", "borderLeftColor", "borderRightColor", "borderXWidth", "borderYWidth", "borderXColor", "borderYColor", "shadow", "flexDir", "opacity", "pointerEvents", "w", "h", "maxW", "maxH", "minW", "minH"]);
+    w, h, maxW, maxH, minW, minH, gap } = props, others = __rest(props, ["p", "m", "px", "py", "pt", "pb", "pl", "pr", "mx", "my", "mt", "mb", "ml", "mr", "bg", "rounded", "roundedTop", "roundedBottom", "roundedLeft", "roundedRight", "roundedX", "roundedY", "borderWidth", "borderColor", "borderTopWidth", "borderBottomWidth", "borderLeftWidth", "borderRightWidth", "borderTopColor", "borderBottomColor", "borderLeftColor", "borderRightColor", "borderXWidth", "borderYWidth", "borderXColor", "borderYColor", "shadow", "flexDir", "opacity", "pointerEvents", "w", "h", "maxW", "maxH", "minW", "minH", "gap"]);
     return [
         // Padding
         p !== undefined && { padding: (0, helpers_1.calcSize)(p) },
@@ -108,6 +108,7 @@ const DEFAULT_PROPS = (props, theme) => {
         flexDir !== undefined && { flexDirection: flexDir },
         pointerEvents !== undefined && { pointerEvents },
         opacity !== undefined && { opacity },
+        gap !== undefined && { gap: (0, helpers_1.calcSize)(gap) },
         others
     ];
 };

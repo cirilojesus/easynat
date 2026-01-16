@@ -6,7 +6,7 @@ import { cloneElement } from "react";
 import { IconProps } from "./Icon";
 import { renderChild } from "./utils/helpers";
 
-export type BSButtonProps = BSPressableProps & BSDefaultProps & {
+export type BSButtonProps = Omit<BSPressableProps, 'variant'> & BSDefaultProps & {
     variant?: VARIANT_BUTTON | (string & {});
     colorScheme?: COLOR_SCHEME;
     _ios?: BSButtonProps;
@@ -42,22 +42,52 @@ export const Button: React.FC<BSButtonProps> = ({ colorScheme = "primary", varia
             borderColor: theme.colors[colorScheme + '.100'],
             _pressed: {
                 bg: theme.colors[colorScheme + '.50']
+            },
+            _text: {
+                color: theme.colors[colorScheme + '.100']
+            },
+            _icon: {
+                color: theme.colors[colorScheme + '.100']
             }
         },
         ghost: {
             _pressed: {
                 bg: theme.colors[colorScheme + '.50']
+            },
+            _text: {
+                color: theme.colors[colorScheme + '.100']
+            },
+            _icon: {
+                color: theme.colors[colorScheme + '.100']
             }
         },
         link: {
             _pressed: {
                 _text: {
-                    color: theme.colors[colorScheme + '.100'],
+                    color: theme.colors[colorScheme + '.200'],
                     textDecorationLine: 'underline'
                 },
                 _icon: {
-                    color: theme.colors[colorScheme + '.100'],
+                    color: theme.colors[colorScheme + '.200'],
                 }
+            },
+            _text: {
+                color: theme.colors[colorScheme + '.100']
+            },
+            _icon: {
+                color: theme.colors[colorScheme + '.100']
+            }
+        },
+        subtle: {
+            bg: theme.colors[colorScheme + '.50'],
+            _pressed: {
+                bg: theme.colors[colorScheme + '.100']
+            },
+            _text: {
+                color: theme.colors[colorScheme + '.200']
+            },
+            _icon: {
+                color: theme.colors[colorScheme + '.200']
             }
         },
         ...theme?.components?.Button?.variants
@@ -65,26 +95,30 @@ export const Button: React.FC<BSButtonProps> = ({ colorScheme = "primary", varia
 
     const sizeStyle: Record<BSButtonProps['size'], BSButtonProps> = {
         sm: {
-            p: 2,
-            _text: { fontSize: 12 }
+            p: 1.5,
+            _text: { fontSize: 12 },
+            _icon: { size: 14 }
         },
         md: {
-            p: 3,
-            _text: { fontSize: 14 }
+            p: 2.5,
+            _text: { fontSize: 14 },
+            _icon: { size: 16 }
         },
         lg: {
-            p: 14,
-            _text: { fontSize: 16 }
+            p: 3.5,
+            _text: { fontSize: 16 },
+            _icon: { size: 18 }
         },
         xl: {
-            p: 4,
-            _text: { fontSize: 18 }
+            p: 4.5,
+            _text: { fontSize: 18 },
+            _icon: { size: 20 }
         },
     }
 
     return (
         <Pressable
-            p={3}
+            p={2.5}
             rounded={2}
             flexDir={'row'}
             alignItems={'center'}
