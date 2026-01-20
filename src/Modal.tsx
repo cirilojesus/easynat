@@ -96,16 +96,18 @@ function InternalModal(
         }).start(({ finished }) => finished && callBack?.());
     };
 
-    const open = () => {
+    const open = useCallback(() => {
         console.log(visible)
-        if (visible) setVisible(false)
-        setVisible(e => !e);
+        setVisible(true);
         animate(1);
-    };
+    }, []);
 
-    const close = () => animate(0, () => setVisible(false));
+    const close = useCallback(() => {
+        animate(0)
+        setTimeout(() => setVisible(false), 250);
+    }, []);
 
-    useImperativeHandle(ref, () => ({ open, close }));
+    useImperativeHandle(ref, () => ({ open, close }), [close, open]);
 
     const handleRequestClose = () => {
         combinedProps.onClose?.();

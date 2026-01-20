@@ -77,15 +77,16 @@ function InternalModal(_a, ref) {
             useNativeDriver: true,
         }).start(({ finished }) => finished && (callBack === null || callBack === void 0 ? void 0 : callBack()));
     };
-    const open = () => {
+    const open = (0, react_1.useCallback)(() => {
         console.log(visible);
-        if (visible)
-            setVisible(false);
-        setVisible(e => !e);
+        setVisible(true);
         animate(1);
-    };
-    const close = () => animate(0, () => setVisible(false));
-    (0, react_1.useImperativeHandle)(ref, () => ({ open, close }));
+    }, []);
+    const close = (0, react_1.useCallback)(() => {
+        animate(0);
+        setTimeout(() => setVisible(false), 250);
+    }, []);
+    (0, react_1.useImperativeHandle)(ref, () => ({ open, close }), [close, open]);
     const handleRequestClose = () => {
         var _a;
         (_a = combinedProps.onClose) === null || _a === void 0 ? void 0 : _a.call(combinedProps);

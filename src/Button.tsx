@@ -46,7 +46,6 @@ export const Button: React.FC<BSButtonProps> = ({ colorScheme = "primary", varia
             _pressed: {
                 bg: theme.colors[colorScheme + '.50']
             },
-
             _text: {
                 color: theme.colors[colorScheme + '.100']
             },

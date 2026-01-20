@@ -328,7 +328,7 @@ export function DatePicker({
                     ]}
                     {..._label}
                 >
-                    {label} {isRequired && <Text color={'danger.100'}>*</Text>}
+                    {label}{isRequired && <Text color={'danger.100'}> *</Text>}
                 </AnimatedText>
             }
             <Pressable
@@ -351,15 +351,15 @@ export function DatePicker({
                 {icon === true ? <Icon name="calendar" as={'Feather'} color={'dark.50'} {..._icon} /> : icon}
             </Pressable>
 
-            <Modal ref={modal} _contentStyle={{ h: "auto", roundedTop: 40 }}>
+            <Modal ref={modal} _contentStyle={{ h: "auto", roundedTop: 40 }} buttonClose={false}>
 
                 {(type == 'calendar' || type == 'datetime' || type == 'date-range') &&
                     <>
                         <Box flexDir="row" p={3}>
                             <Stepper
                                 value={year!}
-                                iconLeft={<Icon name="arrowleft" as="AntDesign" />}
-                                iconRight={<Icon name="arrowright" as="AntDesign" />}
+                                iconLeft={<Icon name="arrow-left" as="Feather" />}
+                                iconRight={<Icon name="arrow-right" as="Feather" />}
                                 onChange={v => setPart("temp", { ...state.temp, year: v })}
                                 format={v => new Date(v, 0).toLocaleString(_years?.locale || locale, {
                                     year: _years?.config || 'numeric',
@@ -370,8 +370,8 @@ export function DatePicker({
                                 value={month!}
                                 min={0}
                                 max={11}
-                                iconLeft={<Icon name="arrowleft" as="AntDesign" />}
-                                iconRight={<Icon name="arrowright" as="AntDesign" />}
+                                iconLeft={<Icon name="arrow-left" as="Feather" />}
+                                iconRight={<Icon name="arrow-right" as="Feather" />}
                                 onChange={v => setPart("temp", { ...state.temp, month: v })}
                                 format={v =>
                                     new Date(0, v).toLocaleString(_months?.locale || locale, {

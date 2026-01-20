@@ -86,16 +86,19 @@ function InternalMenu(_a, ref) {
         },
         ...styles,
     ]);
-    const animate = (toValue, callBack) => {
+    const animate = (0, react_1.useCallback)((toValue, callBack) => {
         react_native_1.Animated.timing(animation, {
             toValue,
             duration: 150,
             useNativeDriver: true,
             delay: 50
         }).start(({ finished }) => finished && (callBack === null || callBack === void 0 ? void 0 : callBack()));
-    };
-    const open = () => setShow(true);
-    const close = () => animate(0, () => setShow(false));
+    }, []);
+    const open = (0, react_1.useCallback)(() => {
+        setShow(true);
+        setTimeout(() => animate(1), 50);
+    }, []);
+    const close = (0, react_1.useCallback)(() => animate(0, () => setShow(false)), []);
     (0, react_1.useImperativeHandle)(ref, () => ({
         open,
         close,
@@ -103,7 +106,7 @@ function InternalMenu(_a, ref) {
         toggle: () => {
             show ? close() : open();
         }
-    }));
+    }), [open, close]);
     const renderItemDefault = ({ item }) => {
         var _a, _b;
         return ((((_a = item === null || item === void 0 ? void 0 : item.type) === null || _a === void 0 ? void 0 : _a.name) == 'MenuItem' || ((_b = item === null || item === void 0 ? void 0 : item.type) === null || _b === void 0 ? void 0 : _b.name) == 'SearchInputItem') ?
@@ -128,7 +131,6 @@ function InternalMenu(_a, ref) {
                 show ? close() : open();
             },
         })}
-
             {show && (<react_native_root_siblings_1.RootSiblingPortal>
                     <react_native_1.View style={react_native_1.StyleSheet.absoluteFill} pointerEvents={"box-none"}>
                         {combinedProps.backdrop && <Pressable_1.Pressable onPress={() => combinedProps.backdrop != 'static' && close()} flex={1}/>}
@@ -136,7 +138,6 @@ function InternalMenu(_a, ref) {
                 const { width, height } = e.nativeEvent.layout;
                 if (width != menuSize.w || Math.floor(height) != Math.floor(menuSize.h)) {
                     setMenuSize({ w: width, h: height });
-                    animate(1);
                 }
             }} style={[
                 baseStyle,

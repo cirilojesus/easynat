@@ -135,18 +135,21 @@ function InternalMenu<T>(
         ...styles,
     ]);
 
-    const animate = (toValue: 0 | 1, callBack?: () => void) => {
+    const animate = useCallback((toValue: 0 | 1, callBack?: () => void) => {
         Animated.timing(animation, {
             toValue,
             duration: 150,
             useNativeDriver: true,
             delay: 50
         }).start(({ finished }) => finished && callBack?.());
-    };
+    }, []);
 
-    const open = () => setShow(true)
+    const open = useCallback(() => {
+        setShow(true)
+        setTimeout(() => animate(1), 50);
+    }, [])
 
-    const close = () => animate(0, () => setShow(false));
+    const close = useCallback(() => animate(0, () => setShow(false)), []);
 
     useImperativeHandle(ref, () => ({
         open,
@@ -155,7 +158,7 @@ function InternalMenu<T>(
         toggle: () => {
             show ? close() : open()
         }
-    }));
+    }), [open, close]);
 
     const renderItemDefault = ({ item }: ListRenderItemInfo<ReactElement<EAMenuItemType>>) => (
         ((item?.type as any)?.name == 'MenuItem' || (item?.type as any)?.name == 'SearchInputItem') ?
@@ -188,7 +191,6 @@ function InternalMenu<T>(
                     show ? close() : open();
                 },
             })}
-
             {show && (
                 <RootSiblingPortal>
                     <View style={StyleSheet.absoluteFill} pointerEvents={"box-none"}>
@@ -198,7 +200,6 @@ function InternalMenu<T>(
                                 const { width, height } = e.nativeEvent.layout;
                                 if (width != menuSize.w || Math.floor(height) != Math.floor(menuSize.h)) {
                                     setMenuSize({ w: width, h: height })
-                                    animate(1)
                                 }
                             }}
                             style={[

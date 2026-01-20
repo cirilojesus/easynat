@@ -1,4 +1,4 @@
-/// <reference types="react" />
+import React from "react";
 import { BSTextProps } from "./Text";
 export type LabelType = BSTextProps & {
     isFloat?: boolean;
@@ -7,4 +7,6 @@ export type LabelType = BSTextProps & {
 export type LabelRef = {
     animate: (value: boolean) => void;
 };
-export declare const Label: import("react").ForwardRefExoticComponent<Omit<any, "ref"> & import("react").RefAttributes<LabelRef>>;
+type LabelComponent = React.ForwardRefExoticComponent<LabelType & React.RefAttributes<LabelRef>>;
+export declare const Label: LabelComponent;
+export {};

@@ -179,7 +179,7 @@ function DatePicker(_a) {
                         } :
                         { marginBottom: 4 }),
                 ]} {..._label}>
-                    {label} {isRequired && <Text_1.Text color={'danger.100'}>*</Text_1.Text>}
+                    {label}{isRequired && <Text_1.Text color={'danger.100'}> *</Text_1.Text>}
                 </AnimatedText>}
             <Pressable_1.Pressable _pressed={{ opacity: 0.7 }} borderWidth={1} borderColor="light.100" rounded={1} py={2} px={3} flexDir="row" justifyContent={'space-between'} alignItems="center" {...props} onPress={e => {
             var _a;
@@ -190,15 +190,15 @@ function DatePicker(_a) {
                 {icon === true ? <Icon_1.Icon name="calendar" as={'Feather'} color={'dark.50'} {..._icon}/> : icon}
             </Pressable_1.Pressable>
 
-            <Modal_1.Modal ref={modal} _contentStyle={{ h: "auto", roundedTop: 40 }}>
+            <Modal_1.Modal ref={modal} _contentStyle={{ h: "auto", roundedTop: 40 }} buttonClose={false}>
 
                 {(type == 'calendar' || type == 'datetime' || type == 'date-range') &&
             <>
                         <Box_1.Box flexDir="row" p={3}>
-                            <Stepper value={year} iconLeft={<Icon_1.Icon name="arrowleft" as="AntDesign"/>} iconRight={<Icon_1.Icon name="arrowright" as="AntDesign"/>} onChange={v => setPart("temp", Object.assign(Object.assign({}, state.temp), { year: v }))} format={v => new Date(v, 0).toLocaleString((_years === null || _years === void 0 ? void 0 : _years.locale) || locale, {
+                            <Stepper value={year} iconLeft={<Icon_1.Icon name="arrow-left" as="Feather"/>} iconRight={<Icon_1.Icon name="arrow-right" as="Feather"/>} onChange={v => setPart("temp", Object.assign(Object.assign({}, state.temp), { year: v }))} format={v => new Date(v, 0).toLocaleString((_years === null || _years === void 0 ? void 0 : _years.locale) || locale, {
                     year: (_years === null || _years === void 0 ? void 0 : _years.config) || 'numeric',
                 })} colorScheme={colorScheme}/>
-                            <Stepper value={month} min={0} max={11} iconLeft={<Icon_1.Icon name="arrowleft" as="AntDesign"/>} iconRight={<Icon_1.Icon name="arrowright" as="AntDesign"/>} onChange={v => setPart("temp", Object.assign(Object.assign({}, state.temp), { month: v }))} format={v => new Date(0, v).toLocaleString((_months === null || _months === void 0 ? void 0 : _months.locale) || locale, {
+                            <Stepper value={month} min={0} max={11} iconLeft={<Icon_1.Icon name="arrow-left" as="Feather"/>} iconRight={<Icon_1.Icon name="arrow-right" as="Feather"/>} onChange={v => setPart("temp", Object.assign(Object.assign({}, state.temp), { month: v }))} format={v => new Date(0, v).toLocaleString((_months === null || _months === void 0 ? void 0 : _months.locale) || locale, {
                     month: (_months === null || _months === void 0 ? void 0 : _months.config) || "long",
                 })} colorScheme={colorScheme}/>
                         </Box_1.Box>
