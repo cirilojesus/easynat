@@ -15,14 +15,13 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-var _FormGroupRef_listeners;
+var _FormGroupRef_listeners, _FormGroupRef_snapshots;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FormListener = exports.Control = exports.FormGroupRef = void 0;
+exports.Control = exports.ListenerForm = exports.useFormGroup = exports.useFormControl = exports.FormGroupRef = void 0;
 const react_1 = require("react");
 const _1 = require(".");
 const DatePicker_1 = require("./DatePicker");
 const SearchInput_1 = require("./SearchInput");
-;
 const ControlItem = () => null;
 const emailValidator = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const validateField = (form, formControl, rules) => {
@@ -49,18 +48,20 @@ class FormGroupRef {
         this.value = {};
         this.initValue = {};
         _FormGroupRef_listeners.set(this, {});
+        _FormGroupRef_snapshots.set(this, {});
+        this.subscribe = (control) => (callback) => {
+            if (!__classPrivateFieldGet(this, _FormGroupRef_listeners, "f")[control])
+                __classPrivateFieldGet(this, _FormGroupRef_listeners, "f")[control] = new Set();
+            __classPrivateFieldGet(this, _FormGroupRef_listeners, "f")[control].add(callback);
+            return () => __classPrivateFieldGet(this, _FormGroupRef_listeners, "f")[control].delete(callback);
+        };
+        this.getSnapshot = (control) => () => {
+            return __classPrivateFieldGet(this, _FormGroupRef_snapshots, "f")[control];
+        };
         Object.keys(form).map(x => {
             this.createControl(x, form[x]);
         });
-    }
-    subscribe(control, callback) {
-        if (!__classPrivateFieldGet(this, _FormGroupRef_listeners, "f")[control])
-            __classPrivateFieldGet(this, _FormGroupRef_listeners, "f")[control] = new Set();
-        __classPrivateFieldGet(this, _FormGroupRef_listeners, "f")[control].add(callback);
-        callback(control == 'FORM_REF' ? this : this.controls[control]);
-        return () => {
-            __classPrivateFieldGet(this, _FormGroupRef_listeners, "f")[control].delete(callback);
-        };
+        __classPrivateFieldGet(this, _FormGroupRef_snapshots, "f")['FORM_REF'] = this;
     }
     setValue(value, validate = false) {
         Object.assign(this.value, value);
@@ -136,22 +137,39 @@ class FormGroupRef {
             validation: props[1]
         };
         this.initValue[control] = props[0];
+        __classPrivateFieldGet(this, _FormGroupRef_snapshots, "f")[control] = Object.assign({}, this.controls[control]);
     }
     notify(control) {
         var _a;
-        (_a = __classPrivateFieldGet(this, _FormGroupRef_listeners, "f")[control]) === null || _a === void 0 ? void 0 : _a.forEach((cb) => cb(control == 'FORM_REF' ? this : this.controls[control]));
+        if (control === 'FORM_REF') {
+            __classPrivateFieldGet(this, _FormGroupRef_snapshots, "f")['FORM_REF'] = Object.assign({}, this);
+        }
+        else {
+            __classPrivateFieldGet(this, _FormGroupRef_snapshots, "f")[control] = Object.assign({}, this.controls[control]);
+        }
+        (_a = __classPrivateFieldGet(this, _FormGroupRef_listeners, "f")[control]) === null || _a === void 0 ? void 0 : _a.forEach((cb) => cb());
     }
 }
 exports.FormGroupRef = FormGroupRef;
-_FormGroupRef_listeners = new WeakMap();
+_FormGroupRef_listeners = new WeakMap(), _FormGroupRef_snapshots = new WeakMap();
+const useFormControl = (formGroup, formControl) => {
+    return (0, react_1.useSyncExternalStore)(formGroup.subscribe(formControl), formGroup.getSnapshot(formControl));
+};
+exports.useFormControl = useFormControl;
+const useFormGroup = (formGroup) => {
+    return (0, react_1.useSyncExternalStore)(formGroup.subscribe('FORM_REF'), formGroup.getSnapshot('FORM_REF'));
+};
+exports.useFormGroup = useFormGroup;
+const ListenerForm = ({ formGroup, formControl, children, }) => {
+    const value = formControl
+        ? (0, exports.useFormControl)(formGroup, formControl)
+        : (0, exports.useFormGroup)(formGroup);
+    return children(value);
+};
+exports.ListenerForm = ListenerForm;
 const Control = (_a) => {
     var { formGroup, formControl } = _a, props = __rest(_a, ["formGroup", "formControl"]);
-    const [control, setControl] = (0, react_1.useState)(formGroup.controls[formControl]);
-    (0, react_1.useEffect)(() => {
-        return formGroup.subscribe(formControl, e => {
-            setControl(Object.assign({}, e));
-        });
-    }, []);
+    const control = (0, exports.useFormControl)(formGroup, formControl);
     return (<_1.Box {...props._box}>
             {props.isSelect ?
             <_1.Select defaultValue={control.value} onChange={e => control.setValue(e)} borderColor={control.error ? 'danger.100' : 'light.100'} {...props}/>
@@ -173,14 +191,4 @@ const Control = (_a) => {
         </_1.Box>);
 };
 exports.Control = Control;
-const FormListener = ({ formGroup, children, formControl = "FORM_REF", }) => {
-    const [form, setForm] = (0, react_1.useState)(formGroup);
-    (0, react_1.useEffect)(() => {
-        return formGroup.subscribe(formControl, e => {
-            setForm(Object.assign({}, e));
-        });
-    }, []);
-    return children(form);
-};
-exports.FormListener = FormListener;
 exports.Control.Item = ControlItem;

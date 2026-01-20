@@ -35,6 +35,9 @@ export const Button: React.FC<BSButtonProps> = ({ colorScheme = "primary", varia
             },
             _icon: {
                 color: theme.colors['white']
+            },
+            _iconRight: {
+                color: theme.colors['white']
             }
         },
         outline: {
@@ -42,12 +45,6 @@ export const Button: React.FC<BSButtonProps> = ({ colorScheme = "primary", varia
             borderColor: theme.colors[colorScheme + '.100'],
             _pressed: {
                 bg: theme.colors[colorScheme + '.50']
-            },
-            _text: {
-                color: theme.colors[colorScheme + '.100']
-            },
-            _icon: {
-                color: theme.colors[colorScheme + '.100']
             }
         },
         ghost: {
@@ -59,6 +56,9 @@ export const Button: React.FC<BSButtonProps> = ({ colorScheme = "primary", varia
             },
             _icon: {
                 color: theme.colors[colorScheme + '.100']
+            },
+            _iconRight: {
+                color: theme.colors[colorScheme + '.100']
             }
         },
         link: {
@@ -69,12 +69,18 @@ export const Button: React.FC<BSButtonProps> = ({ colorScheme = "primary", varia
                 },
                 _icon: {
                     color: theme.colors[colorScheme + '.200'],
+                },
+                _iconRight: {
+                    color: theme.colors[colorScheme + '.200'],
                 }
             },
             _text: {
                 color: theme.colors[colorScheme + '.100']
             },
             _icon: {
+                color: theme.colors[colorScheme + '.100']
+            },
+            _iconRight: {
                 color: theme.colors[colorScheme + '.100']
             }
         },
@@ -87,6 +93,9 @@ export const Button: React.FC<BSButtonProps> = ({ colorScheme = "primary", varia
                 color: theme.colors[colorScheme + '.200']
             },
             _icon: {
+                color: theme.colors[colorScheme + '.200']
+            },
+            _iconRight: {
                 color: theme.colors[colorScheme + '.200']
             }
         },

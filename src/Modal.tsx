@@ -5,6 +5,7 @@ import React, {
     useRef,
     useState,
     useEffect,
+    useCallback,
 } from "react";
 import {
     Animated,
@@ -63,8 +64,6 @@ function InternalModal(
     const modalContentRef = useRef(null);
     useAndroidKeyboardPadding(modalContentRef);
 
-    useImperativeHandle(ref, () => ({ open, close }));
-
     useEffect(() => {
         if (!visible) return;
 
@@ -88,22 +87,27 @@ function InternalModal(
     const contentStyle = DEFAULT_PROPS(combinedProps?._contentStyle || {}, theme);
     const backdropStyle = DEFAULT_PROPS(combinedProps?._backdrop || {}, theme);
 
-    const animate = (toValue: 0 | 1, callBack?: () => void) => {
+    const animate = useCallback((toValue: 0 | 1, callBack?: () => void) => {
         Animated.timing(slideAnim, {
             toValue,
             duration: toValue ? 250 : 200,
             easing: toValue ? Easing.out(Easing.ease) : Easing.in(Easing.ease),
             useNativeDriver: true,
         }).start(({ finished }) => finished && callBack?.());
-    };
+    }, [slideAnim]);
 
-    const open = () => {
-        console.log(visible)
-        setVisible(!visible);
+
+    const open = useCallback(() => {
+        setVisible(true);
         animate(1);
-    };
+    }, [animate]);
 
-    const close = () => animate(0, () => setVisible(false));
+    const close = useCallback(() => {
+        animate(0, () => setVisible(false));
+    }, [animate]);
+
+
+    useImperativeHandle(ref, () => ({ open, close }), [open, close]);
 
     const handleRequestClose = () => {
         combinedProps.onClose?.();

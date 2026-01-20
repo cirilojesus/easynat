@@ -34,3 +34,4 @@ export * from './SearchInput';
 export * from './Carousel';
 export * from './Stagger';
 export * from './Skeleton';
+export * from './Label';

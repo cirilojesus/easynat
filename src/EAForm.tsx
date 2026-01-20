@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useSyncExternalStore } from "react";
 import { Box, BSBoxProps, BSTextInputProps, InputText, Select, Text, BSSelectProps, CheckBox, EACheckBoxProps, Radio, Switch, EASwitchProps } from ".";
 import { DatePicker, DatePickerType } from "./DatePicker";
 import { SearchInput, SearchInputModel } from "./SearchInput";
@@ -11,6 +11,8 @@ export interface InputValidation {
     custom?: (controls: FormGroupRef<any>['controls']) => any;
     pattern?: RegExp
 }
+
+export type FormSchema = Record<string, [any, InputValidation?]>;
 
 type ControlType = {
     value: any,
@@ -28,7 +30,7 @@ type CombinedProps = Omit<Partial<BSSelectProps>, '_android' | '_ios' | '_web'> 
         _web?: CombinedProps;
     } & DatePickerType & Partial<SearchInputModel>
 
-export interface InputFormParams<T extends Record<string, [any, InputValidation?]>> extends CombinedProps {
+export interface InputFormParams<T extends FormSchema> extends CombinedProps {
     formControl: keyof T;
     formGroup: FormGroupRef<T>;
     _box?: BSBoxProps;
@@ -40,12 +42,6 @@ export interface InputFormParams<T extends Record<string, [any, InputValidation?
     isSearch?: boolean;
 }
 
-interface FormListenerProps<T extends Record<string, [any, InputValidation?]>> {
-    formGroup: FormGroupRef<T>;
-    children: (value: FormGroupRef<T>) => React.ReactNode;
-    formControl?: keyof T | 'FORM_REF'
-};
-
 export type EAFormItemProps = Omit<CombinedProps, 'label' | 'value'> & {
     label: string | number;
     value: string | number;
@@ -56,7 +52,7 @@ const ControlItem: React.FC<EAFormItemProps> = () => null;
 const emailValidator =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-const validateField = <T extends Record<string, [any, InputValidation?]>>(form: FormGroupRef<T>['controls'], formControl: keyof T, rules?: InputValidation) => {
+const validateField = <T extends FormSchema>(form: FormGroupRef<T>['controls'], formControl: keyof T, rules?: InputValidation) => {
     if (rules?.required && !form[formControl].value) return "Campo requerido";
     else if (rules?.email && !emailValidator.test(form[formControl].value)) {
         return "Correo inválido";
@@ -72,25 +68,28 @@ const validateField = <T extends Record<string, [any, InputValidation?]>>(form: 
     return "";
 };
 
-export class FormGroupRef<T extends Record<string, [any, InputValidation?]>> {
+export class FormGroupRef<T extends FormSchema> {
     controls: Record<keyof T, ControlType> = {} as any;
     value: Record<keyof T, any> = {} as any;
     initValue: T = {} as any;
-    #listeners: Record<keyof T, Set<(val: any) => void>> = {} as any;
+    #listeners: Record<keyof T | 'FORM_REF', Set<() => void>> = {} as any;
+    #snapshots: Record<keyof T | 'FORM_REF', any> = {} as any;
 
     constructor(form: T) {
         Object.keys(form).map(x => {
             this.createControl(x, form[x])
         })
+        this.#snapshots['FORM_REF'] = this;
     }
 
-    subscribe(control: keyof T | 'FORM_REF', callback: (val: any) => void) {
+    subscribe = (control: keyof T | 'FORM_REF') => (callback: () => void) => {
         if (!this.#listeners[control]) this.#listeners[control] = new Set();
         this.#listeners[control].add(callback);
-        callback(control == 'FORM_REF' ? this : this.controls[control]);
-        return () => {
-            this.#listeners[control].delete(callback)
-        };
+        return () => this.#listeners[control].delete(callback);
+    }
+
+    getSnapshot = (control: keyof T | 'FORM_REF') => () => {
+        return this.#snapshots[control];
     }
 
     setValue(value: Partial<Record<keyof T, any>>, validate: boolean = false) {
@@ -168,25 +167,59 @@ export class FormGroupRef<T extends Record<string, [any, InputValidation?]>> {
             validation: props[1]
         }
         this.initValue[control] = props[0]
+        this.#snapshots[control] = { ...this.controls[control] }
     }
 
-    private notify(control: keyof T) {
-        this.#listeners[control]?.forEach((cb) => cb(control == 'FORM_REF' ? this : this.controls[control]))
+    private notify(control: keyof T | 'FORM_REF') {
+        if (control === 'FORM_REF') {
+            this.#snapshots['FORM_REF'] = { ...this }
+        } else {
+            this.#snapshots[control] = { ...this.controls[control] }
+        }
+        this.#listeners[control]?.forEach((cb) => cb())
     }
 }
 
-export const Control = <T extends Record<string, [any, InputValidation?]>>({
+export const useFormControl = <T extends FormSchema>(
+    formGroup: FormGroupRef<T>,
+    formControl: keyof T
+): ControlType => {
+    return useSyncExternalStore(
+        formGroup.subscribe(formControl),
+        formGroup.getSnapshot(formControl)
+    );
+}
+
+export const useFormGroup = <T extends FormSchema>(
+    formGroup: FormGroupRef<T>
+): FormGroupRef<T> => {
+    return useSyncExternalStore(
+        formGroup.subscribe('FORM_REF'),
+        formGroup.getSnapshot('FORM_REF')
+    );
+}
+
+export const ListenerForm = <T extends FormSchema>({
+    formGroup,
+    formControl,
+    children,
+}: {
+    formGroup: FormGroupRef<T>;
+    formControl?: keyof T;
+    children: (value: ControlType | FormGroupRef<T>) => React.ReactNode;
+}) => {
+    const value = formControl
+        ? useFormControl(formGroup, formControl)
+        : useFormGroup(formGroup);
+    return children(value as any);
+}
+
+export const Control = <T extends FormSchema>({
     formGroup,
     formControl,
     ...props
 }: InputFormParams<T> & { Item?: React.FC<EAFormItemProps> }) => {
-    const [control, setControl] = useState(formGroup.controls[formControl]);
-
-    useEffect(() => {
-        return formGroup.subscribe(formControl, e => {
-            setControl({ ...e })
-        })
-    }, []);
+    const control = useFormControl(formGroup, formControl);
 
     return (
         <Box {...props._box}>
@@ -226,21 +259,5 @@ export const Control = <T extends Record<string, [any, InputValidation?]>>({
         </Box>
     );
 };
-
-export const FormListener = <T extends Record<string, [any, InputValidation?]>>({
-    formGroup,
-    children,
-    formControl = "FORM_REF",
-}: FormListenerProps<T>) => {
-    const [form, setForm] = useState(formGroup);
-
-    useEffect(() => {
-        return formGroup.subscribe(formControl, e => {
-            setForm({ ...e })
-        })
-    }, []);
-
-    return children(form)
-}
 
 Control.Item = ControlItem

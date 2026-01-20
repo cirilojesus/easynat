@@ -4,7 +4,7 @@ import React, {
     useState,
     forwardRef,
     useImperativeHandle,
-    useEffect,
+    useCallback,
 } from "react";
 import {
     StyleSheet,
@@ -25,7 +25,6 @@ import { RootSiblingPortal } from "react-native-root-siblings";
 import { BSFlatListProps, FlatList } from "./FlatList";
 import { BSButtonProps, Button } from "./Button";
 import { useKeyboardHeight } from "./utils/useKeyboardHeight";
-
 /* ---------------- Types ---------------- */
 export type Placement = "bottom" | "top";
 export type MenuDir = "left" | "right";
@@ -62,8 +61,6 @@ export type BSMenuProps<T = unknown> = ViewProps & BSDefaultProps & {
 const MenuItem: React.FC<EAMenuItemType> = () => null;
 MenuItem.displayName = "MenuItem";
 
-let awaitConfigMenu = null
-
 function InternalMenu<T>(
     {
         trigger,
@@ -97,8 +94,8 @@ function InternalMenu<T>(
         borderWidth: 1,
         borderColor: "light.100",
         bg: "white",
-        py: 3,
-        rounded: 3,
+        py: 2,
+        rounded: 2,
         backdrop: true,
         ...props,
         ...(Platform.OS === "ios" ? props._ios : {}),
@@ -138,35 +135,30 @@ function InternalMenu<T>(
         ...styles,
     ]);
 
-    const animate = (toValue: 0 | 1, callBack?: () => void) => {
+    const animate = useCallback((toValue: 0 | 1, callBack?: () => void) => {
         Animated.timing(animation, {
             toValue,
-            duration: toValue ? 200 : 200,
+            duration: 150,
             useNativeDriver: true,
+            delay: 50
         }).start(({ finished }) => finished && callBack?.());
-    };
+    }, [animation]);
 
-    const open = () => setShow(true)
+    const open = useCallback(() => setShow(true), []);
 
-    useEffect(() => {
-        if (show) {
-            clearInterval(awaitConfigMenu)
-            awaitConfigMenu = setTimeout(() => animate(1), 10)
-            animate(1)
-        }
-    }, [show, menuSize])
+    const close = useCallback(() => {
+        animate(0, () => setShow(false));
+    }, [animate]);
 
-    const close = () => animate(0, () => setShow(false));
+    const isOpen = useCallback(() => show, [show]);
+
+    const toggle = useCallback(() => {
+        show ? close() : open();
+    }, [show, open, close]);
 
     useImperativeHandle(ref, () => ({
-        open,
-        close,
-        isOpen: () => show,
-        toggle: () => {
-            show ? close() : open()
-        }
-    }));
-
+        open, close, toggle, isOpen
+    }), [open, close, toggle, isOpen]);
 
     const renderItemDefault = ({ item }: ListRenderItemInfo<ReactElement<EAMenuItemType>>) => (
         ((item?.type as any)?.name == 'MenuItem' || (item?.type as any)?.name == 'SearchInputItem') ?
@@ -208,6 +200,7 @@ function InternalMenu<T>(
                                 const { width, height } = e.nativeEvent.layout;
                                 if (width != menuSize.w || Math.floor(height) != Math.floor(menuSize.h)) {
                                     setMenuSize({ w: width, h: height })
+                                    animate(1)
                                 }
                             }}
                             style={[
@@ -217,7 +210,7 @@ function InternalMenu<T>(
                                         {
                                             translateY: animation.interpolate({
                                                 inputRange: [0, 1],
-                                                outputRange: [5, 0],
+                                                outputRange: [8, 0],
                                             }),
                                         },
                                     ],
@@ -231,7 +224,6 @@ function InternalMenu<T>(
                                 updateCellsBatchingPeriod={10}
                                 windowSize={10}
                                 nestedScrollEnabled
-                                ItemSeparatorComponent={() => <View style={{ backgroundColor: '#ccc', height: .5 }} />}
                                 keyboardShouldPersistTaps={"handled"}
                                 {...combinedProps._contentStyle as any}
                                 {...dataFlatList}

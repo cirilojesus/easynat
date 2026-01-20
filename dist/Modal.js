@@ -57,7 +57,6 @@ function InternalModal(_a, ref) {
     const slideAnim = (0, react_1.useRef)(new react_native_1.Animated.Value(0)).current;
     const modalContentRef = (0, react_1.useRef)(null);
     (0, useAndroidKeyboardPadding_1.useAndroidKeyboardPadding)(modalContentRef);
-    (0, react_1.useImperativeHandle)(ref, () => ({ open, close }));
     (0, react_1.useEffect)(() => {
         if (!visible)
             return;
@@ -70,20 +69,22 @@ function InternalModal(_a, ref) {
     const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, props_default), (_c = props_default === null || props_default === void 0 ? void 0 : props_default.variants) === null || _c === void 0 ? void 0 : _c[props === null || props === void 0 ? void 0 : props.variant]), props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
     const contentStyle = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)((combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._contentStyle) || {}, theme);
     const backdropStyle = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)((combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._backdrop) || {}, theme);
-    const animate = (toValue, callBack) => {
+    const animate = (0, react_1.useCallback)((toValue, callBack) => {
         react_native_1.Animated.timing(slideAnim, {
             toValue,
             duration: toValue ? 250 : 200,
             easing: toValue ? react_native_1.Easing.out(react_native_1.Easing.ease) : react_native_1.Easing.in(react_native_1.Easing.ease),
             useNativeDriver: true,
         }).start(({ finished }) => finished && (callBack === null || callBack === void 0 ? void 0 : callBack()));
-    };
-    const open = () => {
-        console.log(visible);
-        setVisible(!visible);
+    }, [slideAnim]);
+    const open = (0, react_1.useCallback)(() => {
+        setVisible(true);
         animate(1);
-    };
-    const close = () => animate(0, () => setVisible(false));
+    }, [animate]);
+    const close = (0, react_1.useCallback)(() => {
+        animate(0, () => setVisible(false));
+    }, [animate]);
+    (0, react_1.useImperativeHandle)(ref, () => ({ open, close }), [open, close]);
     const handleRequestClose = () => {
         var _a;
         (_a = combinedProps.onClose) === null || _a === void 0 ? void 0 : _a.call(combinedProps);

@@ -50,3 +50,4 @@ __exportStar(require("./SearchInput"), exports);
 __exportStar(require("./Carousel"), exports);
 __exportStar(require("./Stagger"), exports);
 __exportStar(require("./Skeleton"), exports);
+__exportStar(require("./Label"), exports);

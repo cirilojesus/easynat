@@ -56,7 +56,7 @@ export const COLORS_THEME = {
 export type ALL_PROPS = COMPONENTS.BSTextProps & COMPONENTS.BSTextInputProps
     & COMPONENTS.BSBoxProps & COMPONENTS.BSFlatListProps<any>
     & COMPONENTS.BSPressableProps
-    & COMPONENTS.BSModalProps
+    & COMPONENTS.BSModalProps & COMPONENTS.BSButtonProps
 
 export type VARIANTS_TYPE = Record<string, Partial<ALL_PROPS>>
 

@@ -31,18 +31,15 @@ const Button = (_a) => {
             },
             _icon: {
                 color: theme.colors['white']
+            },
+            _iconRight: {
+                color: theme.colors['white']
             }
         }, outline: {
             borderWidth: 1,
             borderColor: theme.colors[colorScheme + '.100'],
             _pressed: {
                 bg: theme.colors[colorScheme + '.50']
-            },
-            _text: {
-                color: theme.colors[colorScheme + '.100']
-            },
-            _icon: {
-                color: theme.colors[colorScheme + '.100']
             }
         }, ghost: {
             _pressed: {
@@ -53,6 +50,9 @@ const Button = (_a) => {
             },
             _icon: {
                 color: theme.colors[colorScheme + '.100']
+            },
+            _iconRight: {
+                color: theme.colors[colorScheme + '.100']
             }
         }, link: {
             _pressed: {
@@ -62,12 +62,18 @@ const Button = (_a) => {
                 },
                 _icon: {
                     color: theme.colors[colorScheme + '.200'],
+                },
+                _iconRight: {
+                    color: theme.colors[colorScheme + '.200'],
                 }
             },
             _text: {
                 color: theme.colors[colorScheme + '.100']
             },
             _icon: {
+                color: theme.colors[colorScheme + '.100']
+            },
+            _iconRight: {
                 color: theme.colors[colorScheme + '.100']
             }
         }, subtle: {
@@ -79,6 +85,9 @@ const Button = (_a) => {
                 color: theme.colors[colorScheme + '.200']
             },
             _icon: {
+                color: theme.colors[colorScheme + '.200']
+            },
+            _iconRight: {
                 color: theme.colors[colorScheme + '.200']
             }
         } }, (_d = (_c = theme === null || theme === void 0 ? void 0 : theme.components) === null || _c === void 0 ? void 0 : _c.Button) === null || _d === void 0 ? void 0 : _d.variants);

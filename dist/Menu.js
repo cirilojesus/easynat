@@ -47,7 +47,6 @@ const Button_1 = require("./Button");
 const useKeyboardHeight_1 = require("./utils/useKeyboardHeight");
 const MenuItem = () => null;
 MenuItem.displayName = "MenuItem";
-let awaitConfigMenu = null;
 function InternalMenu(_a, ref) {
     var { trigger, children, style, defaultOpen, placement = "bottom", menuDir = "left", data, renderItem } = _a, props = __rest(_a, ["trigger", "children", "style", "defaultOpen", "placement", "menuDir", "data", "renderItem"]);
     const { theme } = (0, theme_provider_1.useTheme)();
@@ -63,7 +62,7 @@ function InternalMenu(_a, ref) {
     });
     const [menuSize, setMenuSize] = (0, react_1.useState)({ w: 0, h: 0 });
     const animation = (0, react_1.useRef)(new react_native_1.Animated.Value(0)).current;
-    const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign({ shadow: 3, borderWidth: 1, borderColor: "light.100", bg: "white", py: 3, rounded: 3, backdrop: true }, props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
+    const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign({ shadow: 3, borderWidth: 1, borderColor: "light.100", bg: "white", py: 2, rounded: 2, backdrop: true }, props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
     const styles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(combinedProps, theme);
     const calcMaxHeightBottom = height - insets.bottom - triggerLayout.y - triggerLayout.height - keyboardHeight;
     placement = (calcMaxHeightBottom < 96 && placement == 'bottom') ? 'top' : placement;
@@ -87,30 +86,25 @@ function InternalMenu(_a, ref) {
         },
         ...styles,
     ]);
-    const animate = (toValue, callBack) => {
+    const animate = (0, react_1.useCallback)((toValue, callBack) => {
         react_native_1.Animated.timing(animation, {
             toValue,
-            duration: toValue ? 200 : 200,
+            duration: 150,
             useNativeDriver: true,
+            delay: 50
         }).start(({ finished }) => finished && (callBack === null || callBack === void 0 ? void 0 : callBack()));
-    };
-    const open = () => setShow(true);
-    (0, react_1.useEffect)(() => {
-        if (show) {
-            clearInterval(awaitConfigMenu);
-            awaitConfigMenu = setTimeout(() => animate(1), 10);
-            animate(1);
-        }
-    }, [show, menuSize]);
-    const close = () => animate(0, () => setShow(false));
+    }, [animation]);
+    const open = (0, react_1.useCallback)(() => setShow(true), []);
+    const close = (0, react_1.useCallback)(() => {
+        animate(0, () => setShow(false));
+    }, [animate]);
+    const isOpen = (0, react_1.useCallback)(() => show, [show]);
+    const toggle = (0, react_1.useCallback)(() => {
+        show ? close() : open();
+    }, [show, open, close]);
     (0, react_1.useImperativeHandle)(ref, () => ({
-        open,
-        close,
-        isOpen: () => show,
-        toggle: () => {
-            show ? close() : open();
-        }
-    }));
+        open, close, toggle, isOpen
+    }), [open, close, toggle, isOpen]);
     const renderItemDefault = ({ item }) => {
         var _a, _b;
         return ((((_a = item === null || item === void 0 ? void 0 : item.type) === null || _a === void 0 ? void 0 : _a.name) == 'MenuItem' || ((_b = item === null || item === void 0 ? void 0 : item.type) === null || _b === void 0 ? void 0 : _b.name) == 'SearchInputItem') ?
@@ -143,6 +137,7 @@ function InternalMenu(_a, ref) {
                 const { width, height } = e.nativeEvent.layout;
                 if (width != menuSize.w || Math.floor(height) != Math.floor(menuSize.h)) {
                     setMenuSize({ w: width, h: height });
+                    animate(1);
                 }
             }} style={[
                 baseStyle,
@@ -151,14 +146,14 @@ function InternalMenu(_a, ref) {
                         {
                             translateY: animation.interpolate({
                                 inputRange: [0, 1],
-                                outputRange: [5, 0],
+                                outputRange: [8, 0],
                             }),
                         },
                     ],
                     opacity: animation,
                 },
             ]}>
-                            <FlatList_1.FlatList initialNumToRender={1} maxToRenderPerBatch={10} updateCellsBatchingPeriod={10} windowSize={10} nestedScrollEnabled ItemSeparatorComponent={() => <react_native_1.View style={{ backgroundColor: '#ccc', height: .5 }}/>} keyboardShouldPersistTaps={"handled"} {...combinedProps._contentStyle} {...dataFlatList}/>
+                            <FlatList_1.FlatList initialNumToRender={1} maxToRenderPerBatch={10} updateCellsBatchingPeriod={10} windowSize={10} nestedScrollEnabled keyboardShouldPersistTaps={"handled"} {...combinedProps._contentStyle} {...dataFlatList}/>
                         </react_native_1.Animated.View>
                     </react_native_1.View>
                 </react_native_root_siblings_1.RootSiblingPortal>)}
