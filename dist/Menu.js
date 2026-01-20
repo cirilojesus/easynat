@@ -86,29 +86,28 @@ function InternalMenu(_a, ref) {
         },
         ...styles,
     ]);
-    const animate = (0, react_1.useCallback)((toValue, callBack) => {
+    const animate = (toValue, callBack) => {
         react_native_1.Animated.timing(animation, {
             toValue,
             duration: 150,
             useNativeDriver: true,
             delay: 50
         }).start(({ finished }) => finished && (callBack === null || callBack === void 0 ? void 0 : callBack()));
-    }, [animation]);
-    const open = (0, react_1.useCallback)(() => setShow(true), []);
-    const close = (0, react_1.useCallback)(() => {
-        animate(0, () => setShow(false));
-    }, [animate]);
-    const isOpen = (0, react_1.useCallback)(() => show, [show]);
-    const toggle = (0, react_1.useCallback)(() => {
-        show ? close() : open();
-    }, [show, open, close]);
+    };
+    const open = () => setShow(true);
+    const close = () => animate(0, () => setShow(false));
     (0, react_1.useImperativeHandle)(ref, () => ({
-        open, close, toggle, isOpen
-    }), [open, close, toggle, isOpen]);
+        open,
+        close,
+        isOpen: () => show,
+        toggle: () => {
+            show ? close() : open();
+        }
+    }));
     const renderItemDefault = ({ item }) => {
         var _a, _b;
         return ((((_a = item === null || item === void 0 ? void 0 : item.type) === null || _a === void 0 ? void 0 : _a.name) == 'MenuItem' || ((_b = item === null || item === void 0 ? void 0 : item.type) === null || _b === void 0 ? void 0 : _b.name) == 'SearchInputItem') ?
-            <Button_1.Button children={item.props.label} variant={"ghost"} rounded={0} {...item.props} onPress={(e) => {
+            <Button_1.Button children={item.props.label} variant={"ghost"} _text={{ color: 'black' }} rounded={0} {...item.props} onPress={(e) => {
                     var _a, _b;
                     (_b = (_a = item.props).onPress) === null || _b === void 0 ? void 0 : _b.call(_a, e);
                     close();

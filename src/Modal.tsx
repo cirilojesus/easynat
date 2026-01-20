@@ -87,27 +87,25 @@ function InternalModal(
     const contentStyle = DEFAULT_PROPS(combinedProps?._contentStyle || {}, theme);
     const backdropStyle = DEFAULT_PROPS(combinedProps?._backdrop || {}, theme);
 
-    const animate = useCallback((toValue: 0 | 1, callBack?: () => void) => {
+    const animate = (toValue: 0 | 1, callBack?: () => void) => {
         Animated.timing(slideAnim, {
             toValue,
             duration: toValue ? 250 : 200,
             easing: toValue ? Easing.out(Easing.ease) : Easing.in(Easing.ease),
             useNativeDriver: true,
         }).start(({ finished }) => finished && callBack?.());
-    }, [slideAnim]);
+    };
 
-
-    const open = useCallback(() => {
-        setVisible(true);
+    const open = () => {
+        console.log(visible)
+        if (visible) setVisible(false)
+        setVisible(e => !e);
         animate(1);
-    }, [animate]);
+    };
 
-    const close = useCallback(() => {
-        animate(0, () => setVisible(false));
-    }, [animate]);
+    const close = () => animate(0, () => setVisible(false));
 
-
-    useImperativeHandle(ref, () => ({ open, close }), [open, close]);
+    useImperativeHandle(ref, () => ({ open, close }));
 
     const handleRequestClose = () => {
         combinedProps.onClose?.();

@@ -135,36 +135,34 @@ function InternalMenu<T>(
         ...styles,
     ]);
 
-    const animate = useCallback((toValue: 0 | 1, callBack?: () => void) => {
+    const animate = (toValue: 0 | 1, callBack?: () => void) => {
         Animated.timing(animation, {
             toValue,
             duration: 150,
             useNativeDriver: true,
             delay: 50
         }).start(({ finished }) => finished && callBack?.());
-    }, [animation]);
+    };
 
-    const open = useCallback(() => setShow(true), []);
+    const open = () => setShow(true)
 
-    const close = useCallback(() => {
-        animate(0, () => setShow(false));
-    }, [animate]);
-
-    const isOpen = useCallback(() => show, [show]);
-
-    const toggle = useCallback(() => {
-        show ? close() : open();
-    }, [show, open, close]);
+    const close = () => animate(0, () => setShow(false));
 
     useImperativeHandle(ref, () => ({
-        open, close, toggle, isOpen
-    }), [open, close, toggle, isOpen]);
+        open,
+        close,
+        isOpen: () => show,
+        toggle: () => {
+            show ? close() : open()
+        }
+    }));
 
     const renderItemDefault = ({ item }: ListRenderItemInfo<ReactElement<EAMenuItemType>>) => (
         ((item?.type as any)?.name == 'MenuItem' || (item?.type as any)?.name == 'SearchInputItem') ?
             <Button
                 children={item.props.label}
                 variant={"ghost"}
+                _text={{ color: 'black' }}
                 rounded={0}
                 {...item.props}
                 onPress={(e) => {

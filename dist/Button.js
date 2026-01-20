@@ -40,6 +40,15 @@ const Button = (_a) => {
             borderColor: theme.colors[colorScheme + '.100'],
             _pressed: {
                 bg: theme.colors[colorScheme + '.50']
+            },
+            _text: {
+                color: theme.colors[colorScheme + '.100']
+            },
+            _icon: {
+                color: theme.colors[colorScheme + '.100']
+            },
+            _iconRight: {
+                color: theme.colors[colorScheme + '.100']
             }
         }, ghost: {
             _pressed: {
