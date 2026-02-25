@@ -27,8 +27,8 @@ export const KeyboardAvoidingView: React.FC<BSKeyboardAvoidingProps> = ({ ...pro
 
     return (
         <NRKeyboardAvoidingView
+            {...combinedProps}
             style={baseStyles}
-            {...props}
         >
             {combinedProps.children}
         </NRKeyboardAvoidingView>

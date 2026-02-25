@@ -19,7 +19,7 @@ export type BSTextProps = RNTextProps & Omit<TextStyle, 'color'> & BSDefaultProp
     _web?: BSTextProps;
 };
 
-export const Text: React.FC<BSTextProps> = ({ style, children, ...props }) => {
+export const Text: React.FC<BSTextProps> = ({ children, ...props }) => {
     const { theme } = useTheme();
     const styles_default = theme?.components?.Text || {};
 
@@ -45,19 +45,19 @@ export const Text: React.FC<BSTextProps> = ({ style, children, ...props }) => {
     const styles = DEFAULT_PROPS({ ...variantStyle[combinedProps.variant], ...combinedProps }, theme)
 
     const textStyle = StyleSheet.flatten<TextStyle>([
-        style,
+        combinedProps.style,
         ...styles,
         { color: theme.colors[variantStyle[combinedProps.variant]?.color || combinedProps.color] || variantStyle[combinedProps.variant] || combinedProps.color },
     ]);
 
     return (
         <RNText
+            {...combinedProps}
             style={[
                 theme.fontFamily && { fontFamily: theme?.fonts?.[theme.fontFamily + '_' + (textStyle?.fontWeight || '400')] || theme.fontFamily + '_' + (textStyle?.fontWeight || '400') },
                 textStyle,
                 theme.fontFamily && { fontWeight: undefined }
             ]}
-            {...props}
         >
             {children}
         </RNText>

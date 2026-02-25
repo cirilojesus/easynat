@@ -21,20 +21,20 @@ const theme_provider_1 = require("./theme-provider");
 const DEFAULT_PROPS_1 = require("./utils/DEFAULT_PROPS");
 const helpers_1 = require("./utils/helpers");
 const ScrollView = (_a) => {
-    var { style, children } = _a, props = __rest(_a, ["style", "children"]);
+    var { children } = _a, props = __rest(_a, ["children"]);
     const { theme } = (0, theme_provider_1.useTheme)();
     const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign({}, props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
     const styles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(combinedProps, theme);
     const contentStyles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)((combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._contentContainerStyle) || {}, theme);
     const scrollStyle = react_native_1.StyleSheet.flatten([
-        style,
+        combinedProps.style,
         ...styles,
     ]);
     const scrollContentStyle = react_native_1.StyleSheet.flatten([
         ...contentStyles,
         combinedProps.contentContainerStyle
     ]);
-    return (<react_native_1.ScrollView {...props} style={scrollStyle} contentContainerStyle={scrollContentStyle}>
+    return (<react_native_1.ScrollView {...combinedProps} style={scrollStyle} contentContainerStyle={scrollContentStyle}>
             {(0, helpers_1.renderChild)(children, props._text)}
         </react_native_1.ScrollView>);
 };

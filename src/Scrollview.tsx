@@ -14,7 +14,6 @@ export type BSScrollViewProps = ScrollViewProps & BSDefaultProps & {
 };
 
 export const ScrollView: React.FC<BSScrollViewProps> = ({
-    style,
     children,
     ...props
 }) => {
@@ -31,7 +30,7 @@ export const ScrollView: React.FC<BSScrollViewProps> = ({
     const contentStyles = DEFAULT_PROPS(combinedProps?._contentContainerStyle || {}, theme);
 
     const scrollStyle = StyleSheet.flatten([
-        style,
+        combinedProps.style,
         ...styles,
     ]);
 
@@ -42,7 +41,7 @@ export const ScrollView: React.FC<BSScrollViewProps> = ({
 
     return (
         <RNScrollView
-            {...props}
+            {...combinedProps}
             style={scrollStyle}
             contentContainerStyle={scrollContentStyle}
         >
