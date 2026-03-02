@@ -1,7 +1,7 @@
 /// <reference types="react" />
-import { BSBoxProps, BSTextInputProps, BSSelectProps, EACheckBoxProps, EASwitchProps } from ".";
-import { DatePickerType } from "./DatePicker";
-import { SearchInputModel } from "./SearchInput";
+import { BSBoxProps } from ".";
+import { BSDefaultProps } from "./utils/DEFAULT_PROPS";
+import { COLOR_SCHEME } from "./theme";
 export interface InputValidation {
     required?: boolean;
     email?: boolean;
@@ -18,11 +18,83 @@ type ControlType = {
     validate: (value: any) => any;
     validation: InputValidation;
 };
-type CombinedProps = Omit<Partial<BSSelectProps>, '_android' | '_ios' | '_web'> & Omit<Partial<BSTextInputProps>, '_android' | '_ios' | '_web'> & Omit<Partial<EASwitchProps>, '_android' | '_ios' | '_web'> & Omit<Partial<EACheckBoxProps>, '_android' | '_ios' | '_web'> & {
+interface CombinedProps extends BSDefaultProps {
+    onPress?: (...args: any[]) => void;
+    onLongPress?: (...args: any[]) => void;
+    onPressIn?: (...args: any[]) => void;
+    onPressOut?: (...args: any[]) => void;
+    disabled?: boolean;
+    children?: any;
+    variant?: string;
+    _pressed?: any;
+    _text?: any;
+    label?: string;
+    _label?: any;
+    isPassword?: boolean;
+    isFloat?: boolean;
+    isRequired?: boolean;
+    placeholder?: string;
+    value?: any;
+    onChangeText?: (text: string) => void;
+    defaultValue?: string | number;
+    multiline?: boolean;
+    numberOfLines?: number;
+    keyboardType?: string;
+    returnKeyType?: string;
+    autoCapitalize?: string;
+    autoComplete?: string;
+    autoCorrect?: boolean;
+    autoFocus?: boolean;
+    secureTextEntry?: boolean;
+    maxLength?: number;
+    editable?: boolean;
+    selectTextOnFocus?: boolean;
+    onFocus?: (...args: any[]) => void;
+    onBlur?: (...args: any[]) => void;
+    onSubmitEditing?: (...args: any[]) => void;
+    iconLeft?: React.ReactElement;
+    iconRight?: React.ReactElement;
+    _containerStyle?: any;
+    _focus?: any;
+    _iconRight?: any;
+    color?: COLOR_SCHEME;
+    onChange?: (val: any) => void;
+    _menu?: any;
+    _option?: any;
+    _selected?: any;
+    _icon?: any;
+    icon?: boolean | React.ReactElement<any>;
+    colorScheme?: COLOR_SCHEME;
+    size?: number | string;
+    checked?: boolean;
+    pointerBox?: boolean;
+    type?: "calendar" | "date-range" | "month-year" | "month" | "year" | "time" | "weekday" | "datetime";
+    _months?: any;
+    _weekdays?: any;
+    _years?: any;
+    _days?: any;
+    _time?: any;
+    _buttonCancel?: any;
+    _buttonDone?: any;
+    unSelect?: boolean;
+    minValue?: any;
+    maxValue?: any;
+    config?: any;
+    locale?: string;
+    separate?: string;
+    multiple?: boolean;
+    _item?: any;
+    _input?: any;
+    data?: any[];
+    renderItem?: any;
+    backdrop?: boolean | 'static';
+    placement?: "bottom" | "top";
+    menuDir?: "left" | "right";
+    useTriggerWidth?: boolean;
     _android?: CombinedProps;
     _ios?: CombinedProps;
     _web?: CombinedProps;
-} & DatePickerType & Partial<SearchInputModel>;
+}
 export interface InputFormParams<T extends FormSchema> extends CombinedProps {
     formControl: keyof T;
     formGroup: FormGroupRef<T>;
@@ -34,10 +106,27 @@ export interface InputFormParams<T extends FormSchema> extends CombinedProps {
     isDate?: boolean;
     isSearch?: boolean;
 }
-export type EAFormItemProps = Omit<CombinedProps, 'label' | 'value'> & {
+export interface EAFormItemProps extends BSDefaultProps {
     label: string | number;
     value: string | number;
-};
+    onPress?: (...args: any[]) => void;
+    onLongPress?: (...args: any[]) => void;
+    disabled?: boolean;
+    children?: React.ReactNode;
+    variant?: string;
+    colorScheme?: COLOR_SCHEME;
+    color?: COLOR_SCHEME;
+    _pressed?: any;
+    _text?: any;
+    _icon?: any;
+    _iconRight?: any;
+    icon?: React.ReactElement;
+    iconRight?: React.ReactElement;
+    size?: 'sm' | 'md' | 'lg' | 'xl';
+    _android?: EAFormItemProps;
+    _ios?: EAFormItemProps;
+    _web?: EAFormItemProps;
+}
 export declare class FormGroupRef<T extends FormSchema> {
     #private;
     controls: Record<keyof T, ControlType>;

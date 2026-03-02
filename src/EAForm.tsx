@@ -1,7 +1,9 @@
 import { useSyncExternalStore } from "react";
-import { Box, BSBoxProps, BSTextInputProps, InputText, Select, Text, BSSelectProps, CheckBox, EACheckBoxProps, Radio, Switch, EASwitchProps } from ".";
-import { DatePicker, DatePickerType } from "./DatePicker";
-import { SearchInput, SearchInputModel } from "./SearchInput";
+import { Box, BSBoxProps, InputText, Select, Text, CheckBox, Radio, Switch } from ".";
+import { DatePicker } from "./DatePicker";
+import { SearchInput } from "./SearchInput";
+import { BSDefaultProps } from "./utils/DEFAULT_PROPS";
+import { COLOR_SCHEME } from "./theme";
 
 export interface InputValidation {
     required?: boolean;
@@ -21,14 +23,91 @@ type ControlType = {
     validate: (value: any) => any,
     validation: InputValidation
 }
-type CombinedProps = Omit<Partial<BSSelectProps>, '_android' | '_ios' | '_web'> &
-    Omit<Partial<BSTextInputProps>, '_android' | '_ios' | '_web'> &
-    Omit<Partial<EASwitchProps>, '_android' | '_ios' | '_web'> &
-    Omit<Partial<EACheckBoxProps>, '_android' | '_ios' | '_web'> & {
-        _android?: CombinedProps;
-        _ios?: CombinedProps;
-        _web?: CombinedProps;
-    } & DatePickerType & Partial<SearchInputModel>
+interface CombinedProps extends BSDefaultProps {
+    // Pressable / Button
+    onPress?: (...args: any[]) => void;
+    onLongPress?: (...args: any[]) => void;
+    onPressIn?: (...args: any[]) => void;
+    onPressOut?: (...args: any[]) => void;
+    disabled?: boolean;
+    children?: any;
+    variant?: string;
+    _pressed?: any;
+    _text?: any;
+    // Input
+    label?: string;
+    _label?: any;
+    isPassword?: boolean;
+    isFloat?: boolean;
+    isRequired?: boolean;
+    placeholder?: string;
+    value?: any;
+    onChangeText?: (text: string) => void;
+    defaultValue?: string | number;
+    multiline?: boolean;
+    numberOfLines?: number;
+    keyboardType?: string;
+    returnKeyType?: string;
+    autoCapitalize?: string;
+    autoComplete?: string;
+    autoCorrect?: boolean;
+    autoFocus?: boolean;
+    secureTextEntry?: boolean;
+    maxLength?: number;
+    editable?: boolean;
+    selectTextOnFocus?: boolean;
+    onFocus?: (...args: any[]) => void;
+    onBlur?: (...args: any[]) => void;
+    onSubmitEditing?: (...args: any[]) => void;
+    iconLeft?: React.ReactElement;
+    iconRight?: React.ReactElement;
+    _containerStyle?: any;
+    _focus?: any;
+    _iconRight?: any;
+    color?: COLOR_SCHEME;
+    // Select
+    onChange?: (val: any) => void;
+    _menu?: any;
+    _option?: any;
+    _selected?: any;
+    _icon?: any;
+    icon?: boolean | React.ReactElement<any>;
+    // Button
+    colorScheme?: COLOR_SCHEME;
+    size?: number | string;
+    // Switch / CheckBox / Radio
+    checked?: boolean;
+    pointerBox?: boolean;
+    // DatePicker
+    type?: "calendar" | "date-range" | "month-year" | "month" | "year" | "time" | "weekday" | "datetime";
+    _months?: any;
+    _weekdays?: any;
+    _years?: any;
+    _days?: any;
+    _time?: any;
+    _buttonCancel?: any;
+    _buttonDone?: any;
+    unSelect?: boolean;
+    minValue?: any;
+    maxValue?: any;
+    config?: any;
+    locale?: string;
+    separate?: string;
+    // SearchInput
+    multiple?: boolean;
+    _item?: any;
+    _input?: any;
+    data?: any[];
+    renderItem?: any;
+    backdrop?: boolean | 'static';
+    placement?: "bottom" | "top";
+    menuDir?: "left" | "right";
+    useTriggerWidth?: boolean;
+    // Platform
+    _android?: CombinedProps;
+    _ios?: CombinedProps;
+    _web?: CombinedProps;
+}
 
 export interface InputFormParams<T extends FormSchema> extends CombinedProps {
     formControl: keyof T;
@@ -42,10 +121,27 @@ export interface InputFormParams<T extends FormSchema> extends CombinedProps {
     isSearch?: boolean;
 }
 
-export type EAFormItemProps = Omit<CombinedProps, 'label' | 'value'> & {
+export interface EAFormItemProps extends BSDefaultProps {
     label: string | number;
     value: string | number;
-};
+    onPress?: (...args: any[]) => void;
+    onLongPress?: (...args: any[]) => void;
+    disabled?: boolean;
+    children?: React.ReactNode;
+    variant?: string;
+    colorScheme?: COLOR_SCHEME;
+    color?: COLOR_SCHEME;
+    _pressed?: any;
+    _text?: any;
+    _icon?: any;
+    _iconRight?: any;
+    icon?: React.ReactElement;
+    iconRight?: React.ReactElement;
+    size?: 'sm' | 'md' | 'lg' | 'xl';
+    _android?: EAFormItemProps;
+    _ios?: EAFormItemProps;
+    _web?: EAFormItemProps;
+}
 
 const ControlItem: React.FC<EAFormItemProps> = () => null;
 
