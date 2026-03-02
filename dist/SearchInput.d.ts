@@ -5,7 +5,7 @@ import { BSMenuProps } from "./Menu";
 export type SearchInputModel<T = any> = BSMenuProps<T> & {
     value: T[] | T | null;
     multiple?: boolean;
-    children?: React.ReactElement<EASearchInputItem>[];
+    children?: React.ReactNode;
     _item?: BSButtonProps & {
         label: keyof T;
         value: keyof T;

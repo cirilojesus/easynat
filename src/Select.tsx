@@ -16,7 +16,7 @@ export type BSSelectProps = BSPressableProps & {
     _selected?: Partial<BSPressableProps>;
     _icon?: IconProps;
     icon?: boolean | React.ReactElement<any>
-    children?: React.ReactElement<BSSelectItemProps>[];
+    children?: React.ReactNode;
     label?: string;
     _label?: BSTextProps,
     isFloat?: boolean;
