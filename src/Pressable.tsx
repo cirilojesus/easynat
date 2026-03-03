@@ -6,10 +6,10 @@ import { BSTextProps } from "./Text";
 
 export type BSPressableProps = PressableProps & BSDefaultProps & {
     _text?: BSTextProps;
-    _ios?: BSPressableProps;
-    _android?: BSPressableProps;
-    _web?: BSPressableProps;
-    _pressed?: BSPressableProps;
+    _ios?: Omit<BSPressableProps, '_ios' | '_android' | '_web'>;
+    _android?: Omit<BSPressableProps, '_ios' | '_android' | '_web'>;
+    _web?: Omit<BSPressableProps, '_ios' | '_android' | '_web'>;
+    _pressed?: Omit<BSPressableProps, '_pressed' | '_ios' | '_android' | '_web'>;
     variant?: (string & {});
 };
 
