@@ -381,7 +381,7 @@ type ControlType = {
     validate: (value: any) => any,
     validation: InputValidation
 }
-type CombinedProps =
+type CombinedProps = Omit<Partial<BSSelectProps>, '_android' | '_ios' | '_web'> &
     Omit<Partial<BSTextInputProps>, '_android' | '_ios' | '_web'> &
     Omit<Partial<EASwitchProps>, '_android' | '_ios' | '_web'> &
     Omit<Partial<EACheckBoxProps>, '_android' | '_ios' | '_web'>
