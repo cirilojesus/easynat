@@ -6,7 +6,7 @@ import { cloneElement } from "react";
 import { IconProps } from "./Icon";
 import { renderChild } from "./utils/helpers";
 
-export type BSButtonProps = Omit<BSPressableProps, 'variant'> & BSDefaultProps & {
+export type BSButtonProps = Omit<BSPressableProps, 'variant'> & {
     variant?: VARIANT_BUTTON | (string & {});
     colorScheme?: COLOR_SCHEME;
     _ios?: BSButtonProps;

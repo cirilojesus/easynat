@@ -144,6 +144,12 @@ export const Select: React.FC<BSSelectProps> & { Item: React.FC<BSSelectItemProp
                                 onPress={() => handleSelect(item)}
                                 _pressed={{ opacity: 0.5 }}
                                 {..._option}
+                                {...(_option.onPress ? {
+                                    onPress: e => {
+                                        modal.current.close();
+                                        _option.onPress()
+                                    }
+                                } : {})}
                                 {...item.props}
                                 {...(isSelected ? _selected : {})}
                             >

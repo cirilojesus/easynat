@@ -8,7 +8,7 @@ import { BSTextProps, Text } from "./Text";
 import { Box, BSBoxProps } from "./Box";
 import { Theme } from "./theme";
 
-export type BSTextInputProps = TextInputProps & BSTextProps & BSDefaultProps & {
+export type BSTextInputProps = TextInputProps & BSTextProps & {
     _ios?: BSTextInputProps;
     _android?: BSTextInputProps;
     _web?: BSTextInputProps;
