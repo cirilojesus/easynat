@@ -381,10 +381,10 @@ type ControlType = {
     validate: (value: any) => any,
     validation: InputValidation
 }
-type CombinedProps = Omit<Partial<BSSelectProps>, '_android' | '_ios' | '_web'> &
+type CombinedProps =
     Omit<Partial<BSTextInputProps>, '_android' | '_ios' | '_web'> &
     Omit<Partial<EASwitchProps>, '_android' | '_ios' | '_web'> &
-    Omit<Partial<EACheckBoxProps>, '_android' | '_ios' | '_web'> & DatePickerType & Partial<SearchInputModel>
+    Omit<Partial<EACheckBoxProps>, '_android' | '_ios' | '_web'>
 
 export interface InputFormParams<T extends FormSchema> extends CombinedProps {
     formControl: keyof T;

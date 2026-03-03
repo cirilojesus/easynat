@@ -1,7 +1,5 @@
 /// <reference types="react" />
-import { BSBoxProps, BSTextInputProps, BSSelectProps, EACheckBoxProps, EASwitchProps } from ".";
-import { DatePickerType } from "./DatePicker";
-import { SearchInputModel } from "./SearchInput";
+import { BSBoxProps, BSTextInputProps, EACheckBoxProps, EASwitchProps } from ".";
 export interface InputValidation {
     required?: boolean;
     email?: boolean;
@@ -18,7 +16,7 @@ type ControlType = {
     validate: (value: any) => any;
     validation: InputValidation;
 };
-type CombinedProps = Omit<Partial<BSSelectProps>, '_android' | '_ios' | '_web'> & Omit<Partial<BSTextInputProps>, '_android' | '_ios' | '_web'> & Omit<Partial<EASwitchProps>, '_android' | '_ios' | '_web'> & Omit<Partial<EACheckBoxProps>, '_android' | '_ios' | '_web'> & DatePickerType & Partial<SearchInputModel>;
+type CombinedProps = Omit<Partial<BSTextInputProps>, '_android' | '_ios' | '_web'> & Omit<Partial<EASwitchProps>, '_android' | '_ios' | '_web'> & Omit<Partial<EACheckBoxProps>, '_android' | '_ios' | '_web'>;
 export interface InputFormParams<T extends FormSchema> extends CombinedProps {
     formControl: keyof T;
     formGroup: FormGroupRef<T>;
