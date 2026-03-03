@@ -19,5 +19,5 @@ export type EASearchInputItem = BSButtonProps & {
 };
 export declare const SearchInput: {
     <T>({ value, multiple, _item, ...props }: any): import("react").JSX.Element;
-    Item: import("react").FC<any>;
+    Item: import("react").FC<EASearchInputItem>;
 };

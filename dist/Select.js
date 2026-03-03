@@ -83,7 +83,12 @@ const Select = (_a) => {
             <Modal_1.Modal ref={modal} header={{ children: <Box_1.Box height={3.5} mx="auto" w={60} bg="dark.100"/>, py: 2 }} _contentStyle={Object.assign(Object.assign({}, _menu), { h: "auto", maxH: "90%", roundedTop: 40 })} buttonClose={false}>
                 <react_native_1.FlatList data={children} initialNumToRender={1} maxToRenderPerBatch={10} updateCellsBatchingPeriod={10} windowSize={10} keyExtractor={i => i.props.value.toString()} renderItem={({ item }) => {
             const isSelected = item.props.value === (selected === null || selected === void 0 ? void 0 : selected.props.value);
-            return (<Pressable_1.Pressable p={3} borderBottomWidth={1} borderBottomColor="light.100" bg={isSelected ? "primary.50" : undefined} onPress={() => handleSelect(item)} _pressed={{ opacity: 0.5 }} {..._option} {...item.props} {...(isSelected ? _selected : {})}>
+            return (<Pressable_1.Pressable p={3} borderBottomWidth={1} borderBottomColor="light.100" bg={isSelected ? "primary.50" : undefined} onPress={() => handleSelect(item)} _pressed={{ opacity: 0.5 }} {..._option} {...(_option.onPress ? {
+                onPress: e => {
+                    modal.current.close();
+                    _option.onPress();
+                }
+            } : {})} {...item.props} {...(isSelected ? _selected : {})}>
                                 {item.props.label}
                             </Pressable_1.Pressable>);
         }}/>

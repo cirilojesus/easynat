@@ -1,9 +1,8 @@
 /// <reference types="react" />
-import { BSDefaultProps } from "./utils/DEFAULT_PROPS";
 import { COLOR_SCHEME, VARIANT_BUTTON } from './theme';
 import { BSPressableProps } from "./Pressable";
 import { IconProps } from "./Icon";
-export type BSButtonProps = Omit<BSPressableProps, 'variant'> & BSDefaultProps & {
+export type BSButtonProps = Omit<BSPressableProps, 'variant'> & {
     variant?: VARIANT_BUTTON | (string & {});
     colorScheme?: COLOR_SCHEME;
     _ios?: BSButtonProps;

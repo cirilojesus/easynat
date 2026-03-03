@@ -1,11 +1,10 @@
 /// <reference types="react" />
 import { TextInputProps } from "react-native";
-import { BSDefaultProps } from "./utils/DEFAULT_PROPS";
 import { BSButtonProps } from "./Button";
 import { BSTextProps } from "./Text";
 import { BSBoxProps } from "./Box";
 import { Theme } from "./theme";
-export type BSTextInputProps = TextInputProps & BSTextProps & BSDefaultProps & {
+export type BSTextInputProps = TextInputProps & BSTextProps & {
     _ios?: BSTextInputProps;
     _android?: BSTextInputProps;
     _web?: BSTextInputProps;
