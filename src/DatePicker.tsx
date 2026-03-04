@@ -194,7 +194,8 @@ export function DatePicker({
         config,
         minValue,
         maxValue,
-        _icon
+        _icon,
+        isFloat
     } = { ...styles_default, ...props }
 
     const defaultCfg: DateConfigType = type === "month-year" ? { locale, separate, config: { day: undefined, ...config } }
@@ -311,7 +312,7 @@ export function DatePicker({
                 <AnimatedText
                     pointerEvents="none"
                     style={[
-                        (props.isFloat ?
+                        (isFloat ?
                             {
                                 padding: 3,
                                 marginLeft: 10,

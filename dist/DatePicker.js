@@ -64,7 +64,7 @@ function DatePicker(_a) {
     var { locale = "en-US", placeholder, colorScheme = "primary", type = "calendar", unSelect = false, separate = "-", icon = true } = _a, props = __rest(_a, ["locale", "placeholder", "colorScheme", "type", "unSelect", "separate", "icon"]);
     const { theme } = (0, theme_provider_1.useTheme)();
     const styles_default = ((_b = theme === null || theme === void 0 ? void 0 : theme.components) === null || _b === void 0 ? void 0 : _b.DatePicker) || {};
-    const { label, _label, isRequired, value, onChange, _months, _weekdays, _years, _days, _time, _buttonCancel, _buttonDone, config, minValue, maxValue, _icon } = Object.assign(Object.assign({}, styles_default), props);
+    const { label, _label, isRequired, value, onChange, _months, _weekdays, _years, _days, _time, _buttonCancel, _buttonDone, config, minValue, maxValue, _icon, isFloat } = Object.assign(Object.assign({}, styles_default), props);
     const defaultCfg = type === "month-year" ? { locale, separate, config: Object.assign({ day: undefined }, config) }
         : type === "datetime" ? { locale, separate, config: Object.assign({ hour: "2-digit", minute: "2-digit", hourCycle: "h24" }, config) }
             : type === "year" ? { locale, separate, config: Object.assign({ day: undefined, month: undefined }, config) }
@@ -160,7 +160,7 @@ function DatePicker(_a) {
     return (<>
             {label &&
             <AnimatedText pointerEvents="none" style={[
-                    (props.isFloat ?
+                    (isFloat ?
                         {
                             padding: 3,
                             marginLeft: 10,
