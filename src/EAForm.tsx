@@ -1,7 +1,7 @@
 
 
 import { useSyncExternalStore } from "react";
-import { Box, BSBoxProps, BSTextInputProps, InputText, Select, Text, BSSelectProps, CheckBox, EACheckBoxProps, Radio, Switch, EASwitchProps } from ".";
+import { Box, BSBoxProps, BSTextInputProps, Input, Select, Text, BSSelectProps, CheckBox, EACheckBoxProps, Radio, Switch, EASwitchProps } from ".";
 import { DatePicker, DatePickerType } from "./DatePicker";
 import { SearchInput, SearchInputModel } from "./SearchInput";
 
@@ -35,7 +35,7 @@ interface CombinedProps extends Omit<Partial<BSSelectProps>, '_android' | '_ios'
     _web?: Omit<CombinedProps, '_android' | '_ios' | '_web'>;
 }
 
-export interface InputFormParams<T extends Record<string, [any, InputValidation?]>> extends CombinedProps {
+export interface InputFormParams<T extends FormSchema> extends CombinedProps {
     formControl: keyof T;
     formGroup: FormGroupRef<T>;
     _box?: BSBoxProps;
@@ -57,7 +57,7 @@ const ControlItem: React.FC<EAFormItemProps> = () => null;
 const emailValidator =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-const validateField = <T extends Record<string, [any, InputValidation?]>>(form: FormGroupRef<T>['controls'], formControl: keyof T, rules?: InputValidation) => {
+const validateField = <T extends FormSchema>(form: FormGroupRef<T>['controls'], formControl: keyof T, rules?: InputValidation) => {
     if (rules?.required && !form[formControl].value) return "Campo requerido";
     else if (rules?.email && !emailValidator.test(form[formControl].value)) {
         return "Correo inválido";
@@ -73,7 +73,7 @@ const validateField = <T extends Record<string, [any, InputValidation?]>>(form: 
     return "";
 };
 
-export class FormGroupRef<T extends Record<string, [any, InputValidation?]>> {
+export class FormGroupRef<T extends FormSchema> {
     controls: Record<keyof T, ControlType> = {} as any;
     value: Record<keyof T, any> = {} as any;
     initValue: T = {} as any;
@@ -185,7 +185,7 @@ export class FormGroupRef<T extends Record<string, [any, InputValidation?]>> {
     }
 }
 
-export const useFormControl = <T extends Record<string, [any, InputValidation?]>>(
+export const useFormControl = <T extends FormSchema>(
     formGroup: FormGroupRef<T>,
     formControl: keyof T
 ): ControlType => {
@@ -195,7 +195,7 @@ export const useFormControl = <T extends Record<string, [any, InputValidation?]>
     );
 }
 
-export const useFormGroup = <T extends Record<string, [any, InputValidation?]>>(
+export const useFormGroup = <T extends FormSchema>(
     formGroup: FormGroupRef<T>
 ): FormGroupRef<T> => {
     return useSyncExternalStore(
@@ -204,7 +204,7 @@ export const useFormGroup = <T extends Record<string, [any, InputValidation?]>>(
     );
 }
 
-export const ListenerForm = <T extends Record<string, [any, InputValidation?]>>({
+export const ListenerForm = <T extends FormSchema>({
     formGroup,
     formControl,
     children,
@@ -219,7 +219,7 @@ export const ListenerForm = <T extends Record<string, [any, InputValidation?]>>(
     return children(value as any);
 }
 
-export const Control = <T extends Record<string, [any, InputValidation?]>>({
+export const Control = <T extends FormSchema>({
     formGroup,
     formControl,
     ...props
@@ -253,7 +253,7 @@ export const Control = <T extends Record<string, [any, InputValidation?]>>({
                                         _input={{ label: props.label, isFloat: props.isFloat, _containerStyle: control.error ? { borderColor: 'danger.100' } : {}, ...props._input }}
                                     />
                                     :
-                                    <InputText
+                                    <Input
                                         value={control.value}
                                         onChangeText={e => control.setValue(e)}
                                         _containerStyle={control.error ? { borderColor: 'danger.100' } : {}}

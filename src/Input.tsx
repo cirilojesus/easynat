@@ -23,19 +23,31 @@ export type BSTextInputProps = TextInputProps & Omit<BSTextProps, '_ios' | '_and
     _iconRight?: BSButtonProps,
     iconRight?: React.ReactElement,
     color?: keyof Theme["colors"];
+    variant?: (string & {});
+    size?: 'sm' | 'md' | 'lg' | 'xl';
 };
 
 const AnimatedText = Animated.createAnimatedComponent(Text);
 
-export const InputText: React.FC<BSTextInputProps> = ({ style, ...props }) => {
+export const Input: React.FC<BSTextInputProps> = ({ style, ...props }) => {
     const { theme } = useTheme();
-    const styles_default = theme?.components?.InputText || {};
+    const styles_default = theme?.components?.Input || {};
+    const props_variant = theme?.components?.Input?.variants || {};
     const [focus, setFocus] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const animation = useRef(new Animated.Value(0)).current;
 
+    const sizeStyle: Record<BSTextInputProps['size'], BSTextInputProps> = {
+        sm: { fontSize: 12, _label: { fontSize: 12 } },
+        md: { fontSize: 14, _label: { fontSize: 14 } },
+        lg: { fontSize: 16, _label: { fontSize: 16 } },
+        xl: { fontSize: 18, _label: { fontSize: 18 } },
+    };
+
     const combinedProps: BSTextInputProps = {
         ...styles_default,
+        ...props_variant[styles_default.variant || props.variant],
+        ...sizeStyle[props.size],
         ...props,
         ...(focus && props._focus),
         ...(Platform.OS === "ios"
@@ -149,3 +161,5 @@ export const InputText: React.FC<BSTextInputProps> = ({ style, ...props }) => {
         </>
     );
 };
+
+export const InputText = Input;

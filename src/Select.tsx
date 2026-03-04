@@ -21,7 +21,9 @@ export type BSSelectProps = BSPressableProps & {
     _label?: BSTextProps,
     isFloat?: boolean;
     isRequired?: boolean;
-    _containerStyle?: BSBoxProps
+    _containerStyle?: BSBoxProps;
+    variant?: (string & {});
+    size?: 'sm' | 'md' | 'lg' | 'xl';
 };
 
 export type BSSelectItemProps = BSPressableProps & {
@@ -49,7 +51,16 @@ export const Select: React.FC<BSSelectProps> & { Item: React.FC<BSSelectItemProp
     const animation = useRef(new Animated.Value(0)).current;
     const { theme } = useTheme();
     const styles_default = theme?.components?.Select || {};
-    const { isFloat, label, _label, isRequired, _containerStyle } = { ...styles_default, ...props, }
+    const props_variant = theme?.components?.Select?.variants || {};
+
+    const sizeStyle: Record<BSSelectProps['size'], BSSelectProps> = {
+        sm: { p: 1.5, _text: { fontSize: 12 } },
+        md: { p: 2, _text: { fontSize: 14 } },
+        lg: { p: 2.5, _text: { fontSize: 16 } },
+        xl: { p: 3, _text: { fontSize: 18 } },
+    };
+
+    const { isFloat, label, _label, isRequired, _containerStyle } = { ...styles_default, ...props_variant[styles_default.variant || props.variant], ...sizeStyle[props.size], ...props, }
 
     useEffect(() => {
         animate(defaultValue)
@@ -144,13 +155,13 @@ export const Select: React.FC<BSSelectProps> & { Item: React.FC<BSSelectItemProp
                                 onPress={() => handleSelect(item)}
                                 _pressed={{ opacity: 0.5 }}
                                 {..._option}
-                                {...(_option.onPress ? {
+                                {...item.props}
+                                {...(item.props?.onPress ? {
                                     onPress: e => {
                                         modal.current.close();
                                         _option.onPress()
                                     }
                                 } : {})}
-                                {...item.props}
                                 {...(isSelected ? _selected : {})}
                             >
                                 {item.props.label}

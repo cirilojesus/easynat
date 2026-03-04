@@ -19,5 +19,8 @@ export type BSTextInputProps = TextInputProps & Omit<BSTextProps, '_ios' | '_and
     _iconRight?: BSButtonProps;
     iconRight?: React.ReactElement;
     color?: keyof Theme["colors"];
+    variant?: (string & {});
+    size?: 'sm' | 'md' | 'lg' | 'xl';
 };
-export declare const InputText: React.FC<BSTextInputProps>;
+export declare const Input: React.FC<BSTextInputProps>;
+export declare const InputText: import("react").FC<any>;

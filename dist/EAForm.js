@@ -186,7 +186,7 @@ const Control = (_a) => {
                                     props.isSearch ?
                                         <SearchInput_1.SearchInput value={control.value} onChange={e => control.setValue(e)} {...props} _input={Object.assign({ label: props.label, isFloat: props.isFloat, _containerStyle: control.error ? { borderColor: 'danger.100' } : {} }, props._input)}/>
                                         :
-                                            <_1.InputText value={control.value} onChangeText={e => control.setValue(e)} _containerStyle={control.error ? { borderColor: 'danger.100' } : {}} {...props}/>}
+                                            <_1.Input value={control.value} onChangeText={e => control.setValue(e)} _containerStyle={control.error ? { borderColor: 'danger.100' } : {}} {...props}/>}
             {control.error ? <_1.Text color={'danger.100'}>{control.error}</_1.Text> : null}
         </_1.Box>);
 };

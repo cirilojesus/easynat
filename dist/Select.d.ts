@@ -18,6 +18,8 @@ export type BSSelectProps = BSPressableProps & {
     isFloat?: boolean;
     isRequired?: boolean;
     _containerStyle?: BSBoxProps;
+    variant?: (string & {});
+    size?: 'sm' | 'md' | 'lg' | 'xl';
 };
 export type BSSelectItemProps = BSPressableProps & {
     label: string | number;

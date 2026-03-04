@@ -45,7 +45,7 @@ const SearchInput = (_a) => {
     return (<>
             <Menu_1.Menu ref={menuRef} backdrop={false} useTriggerWidth trigger={({ onPress }) => {
             var _a;
-            return <Input_1.InputText value={text} {...props === null || props === void 0 ? void 0 : props._input} onChangeText={e => {
+            return <Input_1.Input value={text} {...props === null || props === void 0 ? void 0 : props._input} onChangeText={e => {
                     if (value && !multiple)
                         props.onChange(null);
                     setText(e);

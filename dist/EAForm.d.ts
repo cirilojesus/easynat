@@ -23,7 +23,7 @@ interface CombinedProps extends Omit<Partial<BSSelectProps>, '_android' | '_ios'
     _ios?: Omit<CombinedProps, '_android' | '_ios' | '_web'>;
     _web?: Omit<CombinedProps, '_android' | '_ios' | '_web'>;
 }
-export interface InputFormParams<T extends Record<string, [any, InputValidation?]>> extends CombinedProps {
+export interface InputFormParams<T extends FormSchema> extends CombinedProps {
     formControl: keyof T;
     formGroup: FormGroupRef<T>;
     _box?: BSBoxProps;
@@ -38,7 +38,7 @@ export type EAFormItemProps = Omit<CombinedProps, 'label' | 'value'> & {
     label: string | number;
     value: string | number;
 };
-export declare class FormGroupRef<T extends Record<string, [any, InputValidation?]>> {
+export declare class FormGroupRef<T extends FormSchema> {
     #private;
     controls: Record<keyof T, ControlType>;
     value: Record<keyof T, any>;
@@ -55,15 +55,15 @@ export declare class FormGroupRef<T extends Record<string, [any, InputValidation
     createControl(control: keyof T, props: [any, InputValidation?]): void;
     private notify;
 }
-export declare const useFormControl: <T extends Record<string, [any, InputValidation?]>>(formGroup: FormGroupRef<T>, formControl: keyof T) => ControlType;
-export declare const useFormGroup: <T extends Record<string, [any, InputValidation?]>>(formGroup: FormGroupRef<T>) => FormGroupRef<T>;
-export declare const ListenerForm: <T extends Record<string, [any, InputValidation?]>>({ formGroup, formControl, children, }: {
+export declare const useFormControl: <T extends FormSchema>(formGroup: FormGroupRef<T>, formControl: keyof T) => ControlType;
+export declare const useFormGroup: <T extends FormSchema>(formGroup: FormGroupRef<T>) => FormGroupRef<T>;
+export declare const ListenerForm: <T extends FormSchema>({ formGroup, formControl, children, }: {
     formGroup: FormGroupRef<T>;
     formControl?: keyof T;
     children: (value: ControlType | FormGroupRef<T>) => React.ReactNode;
 }) => import("react").ReactNode;
 export declare const Control: {
-    <T extends Record<string, [any, InputValidation?]>>({ formGroup, formControl, ...props }: InputFormParams<T> & {
+    <T extends FormSchema>({ formGroup, formControl, ...props }: InputFormParams<T> & {
         Item?: React.FC<EAFormItemProps>;
     }): import("react").JSX.Element;
     Item: import("react").FC<EAFormItemProps>;

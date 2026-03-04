@@ -11,7 +11,7 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.InputText = void 0;
+exports.InputText = exports.Input = void 0;
 const react_1 = require("react");
 const react_native_1 = require("react-native");
 const theme_provider_1 = require("./theme-provider");
@@ -21,15 +21,22 @@ const Button_1 = require("./Button");
 const Text_1 = require("./Text");
 const Box_1 = require("./Box");
 const AnimatedText = react_native_1.Animated.createAnimatedComponent(Text_1.Text);
-const InputText = (_a) => {
-    var _b, _c, _d, _e;
+const Input = (_a) => {
+    var _b, _c, _d, _e, _f, _g;
     var { style } = _a, props = __rest(_a, ["style"]);
     const { theme } = (0, theme_provider_1.useTheme)();
-    const styles_default = ((_b = theme === null || theme === void 0 ? void 0 : theme.components) === null || _b === void 0 ? void 0 : _b.InputText) || {};
+    const styles_default = ((_b = theme === null || theme === void 0 ? void 0 : theme.components) === null || _b === void 0 ? void 0 : _b.Input) || {};
+    const props_variant = ((_d = (_c = theme === null || theme === void 0 ? void 0 : theme.components) === null || _c === void 0 ? void 0 : _c.Input) === null || _d === void 0 ? void 0 : _d.variants) || {};
     const [focus, setFocus] = (0, react_1.useState)(false);
     const [showPassword, setShowPassword] = (0, react_1.useState)(false);
     const animation = (0, react_1.useRef)(new react_native_1.Animated.Value(0)).current;
-    const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, styles_default), props), (focus && props._focus)), (react_native_1.Platform.OS === "ios"
+    const sizeStyle = {
+        sm: { fontSize: 12, _label: { fontSize: 12 } },
+        md: { fontSize: 14, _label: { fontSize: 14 } },
+        lg: { fontSize: 16, _label: { fontSize: 16 } },
+        xl: { fontSize: 18, _label: { fontSize: 18 } },
+    };
+    const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, styles_default), props_variant[styles_default.variant || props.variant]), sizeStyle[props.size]), props), (focus && props._focus)), (react_native_1.Platform.OS === "ios"
         ? Object.assign(Object.assign({}, styles_default === null || styles_default === void 0 ? void 0 : styles_default._ios), props === null || props === void 0 ? void 0 : props._ios) : {})), (react_native_1.Platform.OS === "android"
         ? Object.assign(Object.assign({}, styles_default === null || styles_default === void 0 ? void 0 : styles_default._android), props === null || props === void 0 ? void 0 : props._android) : {})), (react_native_1.Platform.OS === "web"
         ? Object.assign(Object.assign({}, styles_default === null || styles_default === void 0 ? void 0 : styles_default._web), props === null || props === void 0 ? void 0 : props._web) : {}));
@@ -80,10 +87,10 @@ const InputText = (_a) => {
                 ]} {...combinedProps._label}>
                     {combinedProps.label}{combinedProps.isRequired && <Text_1.Text color={'danger.100'}> *</Text_1.Text>}
                 </AnimatedText>}
-            <Box_1.Box alignItems={'center'} flexDir="row" rounded={1} borderWidth={1} {...Object.assign(Object.assign({}, styles_default._containerStyle), combinedProps._containerStyle)} borderColor={((_c = styles_default === null || styles_default === void 0 ? void 0 : styles_default._containerStyle) === null || _c === void 0 ? void 0 : _c.borderColor) || ((_d = combinedProps._containerStyle) === null || _d === void 0 ? void 0 : _d.borderColor) || (focus ? 'primary.100' : 'light.100')}>
+            <Box_1.Box alignItems={'center'} flexDir="row" rounded={1} borderWidth={1} {...Object.assign(Object.assign({}, styles_default._containerStyle), combinedProps._containerStyle)} borderColor={((_e = styles_default === null || styles_default === void 0 ? void 0 : styles_default._containerStyle) === null || _e === void 0 ? void 0 : _e.borderColor) || ((_f = combinedProps._containerStyle) === null || _f === void 0 ? void 0 : _f.borderColor) || (focus ? 'primary.100' : 'light.100')}>
                 {combinedProps.iconLeft}
                 <react_native_1.TextInput {...combinedProps} secureTextEntry={combinedProps.isPassword && !showPassword} style={[
-            theme.fontFamily && { fontFamily: ((_e = theme === null || theme === void 0 ? void 0 : theme.fonts) === null || _e === void 0 ? void 0 : _e[theme.fontFamily + '_' + ((inputStyle === null || inputStyle === void 0 ? void 0 : inputStyle.fontWeight) || '400')]) || theme.fontFamily + '_' + ((inputStyle === null || inputStyle === void 0 ? void 0 : inputStyle.fontWeight) || '400') },
+            theme.fontFamily && { fontFamily: ((_g = theme === null || theme === void 0 ? void 0 : theme.fonts) === null || _g === void 0 ? void 0 : _g[theme.fontFamily + '_' + ((inputStyle === null || inputStyle === void 0 ? void 0 : inputStyle.fontWeight) || '400')]) || theme.fontFamily + '_' + ((inputStyle === null || inputStyle === void 0 ? void 0 : inputStyle.fontWeight) || '400') },
             inputStyle,
             theme.fontFamily && { fontWeight: undefined }
         ]} onFocus={e => {
@@ -101,4 +108,5 @@ const InputText = (_a) => {
             </Box_1.Box>
         </>);
 };
-exports.InputText = InputText;
+exports.Input = Input;
+exports.InputText = exports.Input;

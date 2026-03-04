@@ -1,6 +1,6 @@
 import { Children, useEffect, useRef, useState } from "react"
 import { Box } from './Box';
-import { BSTextInputProps, InputText } from "./Input"
+import { BSTextInputProps, Input } from "./Input"
 import { Icon } from "./Icon"
 import { BSButtonProps, Button } from "./Button"
 import { BSMenuProps, Menu, MenuRef } from "./Menu"
@@ -50,7 +50,7 @@ export const SearchInput = <T,>({ value, multiple, _item, ...props }: SearchInpu
                 backdrop={false}
                 useTriggerWidth
                 trigger={({ onPress }) =>
-                    <InputText
+                    <Input
                         value={text}
                         {...props?._input}
                         onChangeText={e => {

@@ -89,7 +89,7 @@ function InternalCollapse(
                 rounded: 1,
                 flexDir: 'row',
                 justifyContent: 'space-between',
-                icon: (
+                iconRight: (
                     <IconAnimated
                         as="Feather"
                         name="chevron-down"
