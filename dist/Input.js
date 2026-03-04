@@ -11,7 +11,7 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.InputText = exports.Input = void 0;
+exports.Input = void 0;
 const react_1 = require("react");
 const react_native_1 = require("react-native");
 const theme_provider_1 = require("./theme-provider");
@@ -109,4 +109,3 @@ const Input = (_a) => {
         </>);
 };
 exports.Input = Input;
-exports.InputText = exports.Input;

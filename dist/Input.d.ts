@@ -23,4 +23,3 @@ export type BSTextInputProps = TextInputProps & Omit<BSTextProps, '_ios' | '_and
     size?: 'sm' | 'md' | 'lg' | 'xl';
 };
 export declare const Input: React.FC<BSTextInputProps>;
-export declare const InputText: import("react").FC<any>;

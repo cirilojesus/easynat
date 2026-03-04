@@ -161,5 +161,3 @@ export const Input: React.FC<BSTextInputProps> = ({ style, ...props }) => {
         </>
     );
 };
-
-export const InputText = Input;

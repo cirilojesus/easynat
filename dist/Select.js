@@ -94,7 +94,7 @@ const Select = (_a) => {
             return (<Pressable_1.Pressable p={3} borderBottomWidth={1} borderBottomColor="light.100" bg={isSelected ? "primary.50" : undefined} onPress={() => handleSelect(item)} _pressed={{ opacity: 0.5 }} {..._option} {...item.props} {...(((_a = item.props) === null || _a === void 0 ? void 0 : _a.onPress) ? {
                 onPress: e => {
                     modal.current.close();
-                    _option.onPress();
+                    item.props.onPress(e);
                 }
             } : {})} {...(isSelected ? _selected : {})}>
                                 {item.props.label}
