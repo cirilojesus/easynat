@@ -6,17 +6,17 @@ import { cloneElement } from "react";
 import { IconProps } from "./Icon";
 import { renderChild } from "./utils/helpers";
 
-export type BSButtonProps = Omit<BSPressableProps, 'variant'> & {
+export type BSButtonProps = Omit<BSPressableProps, 'variant' | '_ios' | '_android' | '_web' | '_pressed'> & {
     variant?: VARIANT_BUTTON | (string & {});
     colorScheme?: COLOR_SCHEME;
-    _ios?: BSButtonProps;
-    _android?: BSButtonProps;
-    _web?: BSButtonProps;
+    _ios?: Omit<BSButtonProps, '_ios' | '_android' | '_web'>;
+    _android?: Omit<BSButtonProps, '_ios' | '_android' | '_web'>;
+    _web?: Omit<BSButtonProps, '_ios' | '_android' | '_web'>;
     _icon?: Partial<IconProps<any>>;
     _iconRight?: Partial<IconProps<any>>;
     icon?: React.ReactElement<IconProps<any>>
     iconRight?: React.ReactElement<IconProps<any>>
-    _pressed?: BSButtonProps;
+    _pressed?: Omit<BSButtonProps, '_ios' | '_android' | '_web' | '_pressed'>;
     size?: 'sm' | 'md' | 'lg' | 'xl'
 };
 

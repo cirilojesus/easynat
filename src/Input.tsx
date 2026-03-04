@@ -8,10 +8,10 @@ import { BSTextProps, Text } from "./Text";
 import { Box, BSBoxProps } from "./Box";
 import { Theme } from "./theme";
 
-export type BSTextInputProps = TextInputProps & BSTextProps & {
-    _ios?: BSTextInputProps;
-    _android?: BSTextInputProps;
-    _web?: BSTextInputProps;
+export type BSTextInputProps = TextInputProps & Omit<BSTextProps, '_ios' | '_android' | '_web'> & {
+    _ios?: Omit<BSTextInputProps, '_ios' | '_android' | '_web'>;
+    _android?: Omit<BSTextInputProps, '_ios' | '_android' | '_web'>;
+    _web?: Omit<BSTextInputProps, '_ios' | '_android' | '_web'>;
     label?: string;
     _label?: BSTextProps,
     isPassword?: boolean;
@@ -19,7 +19,7 @@ export type BSTextInputProps = TextInputProps & BSTextProps & {
     isRequired?: boolean;
     iconLeft?: React.ReactElement,
     _containerStyle?: BSBoxProps,
-    _focus?: BSTextInputProps,
+    _focus?: Omit<BSTextInputProps, '_ios' | '_android' | '_web' | '_focus'>;
     _iconRight?: BSButtonProps,
     iconRight?: React.ReactElement,
     color?: keyof Theme["colors"];

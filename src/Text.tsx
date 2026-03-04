@@ -14,9 +14,9 @@ export type TextVariants = 'h1'
 export type BSTextProps = RNTextProps & Omit<TextStyle, 'color'> & BSDefaultProps & {
     color?: keyof Theme["colors"];
     variant?: TextVariants | (string & {});
-    _ios?: BSTextProps;
-    _android?: BSTextProps;
-    _web?: BSTextProps;
+    _ios?: Omit<BSTextProps, '_ios' | '_android' | '_web'>;
+    _android?: Omit<BSTextProps, '_ios' | '_android' | '_web'>;
+    _web?: Omit<BSTextProps, '_ios' | '_android' | '_web'>;
 };
 
 export const Text: React.FC<BSTextProps> = ({ children, ...props }) => {

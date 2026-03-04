@@ -13,9 +13,9 @@ export type BSBoxProps = ViewProps & BSDefaultProps & {
     safeAreaBottom?: boolean,
     safeAreaLeft?: boolean,
     safeAreaRight?: boolean,
-    _ios?: BSBoxProps;
-    _android?: BSBoxProps;
-    _web?: BSBoxProps;
+    _ios?: Omit<BSBoxProps, '_ios' | '_android' | '_web'>;
+    _android?: Omit<BSBoxProps, '_ios' | '_android' | '_web'>;
+    _web?: Omit<BSBoxProps, '_ios' | '_android' | '_web'>;
     padding?: number;
     paddingTop?: number;
     paddingBottom?: number;
