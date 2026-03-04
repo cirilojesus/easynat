@@ -82,5 +82,5 @@ export type DatePickerType = BSPressableProps & DateConfigType & Intl.DateTimeFo
     isFloat?: boolean;
     isRequired?: boolean;
 };
-export declare function DatePicker({ locale, colorScheme, type, unSelect, separate, icon, ...props }: DatePickerType): import("react").JSX.Element;
+export declare function DatePicker({ locale, placeholder, colorScheme, type, unSelect, separate, icon, ...props }: DatePickerType): import("react").JSX.Element;
 export {};

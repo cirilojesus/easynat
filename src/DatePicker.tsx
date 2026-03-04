@@ -168,6 +168,7 @@ const AnimatedText = Animated.createAnimatedComponent(Text);
 
 export function DatePicker({
     locale = "en-US",
+    placeholder,
     colorScheme = "primary",
     type = "calendar",
     unSelect = false,
@@ -182,7 +183,6 @@ export function DatePicker({
         _label,
         isRequired,
         value,
-        placeholder,
         onChange,
         _months,
         _weekdays,
