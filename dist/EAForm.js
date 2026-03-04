@@ -181,7 +181,7 @@ const Control = (_a) => {
                         props.children.map(x => <_1.Radio key={x.props.value} checked={control.value == x.props.value} onChange={e => control.setValue(e)} {...props} {...x.props}/>)
                         :
                             props.isDate ?
-                                <DatePicker_1.DatePicker value={control.value} borderColor={control.error ? 'danger.100' : 'light.100'} onChange={props === null || props === void 0 ? void 0 : props.onChange} {...props}/>
+                                <DatePicker_1.DatePicker value={control.value} borderColor={control.error ? 'danger.100' : 'light.100'} onChange={e => control.setValue(e.iso)} {...props}/>
                                 :
                                     props.isSearch ?
                                         <SearchInput_1.SearchInput value={control.value} onChange={e => control.setValue(e)} {...props} _input={Object.assign({ label: props.label, isFloat: props.isFloat, _containerStyle: control.error ? { borderColor: 'danger.100' } : {} }, props._input)}/>

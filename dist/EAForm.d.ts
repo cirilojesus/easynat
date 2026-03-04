@@ -22,6 +22,7 @@ interface CombinedProps extends Omit<Partial<BSSelectProps>, '_android' | '_ios'
     _android?: Omit<CombinedProps, '_android' | '_ios' | '_web'>;
     _ios?: Omit<CombinedProps, '_android' | '_ios' | '_web'>;
     _web?: Omit<CombinedProps, '_android' | '_ios' | '_web'>;
+    onChange?: (e: any) => void;
 }
 export interface InputFormParams<T extends FormSchema> extends CombinedProps {
     formControl: keyof T;

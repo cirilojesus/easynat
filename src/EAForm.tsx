@@ -33,6 +33,7 @@ interface CombinedProps extends Omit<Partial<BSSelectProps>, '_android' | '_ios'
     _android?: Omit<CombinedProps, '_android' | '_ios' | '_web'>;
     _ios?: Omit<CombinedProps, '_android' | '_ios' | '_web'>;
     _web?: Omit<CombinedProps, '_android' | '_ios' | '_web'>;
+    onChange?: (e: any) => void
 }
 
 export interface InputFormParams<T extends FormSchema> extends CombinedProps {
@@ -243,7 +244,7 @@ export const Control = <T extends FormSchema>({
                             props.children.map(x => <Radio key={x.props.value} checked={control.value == x.props.value} onChange={e => control.setValue(e)} {...props} {...x.props} />)
                             :
                             props.isDate ?
-                                <DatePicker value={control.value} borderColor={control.error ? 'danger.100' : 'light.100'} onChange={props?.onChange} {...props} />
+                                <DatePicker value={control.value} borderColor={control.error ? 'danger.100' : 'light.100'} onChange={e => control.setValue(e.iso)} {...props} />
                                 :
                                 props.isSearch ?
                                     <SearchInput

@@ -167,31 +167,35 @@ function Stepper({
 const AnimatedText = Animated.createAnimatedComponent(Text);
 
 export function DatePicker({
-    value,
-    placeholder,
-    onChange,
-    _months,
-    _weekdays,
-    _years,
-    _days,
-    _time,
     locale = "en-US",
     colorScheme = "primary",
-    _buttonCancel,
-    _buttonDone,
     type = "calendar",
     unSelect = false,
-    config,
     separate = "-",
-    minValue,
-    maxValue,
     icon = true,
-    _icon,
     ...props
 }: DatePickerType) {
     const { theme } = useTheme();
     const styles_default = theme?.components?.DatePicker || {};
-    const { label, _label, isRequired } = { ...styles_default, ...props }
+    const {
+        label,
+        _label,
+        isRequired,
+        value,
+        placeholder,
+        onChange,
+        _months,
+        _weekdays,
+        _years,
+        _days,
+        _time,
+        _buttonCancel,
+        _buttonDone,
+        config,
+        minValue,
+        maxValue,
+        _icon
+    } = { ...styles_default, ...props }
 
     const defaultCfg: DateConfigType = type === "month-year" ? { locale, separate, config: { day: undefined, ...config } }
         : type === "datetime" ? { locale, separate, config: { hour: "2-digit", minute: "2-digit", hourCycle: "h24", ...config } }
