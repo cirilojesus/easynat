@@ -15,12 +15,16 @@ export interface InputValidation {
 }
 
 export type FormSchema = Record<string, [any, InputValidation?]>;
+export type FormValues<T extends FormSchema> = {
+    [K in keyof T]: T[K][0]
+}
 
 type ControlType = {
     value: any,
     error: string,
-    setValue: (value: any) => any,
-    validate: (value: any) => any,
+    setValue: (value: any) => void,
+    validate: (value: any) => string,
+    reset: () => void,
     validation: InputValidation
 }
 
@@ -76,7 +80,7 @@ const validateField = <T extends FormSchema>(form: FormGroupRef<T>['controls'], 
 
 export class FormGroupRef<T extends FormSchema> {
     controls: Record<keyof T, ControlType> = {} as any;
-    value: Record<keyof T, any> = {} as any;
+    value: FormValues<T> = {} as any;
     initValue: T = {} as any;
     #listeners: Record<keyof T | 'FORM_REF', Set<() => void>> = {} as any;
     #snapshots: Record<keyof T | 'FORM_REF', any> = {} as any;
@@ -96,6 +100,11 @@ export class FormGroupRef<T extends FormSchema> {
 
     getSnapshot = (control: keyof T | 'FORM_REF') => () => {
         return this.#snapshots[control];
+    }
+
+    setInitValue(value: Partial<Record<keyof T, any>>, setControls: boolean = true) {
+        Object.assign(this.initValue, value)
+        if (setControls) this.setValue(value)
     }
 
     setValue(value: Partial<Record<keyof T, any>>, validate: boolean = false) {
@@ -141,7 +150,7 @@ export class FormGroupRef<T extends FormSchema> {
         this.notify('FORM_REF')
     }
 
-    setControlValue(control: keyof T, value: any, validate: boolean = true) {
+    setControlValue<K extends keyof T>(control: K, value: T[K][0], validate: boolean = true) {
         this.value[control] = value
         this.controls[control].value = value
         if (validate) this.controls[control].validate(value)
@@ -157,7 +166,7 @@ export class FormGroupRef<T extends FormSchema> {
         this.notify(control)
     }
 
-    createControl(control: keyof T, props: [any, InputValidation?]) {
+    createControl<K extends keyof T>(control: K, props: [any, InputValidation?]) {
         this.value[control] = props[0]
         this.controls[control] = {
             value: props[0],
@@ -169,6 +178,11 @@ export class FormGroupRef<T extends FormSchema> {
                     this.controls[control].error = error
                     return error
                 }
+            },
+            reset: () => {
+                this.controls[control].value = this.initValue[control]
+                this.controls[control].error = ''
+                this.notify(control)
             },
             validation: props[1]
         }

@@ -11,11 +11,15 @@ export interface InputValidation {
     pattern?: RegExp;
 }
 export type FormSchema = Record<string, [any, InputValidation?]>;
+export type FormValues<T extends FormSchema> = {
+    [K in keyof T]: T[K][0];
+};
 type ControlType = {
     value: any;
     error: string;
-    setValue: (value: any) => any;
-    validate: (value: any) => any;
+    setValue: (value: any) => void;
+    validate: (value: any) => string;
+    reset: () => void;
     validation: InputValidation;
 };
 interface CombinedProps extends Omit<Partial<BSSelectProps>, '_android' | '_ios' | '_web'>, Omit<Partial<BSTextInputProps>, '_android' | '_ios' | '_web'>, Omit<Partial<EASwitchProps>, '_android' | '_ios' | '_web'>, Omit<Partial<EACheckBoxProps>, '_android' | '_ios' | '_web'>, DatePickerType, Partial<SearchInputModel> {
@@ -42,18 +46,19 @@ export type EAFormItemProps = Omit<CombinedProps, 'label' | 'value'> & {
 export declare class FormGroupRef<T extends FormSchema> {
     #private;
     controls: Record<keyof T, ControlType>;
-    value: Record<keyof T, any>;
+    value: FormValues<T>;
     initValue: T;
     constructor(form: T);
     subscribe: (control: keyof T | 'FORM_REF') => (callback: () => void) => () => boolean;
     getSnapshot: (control: keyof T | 'FORM_REF') => () => Record<keyof T | "FORM_REF", any>[keyof T | "FORM_REF"];
+    setInitValue(value: Partial<Record<keyof T, any>>, setControls?: boolean): void;
     setValue(value: Partial<Record<keyof T, any>>, validate?: boolean): void;
     validate(): boolean;
     isInvalid(): boolean;
     reset(): void;
-    setControlValue(control: keyof T, value: any, validate?: boolean): void;
+    setControlValue<K extends keyof T>(control: K, value: T[K][0], validate?: boolean): void;
     validateControl(control: keyof T, validation: InputValidation): void;
-    createControl(control: keyof T, props: [any, InputValidation?]): void;
+    createControl<K extends keyof T>(control: K, props: [any, InputValidation?]): void;
     private notify;
 }
 export declare const useFormControl: <T extends FormSchema>(formGroup: FormGroupRef<T>, formControl: keyof T) => ControlType;

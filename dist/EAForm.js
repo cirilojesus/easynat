@@ -63,6 +63,11 @@ class FormGroupRef {
         });
         __classPrivateFieldGet(this, _FormGroupRef_snapshots, "f")['FORM_REF'] = this;
     }
+    setInitValue(value, setControls = true) {
+        Object.assign(this.initValue, value);
+        if (setControls)
+            this.setValue(value);
+    }
     setValue(value, validate = false) {
         Object.assign(this.value, value);
         Object.keys(value).map((control) => {
@@ -133,6 +138,11 @@ class FormGroupRef {
                     this.controls[control].error = error;
                     return error;
                 }
+            },
+            reset: () => {
+                this.controls[control].value = this.initValue[control];
+                this.controls[control].error = '';
+                this.notify(control);
             },
             validation: props[1]
         };
