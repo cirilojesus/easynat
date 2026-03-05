@@ -81,7 +81,7 @@ const validateField = <T extends FormSchema>(form: FormGroupRef<T>['controls'], 
 export class FormGroupRef<T extends FormSchema> {
     controls: { [K in keyof T]: ControlType<T[K][0]> } = {} as any;
     value: FormValues<T> = {} as any;
-    initValue: T = {} as any;
+    initValue: FormValues<T> = {} as any;
     #listeners: Record<keyof T | 'FORM_REF', Set<() => void>> = {} as any;
     #snapshots: Record<keyof T | 'FORM_REF', any> = {} as any;
 

@@ -49,7 +49,7 @@ export declare class FormGroupRef<T extends FormSchema> {
         [K in keyof T]: ControlType<T[K][0]>;
     };
     value: FormValues<T>;
-    initValue: T;
+    initValue: FormValues<T>;
     constructor(form: T);
     subscribe: (control: keyof T | 'FORM_REF') => (callback: () => void) => () => boolean;
     getSnapshot: (control: keyof T | 'FORM_REF') => () => Record<keyof T | "FORM_REF", any>[keyof T | "FORM_REF"];
