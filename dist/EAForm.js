@@ -170,12 +170,12 @@ const useFormGroup = (formGroup) => {
     return (0, react_1.useSyncExternalStore)(formGroup.subscribe('FORM_REF'), formGroup.getSnapshot('FORM_REF'));
 };
 exports.useFormGroup = useFormGroup;
-const ListenerForm = ({ formGroup, formControl, children, }) => {
+function ListenerForm({ formGroup, formControl, children }) {
     const value = formControl
         ? (0, exports.useFormControl)(formGroup, formControl)
         : (0, exports.useFormGroup)(formGroup);
     return children(value);
-};
+}
 exports.ListenerForm = ListenerForm;
 const Control = (_a) => {
     var { formGroup, formControl } = _a, props = __rest(_a, ["formGroup", "formControl"]);

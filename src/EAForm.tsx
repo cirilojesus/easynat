@@ -19,11 +19,11 @@ export type FormValues<T extends FormSchema> = {
     [K in keyof T]: T[K][0]
 }
 
-type ControlType = {
-    value: any,
+type ControlType<T> = {
+    value: T,
     error: string,
-    setValue: (value: any) => void,
-    validate: (value: any) => string,
+    setValue: (value: T) => void,
+    validate: (value: T) => string,
     reset: () => void,
     validation: InputValidation
 }
@@ -79,7 +79,7 @@ const validateField = <T extends FormSchema>(form: FormGroupRef<T>['controls'], 
 };
 
 export class FormGroupRef<T extends FormSchema> {
-    controls: Record<keyof T, ControlType> = {} as any;
+    controls: { [K in keyof T]: ControlType<T[K][0]> } = {} as any;
     value: FormValues<T> = {} as any;
     initValue: T = {} as any;
     #listeners: Record<keyof T | 'FORM_REF', Set<() => void>> = {} as any;
@@ -200,10 +200,13 @@ export class FormGroupRef<T extends FormSchema> {
     }
 }
 
-export const useFormControl = <T extends FormSchema>(
+export const useFormControl = <
+    T extends FormSchema,
+    K extends keyof T
+>(
     formGroup: FormGroupRef<T>,
-    formControl: keyof T
-): ControlType => {
+    formControl: K
+): ControlType<T[K][0]> => {
     return useSyncExternalStore(
         formGroup.subscribe(formControl),
         formGroup.getSnapshot(formControl)
@@ -219,19 +222,28 @@ export const useFormGroup = <T extends FormSchema>(
     );
 }
 
-export const ListenerForm = <T extends FormSchema>({
-    formGroup,
-    formControl,
-    children,
-}: {
-    formGroup: FormGroupRef<T>;
-    formControl?: keyof T;
-    children: (value: ControlType | FormGroupRef<T>) => React.ReactNode;
-}) => {
+export function ListenerForm<T extends FormSchema, K extends keyof T>(
+    props: {
+        formGroup: FormGroupRef<T>;
+        formControl: K;
+        children: (value: ControlType<T[K][0]>) => React.ReactNode;
+    }
+): React.ReactNode;
+
+export function ListenerForm<T extends FormSchema>(
+    props: {
+        formGroup: FormGroupRef<T>;
+        formControl?: undefined;
+        children: (value: FormGroupRef<T>) => React.ReactNode;
+    }
+): React.ReactNode;
+
+export function ListenerForm({ formGroup, formControl, children }) {
     const value = formControl
         ? useFormControl(formGroup, formControl)
         : useFormGroup(formGroup);
-    return children(value as any);
+
+    return children(value);
 }
 
 export const Control = <T extends FormSchema>({

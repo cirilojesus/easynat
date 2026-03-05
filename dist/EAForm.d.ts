@@ -14,11 +14,11 @@ export type FormSchema = Record<string, [any, InputValidation?]>;
 export type FormValues<T extends FormSchema> = {
     [K in keyof T]: T[K][0];
 };
-type ControlType = {
-    value: any;
+type ControlType<T> = {
+    value: T;
     error: string;
-    setValue: (value: any) => void;
-    validate: (value: any) => string;
+    setValue: (value: T) => void;
+    validate: (value: T) => string;
     reset: () => void;
     validation: InputValidation;
 };
@@ -45,7 +45,9 @@ export type EAFormItemProps = Omit<CombinedProps, 'label' | 'value'> & {
 };
 export declare class FormGroupRef<T extends FormSchema> {
     #private;
-    controls: Record<keyof T, ControlType>;
+    controls: {
+        [K in keyof T]: ControlType<T[K][0]>;
+    };
     value: FormValues<T>;
     initValue: T;
     constructor(form: T);
@@ -61,13 +63,18 @@ export declare class FormGroupRef<T extends FormSchema> {
     createControl<K extends keyof T>(control: K, props: [any, InputValidation?]): void;
     private notify;
 }
-export declare const useFormControl: <T extends FormSchema>(formGroup: FormGroupRef<T>, formControl: keyof T) => ControlType;
+export declare const useFormControl: <T extends FormSchema, K extends keyof T>(formGroup: FormGroupRef<T>, formControl: K) => ControlType<T[K][0]>;
 export declare const useFormGroup: <T extends FormSchema>(formGroup: FormGroupRef<T>) => FormGroupRef<T>;
-export declare const ListenerForm: <T extends FormSchema>({ formGroup, formControl, children, }: {
+export declare function ListenerForm<T extends FormSchema, K extends keyof T>(props: {
     formGroup: FormGroupRef<T>;
-    formControl?: keyof T;
-    children: (value: ControlType | FormGroupRef<T>) => React.ReactNode;
-}) => import("react").ReactNode;
+    formControl: K;
+    children: (value: ControlType<T[K][0]>) => React.ReactNode;
+}): React.ReactNode;
+export declare function ListenerForm<T extends FormSchema>(props: {
+    formGroup: FormGroupRef<T>;
+    formControl?: undefined;
+    children: (value: FormGroupRef<T>) => React.ReactNode;
+}): React.ReactNode;
 export declare const Control: {
     <T extends FormSchema>({ formGroup, formControl, ...props }: InputFormParams<T> & {
         Item?: React.FC<EAFormItemProps>;
