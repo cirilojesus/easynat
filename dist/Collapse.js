@@ -42,7 +42,7 @@ const Icon_1 = require("./Icon");
 const IconAnimated = react_native_reanimated_1.default.createAnimatedComponent(Icon_1.Icon);
 /* ---------------- INTERNAL COMPONENT ------------------- */
 function InternalCollapse(_a, ref) {
-    var _b;
+    var _b, _c;
     var { trigger } = _a, props = __rest(_a, ["trigger"]);
     const height = (0, react_native_reanimated_1.useSharedValue)(0);
     const isExpanded = (0, react_native_reanimated_1.useSharedValue)(false);
@@ -66,7 +66,7 @@ function InternalCollapse(_a, ref) {
         toggle: () => (isExpanded.value = !isExpanded.value),
     }));
     return (<Box_1.Box {...props}>
-            {trigger(Object.assign({ onPress: () => (isExpanded.value = !isExpanded.value), isOpen: openState, p: 2.5, borderWidth: 1, borderColor: 'light.100', rounded: 1, flexDir: 'row', justifyContent: 'space-between', iconRight: (<IconAnimated as="Feather" name="chevron-down" {...(_b = props._trigger) === null || _b === void 0 ? void 0 : _b._icon} style={iconStyle}/>) }, (openState ? props._open : props._trigger)))}
+            {trigger(Object.assign(Object.assign({ onPress: () => (isExpanded.value = !isExpanded.value), isOpen: openState, p: 2.5, borderWidth: 1, borderColor: 'light.100', rounded: 1, flexDir: 'row', justifyContent: 'space-between', iconRight: (<IconAnimated as="Feather" name="chevron-down" {...(_b = props._trigger) === null || _b === void 0 ? void 0 : _b._iconRight} {...(openState ? (_c = props._open) === null || _c === void 0 ? void 0 : _c._iconRight : {})} style={iconStyle}/>) }, props._trigger), (openState ? props._open : {})))}
 
             <react_native_reanimated_1.default.View style={bodyStyle}>
                 <Box_1.Box onLayout={(e) => (height.value = e.nativeEvent.layout.height)} style={{ width: '100%', position: 'absolute' }} {...props._contentStyle}>

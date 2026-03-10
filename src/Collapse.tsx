@@ -93,11 +93,13 @@ function InternalCollapse(
                     <IconAnimated
                         as="Feather"
                         name="chevron-down"
-                        {...props._trigger?._icon}
+                        {...props._trigger?._iconRight}
+                        {...(openState ? props._open?._iconRight : {})}
                         style={iconStyle}
                     />
                 ),
-                ...(openState ? props._open : props._trigger),
+                ...props._trigger,
+                ...(openState ? props._open : {}),
             })}
 
             <Animated.View style={bodyStyle}>

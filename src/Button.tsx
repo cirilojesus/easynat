@@ -136,11 +136,10 @@ export const Button: React.FC<BSButtonProps> = ({ colorScheme = "primary", varia
 
     return (
         <Pressable
-            p={2.5}
-            rounded={2}
+            rounded={1}
             flexDir={'row'}
             alignItems={'center'}
-            gap={8}
+            gap={2}
             justifyContent={'center'}
             {...{ ...props_default, ...variantStyles[variant], ...sizeStyle[props?.size], ...props }}
             _pressed={{ ...props_default?._pressed, ...variantStyles[variant]?._pressed, ...props._pressed }}

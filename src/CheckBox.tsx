@@ -72,7 +72,7 @@ export const CheckBox: React.FC<EACheckBoxProps> = (props) => {
                     {checked ? combinedProps.icon || <Icon name={'check'} as={'Feather'} color="white" {...combinedProps._icon} /> : ''}
                 </Box>
             }
-            _text={{ ml: 2, textAlign: 'left', ...combinedProps._text }}
+            _text={{ textAlign: 'left', ...combinedProps._text }}
         >
             {label}
         </Button>

@@ -8,8 +8,10 @@ export type EASwitchProps = RNSwitchProps & BSDefaultProps & {
     _android?: Omit<EASwitchProps, '_ios' | '_android' | '_web'>;
     _web?: Omit<EASwitchProps, '_ios' | '_android' | '_web'>;
     size?: number;
+    scale?: number;
     colorScheme?: COLOR_SCHEME;
     _containerStyle?: BSButtonProps;
     pointerBox?: boolean;
+    label?: string;
 };
 export declare const Switch: React.FC<EASwitchProps>;

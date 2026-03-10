@@ -14,9 +14,11 @@ export type EASwitchProps = RNSwitchProps & BSDefaultProps & {
     _android?: Omit<EASwitchProps, '_ios' | '_android' | '_web'>;
     _web?: Omit<EASwitchProps, '_ios' | '_android' | '_web'>;
     size?: number;
+    scale?: number;
     colorScheme?: COLOR_SCHEME;
     _containerStyle?: BSButtonProps;
     pointerBox?: boolean;
+    label?: string;
 };
 
 export const Switch: React.FC<EASwitchProps> = (props) => {
@@ -33,22 +35,24 @@ export const Switch: React.FC<EASwitchProps> = (props) => {
 
     const styles = DEFAULT_PROPS(combinedProps, theme);
 
-    const { colorScheme = "primary", _containerStyle, pointerBox, size = 1, ...rest } = combinedProps;
+    const {
+        colorScheme = "primary",
+        _containerStyle,
+        pointerBox,
+        size = 1,
+        label,
+        scale = 1,
+        ...rest
+    } = combinedProps;
 
-    const scale = 1 + 0.1 * (size - 1);
-    const rightOffset = ((52 * (scale - 1)) / 2);
 
     return (
         <Button
             variant="unstyle"
-            height={36 + size * 4}
+            height={28 + (.7 - 1) * 28}
             onPress={() => props.onValueChange(!props.value)}
-            _text={{ ml: 1 }}
             _pressed={{ _text: { color: theme.colors[colorScheme + '.100'] } }}
-            p={0}
-            ml={-10}
-            flexDir="row"
-            alignItems="center"
+            justifyContent={'flex-start'}
             pointerEvents={pointerBox ? 'auto' : 'box-none'}
             {..._containerStyle}
         >
@@ -57,23 +61,20 @@ export const Switch: React.FC<EASwitchProps> = (props) => {
                     false: theme.colors['light.100'],
                     true: theme.colors[colorScheme + '.100'],
                 }}
-                thumbColor={
-                    combinedProps.value
-                        ? theme.colors[colorScheme + '.100']
-                        : theme.colors['light.100']
-                }
+                thumbColor={theme.colors['light.100']}
                 {...rest}
                 style={[
                     {
-                        width: 52 + (rightOffset / 2),
-                        marginRight: (rightOffset * 2),
-                        transform: [{ scale }],
+                        marginRight: (size - 1) * 31.58,
+                        marginLeft: (size - 1) * 31.58,
+                        marginTop: (size - 1) * 14,
+                        transform: [{ scale }]
                     },
                     rest.style,
                     ...styles
                 ]}
             />
-            LABEL
+            {label}
         </Button>
 
     );

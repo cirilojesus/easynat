@@ -26,25 +26,22 @@ const Switch = (props) => {
     const styles_default = ((_a = theme === null || theme === void 0 ? void 0 : theme.components) === null || _a === void 0 ? void 0 : _a.Switch) || {};
     const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, styles_default), props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
     const styles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(combinedProps, theme);
-    const { colorScheme = "primary", _containerStyle, pointerBox, size = 1 } = combinedProps, rest = __rest(combinedProps, ["colorScheme", "_containerStyle", "pointerBox", "size"]);
-    const scale = 1 + 0.1 * (size - 1);
-    const rightOffset = ((52 * (scale - 1)) / 2);
-    return (<Button_1.Button variant="unstyle" height={36 + size * 4} onPress={() => props.onValueChange(!props.value)} _text={{ ml: 1 }} _pressed={{ _text: { color: theme.colors[colorScheme + '.100'] } }} p={0} ml={-10} flexDir="row" alignItems="center" pointerEvents={pointerBox ? 'auto' : 'box-none'} {..._containerStyle}>
+    const { colorScheme = "primary", _containerStyle, pointerBox, size = 1, label, scale = 1 } = combinedProps, rest = __rest(combinedProps, ["colorScheme", "_containerStyle", "pointerBox", "size", "label", "scale"]);
+    return (<Button_1.Button variant="unstyle" height={28 + (.7 - 1) * 28} onPress={() => props.onValueChange(!props.value)} _pressed={{ _text: { color: theme.colors[colorScheme + '.100'] } }} justifyContent={'flex-start'} pointerEvents={pointerBox ? 'auto' : 'box-none'} {..._containerStyle}>
             <react_native_1.Switch trackColor={{
             false: theme.colors['light.100'],
             true: theme.colors[colorScheme + '.100'],
-        }} thumbColor={combinedProps.value
-            ? theme.colors[colorScheme + '.100']
-            : theme.colors['light.100']} {...rest} style={[
+        }} thumbColor={theme.colors['light.100']} {...rest} style={[
             {
-                width: 52 + (rightOffset / 2),
-                marginRight: (rightOffset * 2),
-                transform: [{ scale }],
+                marginRight: (size - 1) * 31.58,
+                marginLeft: (size - 1) * 31.58,
+                marginTop: (size - 1) * 14,
+                transform: [{ scale }]
             },
             rest.style,
             ...styles
         ]}/>
-            LABEL
+            {label}
         </Button_1.Button>);
 };
 exports.Switch = Switch;
