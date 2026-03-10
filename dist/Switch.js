@@ -27,15 +27,15 @@ const Switch = (props) => {
     const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, styles_default), props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
     const styles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(combinedProps, theme);
     const { colorScheme = "primary", _containerStyle, pointerBox, size = 1, label, scale = 1 } = combinedProps, rest = __rest(combinedProps, ["colorScheme", "_containerStyle", "pointerBox", "size", "label", "scale"]);
-    return (<Button_1.Button variant="unstyle" height={28 + (.7 - 1) * 28} onPress={() => props.onValueChange(!props.value)} _pressed={{ _text: { color: theme.colors[colorScheme + '.100'] } }} justifyContent={'flex-start'} pointerEvents={pointerBox ? 'auto' : 'box-none'} {..._containerStyle}>
+    return (<Button_1.Button variant="unstyle" height={28 + (scale - 1) * 28} p={0} onPress={() => props.onValueChange(!props.value)} _pressed={{ _text: { color: theme.colors[colorScheme + '.100'] } }} justifyContent={'flex-start'} pointerEvents={pointerBox ? 'auto' : 'box-none'} {..._containerStyle}>
             <react_native_1.Switch trackColor={{
             false: theme.colors['light.100'],
             true: theme.colors[colorScheme + '.100'],
         }} thumbColor={theme.colors['light.100']} {...rest} style={[
             {
-                marginRight: (size - 1) * 31.58,
-                marginLeft: (size - 1) * 31.58,
-                marginTop: (size - 1) * 14,
+                marginRight: (scale - 1) * 31.58,
+                marginLeft: (scale - 1) * 31.58,
+                marginTop: (scale - 1) * 14,
                 transform: [{ scale }]
             },
             rest.style,

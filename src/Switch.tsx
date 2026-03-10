@@ -49,7 +49,8 @@ export const Switch: React.FC<EASwitchProps> = (props) => {
     return (
         <Button
             variant="unstyle"
-            height={28 + (.7 - 1) * 28}
+            height={28 + (scale - 1) * 28}
+            p={0}
             onPress={() => props.onValueChange(!props.value)}
             _pressed={{ _text: { color: theme.colors[colorScheme + '.100'] } }}
             justifyContent={'flex-start'}
@@ -65,9 +66,9 @@ export const Switch: React.FC<EASwitchProps> = (props) => {
                 {...rest}
                 style={[
                     {
-                        marginRight: (size - 1) * 31.58,
-                        marginLeft: (size - 1) * 31.58,
-                        marginTop: (size - 1) * 14,
+                        marginRight: (scale - 1) * 31.58,
+                        marginLeft: (scale - 1) * 31.58,
+                        marginTop: (scale - 1) * 14,
                         transform: [{ scale }]
                     },
                     rest.style,

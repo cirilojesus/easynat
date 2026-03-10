@@ -136,6 +136,7 @@ export const Button: React.FC<BSButtonProps> = ({ colorScheme = "primary", varia
 
     return (
         <Pressable
+            p={2.5}
             rounded={1}
             flexDir={'row'}
             alignItems={'center'}
