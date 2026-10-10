@@ -1,8 +1,8 @@
-import { DimensionValue, FlexStyle } from "react-native";
+import { DimensionValue, FlexStyle, TextStyle } from "react-native";
 import { calcSize } from "./helpers";
-import { Theme } from "../theme";
+import { Theme, ThemeColor, ThemeShadow } from "../theme";
 
-export type BSDefaultProps = FlexStyle & {
+export type EADefaultProps = FlexStyle & {
     // Spacing
     p?: DimensionValue;
     m?: DimensionValue;
@@ -20,7 +20,7 @@ export type BSDefaultProps = FlexStyle & {
     mr?: DimensionValue;
 
     // Background
-    bg?: keyof Theme['colors'] | `#${string}` | `rgb${string}`;
+    bg?: ThemeColor;
 
     // Border radius
     rounded?: DimensionValue;
@@ -33,22 +33,22 @@ export type BSDefaultProps = FlexStyle & {
 
     // Border
     borderWidth?: number;
-    borderColor?: keyof Theme["colors"] | `#${string}` | `rgb${string}`;
+    borderColor?: ThemeColor;
     borderTopWidth?: number;
     borderBottomWidth?: number;
     borderLeftWidth?: number;
     borderRightWidth?: number;
-    borderTopColor?: keyof Theme["colors"] | `#${string}` | `rgb${string}`;
-    borderBottomColor?: keyof Theme["colors"] | `#${string}` | `rgb${string}`;
-    borderLeftColor?: keyof Theme["colors"] | `#${string}` | `rgb${string}`;
-    borderRightColor?: keyof Theme["colors"] | `#${string}` | `rgb${string}`;
+    borderTopColor?: ThemeColor;
+    borderBottomColor?: ThemeColor;
+    borderLeftColor?: ThemeColor;
+    borderRightColor?: ThemeColor;
     borderXWidth?: number;
     borderYWidth?: number;
-    borderXColor?: keyof Theme["colors"] | `#${string}` | `rgb${string}`;
-    borderYColor?: keyof Theme["colors"] | `#${string}` | `rgb${string}`;
+    borderXColor?: ThemeColor;
+    borderYColor?: ThemeColor;
 
     // Shadows & flex
-    shadow?: keyof Theme['shadows'];
+    shadow?: ThemeShadow;
     flexDir?: "row" | "column" | "row-reverse" | "column-reverse";
     opacity?: number;
     pointerEvents?: "box-none" | "none" | "box-only" | "auto";
@@ -62,7 +62,36 @@ export type BSDefaultProps = FlexStyle & {
     minH?: DimensionValue;
 };
 
-export const DEFAULT_PROPS = (props: BSDefaultProps, theme: Theme) => {
+// Claves de estilo válidas de React Native (View, Text e Image)
+const STYLE_KEYS = new Set([
+    "alignContent", "alignItems", "alignSelf", "aspectRatio", "backfaceVisibility", "backgroundColor",
+    "borderBlockColor", "borderBlockEndColor", "borderBlockStartColor", "borderBottomColor",
+    "borderBottomEndRadius", "borderBottomLeftRadius", "borderBottomRightRadius", "borderBottomStartRadius",
+    "borderBottomWidth", "borderColor", "borderCurve", "borderEndColor", "borderEndEndRadius",
+    "borderEndStartRadius", "borderEndWidth", "borderLeftColor", "borderLeftWidth", "borderRadius",
+    "borderRightColor", "borderRightWidth", "borderStartColor", "borderStartEndRadius",
+    "borderStartStartRadius", "borderStartWidth", "borderStyle", "borderTopColor", "borderTopEndRadius",
+    "borderTopLeftRadius", "borderTopRightRadius", "borderTopStartRadius", "borderTopWidth", "borderWidth",
+    "bottom", "boxShadow", "color", "columnGap", "cursor", "direction", "display", "elevation", "end",
+    "filter", "flex", "flexBasis", "flexDirection", "flexGrow", "flexShrink", "flexWrap", "fontFamily",
+    "fontSize", "fontStyle", "fontVariant", "fontWeight", "gap", "height", "includeFontPadding", "inset",
+    "insetBlock", "insetBlockEnd", "insetBlockStart", "insetInline", "insetInlineEnd", "insetInlineStart",
+    "isolation", "justifyContent", "left", "letterSpacing", "lineHeight", "margin", "marginBlock",
+    "marginBlockEnd", "marginBlockStart", "marginBottom", "marginEnd", "marginHorizontal", "marginInline",
+    "marginInlineEnd", "marginInlineStart", "marginLeft", "marginRight", "marginStart", "marginTop",
+    "marginVertical", "maxHeight", "maxWidth", "minHeight", "minWidth", "mixBlendMode", "objectFit",
+    "opacity", "outlineColor", "outlineOffset", "outlineStyle", "outlineWidth", "overflow", "overlayColor",
+    "padding", "paddingBlock", "paddingBlockEnd", "paddingBlockStart", "paddingBottom", "paddingEnd",
+    "paddingHorizontal", "paddingInline", "paddingInlineEnd", "paddingInlineStart", "paddingLeft",
+    "paddingRight", "paddingStart", "paddingTop", "paddingVertical", "pointerEvents", "position",
+    "resizeMode", "right", "rotation", "rowGap", "scaleX", "scaleY", "shadowColor", "shadowOffset",
+    "shadowOpacity", "shadowRadius", "start", "textAlign", "textAlignVertical", "textDecorationColor",
+    "textDecorationLine", "textDecorationStyle", "textShadowColor", "textShadowOffset", "textShadowRadius",
+    "textTransform", "tintColor", "top", "transform", "transformMatrix", "transformOrigin", "translateX",
+    "translateY", "userSelect", "verticalAlign", "width", "writingDirection", "zIndex",
+]);
+
+export const DEFAULT_PROPS = (props: EADefaultProps, theme: Theme) => {
     const {
         // spacing
         p, m, px, py, pt, pb, pl, pr,
@@ -103,7 +132,7 @@ export const DEFAULT_PROPS = (props: BSDefaultProps, theme: Theme) => {
         mr !== undefined && { marginRight: calcSize(mr) },
 
         // Background
-        bg && { backgroundColor: theme.colors?.[bg as keyof Theme["colors"]] || bg },
+        bg && { backgroundColor: theme.colors?.[bg as ThemeColor] || bg },
 
         // Border radius
         rounded !== undefined && { borderRadius: calcSize(rounded) },
@@ -138,28 +167,28 @@ export const DEFAULT_PROPS = (props: BSDefaultProps, theme: Theme) => {
 
         // Border
         borderWidth !== undefined && { borderWidth },
-        borderColor && { borderColor: theme.colors?.[borderColor as keyof Theme["colors"]] || borderColor },
+        borderColor && { borderColor: theme.colors?.[borderColor as ThemeColor] || borderColor },
 
         borderTopWidth !== undefined && { borderTopWidth },
         borderBottomWidth !== undefined && { borderBottomWidth },
         borderLeftWidth !== undefined && { borderLeftWidth },
         borderRightWidth !== undefined && { borderRightWidth },
 
-        borderTopColor && { borderTopColor: theme.colors?.[borderTopColor as keyof Theme["colors"]] || borderTopColor },
-        borderBottomColor && { borderBottomColor: theme.colors?.[borderBottomColor as keyof Theme["colors"]] || borderBottomColor },
-        borderLeftColor && { borderLeftColor: theme.colors?.[borderLeftColor as keyof Theme["colors"]] || borderLeftColor },
-        borderRightColor && { borderRightColor: theme.colors?.[borderRightColor as keyof Theme["colors"]] || borderRightColor },
+        borderTopColor && { borderTopColor: theme.colors?.[borderTopColor as ThemeColor] || borderTopColor },
+        borderBottomColor && { borderBottomColor: theme.colors?.[borderBottomColor as ThemeColor] || borderBottomColor },
+        borderLeftColor && { borderLeftColor: theme.colors?.[borderLeftColor as ThemeColor] || borderLeftColor },
+        borderRightColor && { borderRightColor: theme.colors?.[borderRightColor as ThemeColor] || borderRightColor },
 
         borderXWidth !== undefined && { borderLeftWidth: borderXWidth, borderRightWidth: borderXWidth },
         borderYWidth !== undefined && { borderTopWidth: borderYWidth, borderBottomWidth: borderYWidth },
 
         borderXColor && {
-            borderLeftColor: theme.colors?.[borderXColor as keyof Theme["colors"]] || borderXColor,
-            borderRightColor: theme.colors?.[borderXColor as keyof Theme["colors"]] || borderXColor
+            borderLeftColor: theme.colors?.[borderXColor as ThemeColor] || borderXColor,
+            borderRightColor: theme.colors?.[borderXColor as ThemeColor] || borderXColor
         },
         borderYColor && {
-            borderTopColor: theme.colors?.[borderYColor as keyof Theme["colors"]] || borderYColor,
-            borderBottomColor: theme.colors?.[borderYColor as keyof Theme["colors"]] || borderYColor
+            borderTopColor: theme.colors?.[borderYColor as ThemeColor] || borderYColor,
+            borderBottomColor: theme.colors?.[borderYColor as ThemeColor] || borderYColor
         },
 
         // Size
@@ -175,7 +204,9 @@ export const DEFAULT_PROPS = (props: BSDefaultProps, theme: Theme) => {
         flexDir !== undefined && { flexDirection: flexDir },
         pointerEvents !== undefined && { pointerEvents },
         opacity !== undefined && { opacity },
-        gap !== undefined && { gap: calcSize(gap) },
-        others
+        gap !== undefined && { gap: calcSize(gap as DimensionValue) },
+        // Solo se pasan a style las props que son estilos; el resto (onPress, children...) se ignora
+        Object.fromEntries(Object.entries(others).filter(([key]) => STYLE_KEYS.has(key))),
+        (others as TextStyle).color && { color: theme.colors?.[(others as TextStyle).color as string] || (others as TextStyle).color },
     ];
 };

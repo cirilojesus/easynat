@@ -1,30 +1,21 @@
-import { Platform } from "react-native";
-import { useTheme } from "./theme-provider";
-import { BSDefaultProps } from "./utils/DEFAULT_PROPS";
-import { Theme } from "./theme";
-import { Box, BSBoxProps } from "./Box";
+import React from "react";
+import { useThemeProps } from "./utils/useThemeProps";
+import { EADefaultProps } from "./utils/DEFAULT_PROPS";
+import { ThemeColor } from "./theme";
+import { Box, EABoxProps } from "./Box";
 
-export type EAProgressBarProps = BSBoxProps & BSDefaultProps & {
+export type EAProgressBarProps = EABoxProps & EADefaultProps & {
     progress: number;
-    color?: keyof Theme["colors"];
+    color?: ThemeColor;
     text?: boolean | string;
     _ios?: EAProgressBarProps;
     _android?: EAProgressBarProps;
     _web?: EAProgressBarProps;
 };
 
-export const ProgressBar: React.FC<EAProgressBarProps> = ({ ...props }) => {
-    const { theme } = useTheme();
-    const props_default = theme?.components?.ProgressBar || {}
-
-    const combinedProps: EAProgressBarProps = {
-        ...{ text: true, color: 'primary.100' },
-        ...props_default,
-        ...props,
-        ...(Platform.OS === "ios" ? props._ios : {}),
-        ...(Platform.OS === "android" ? props._android : {}),
-        ...(Platform.OS === "web" ? props._web : {}),
-    };
+export const ProgressBar: React.FC<EAProgressBarProps> = (props) => {
+    // Defaults → theme.components.ProgressBar → variante → props → plataforma
+    const [{ variant: _variant, ...combinedProps }] = useThemeProps<EAProgressBarProps>('ProgressBar', props, { defaults: { text: true, color: 'primary.100' } });
 
     const { progress, color, text } = combinedProps;
 
@@ -35,7 +26,7 @@ export const ProgressBar: React.FC<EAProgressBarProps> = ({ ...props }) => {
             borderColor={'light.100'}
             overflow="hidden"
             w={'100%'}
-            {...props}
+            {...combinedProps}
             _text={{ textAlign: "center", fontSize: 12, ...combinedProps._text }}
         >
             <Box

@@ -1,37 +1,28 @@
 import React from "react";
 import {
-    Platform,
     Switch as RNSwitch,
     SwitchProps as RNSwitchProps,
 } from "react-native";
-import { useTheme } from "./theme-provider";
-import { BSDefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
-import { COLOR_SCHEME, Theme } from "./theme";
-import { BSButtonProps, Button } from "./Button";
+import { EADefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
+import { COLOR_SCHEME } from "./theme";
+import { EAButtonProps, Button } from "./Button";
+import { useThemeProps } from "./utils/useThemeProps";
 
-export type EASwitchProps = RNSwitchProps & BSDefaultProps & {
+export type EASwitchProps = RNSwitchProps & EADefaultProps & {
     _ios?: Omit<EASwitchProps, '_ios' | '_android' | '_web'>;
     _android?: Omit<EASwitchProps, '_ios' | '_android' | '_web'>;
     _web?: Omit<EASwitchProps, '_ios' | '_android' | '_web'>;
-    size?: number;
     scale?: number;
     colorScheme?: COLOR_SCHEME;
-    _containerStyle?: BSButtonProps;
+    _containerStyle?: EAButtonProps;
     pointerBox?: boolean;
     label?: string;
+    variant?: (string & {});
 };
 
 export const Switch: React.FC<EASwitchProps> = (props) => {
-    const { theme } = useTheme();
-    const styles_default = theme?.components?.Switch || {};
-
-    const combinedProps: EASwitchProps = {
-        ...styles_default,
-        ...props,
-        ...(Platform.OS === "ios" ? props._ios : {}),
-        ...(Platform.OS === "android" ? props._android : {}),
-        ...(Platform.OS === "web" ? props._web : {}),
-    };
+    // Defaults → theme.components.Switch → variante → props → plataforma
+    const [combinedProps, theme] = useThemeProps<EASwitchProps>('Switch', props);
 
     const styles = DEFAULT_PROPS(combinedProps, theme);
 
@@ -39,36 +30,48 @@ export const Switch: React.FC<EASwitchProps> = (props) => {
         colorScheme = "primary",
         _containerStyle,
         pointerBox,
-        size = 1,
         label,
         scale = 1,
+        variant: _variant,
         ...rest
     } = combinedProps;
 
 
+    // transform: scale no ocupa espacio: se compensa con margen. Cada lado crece la MITAD del aumento del
+    // tamaño real del switch (se mide; antes era un ancho fijo y todo el aumento a cada lado, el doble)
+    const [size, setSize] = React.useState({ w: 51, h: 31 });
+    const extraX = (scale - 1) * size.w / 2;
+    const extraY = (scale - 1) * size.h / 2;
+
     return (
         <Button
             variant="unstyle"
-            height={28 + (scale - 1) * 28}
+            minH={size.h * scale}
             p={0}
-            onPress={() => props.onValueChange(!props.value)}
+            onPress={() => !combinedProps.disabled && combinedProps.onValueChange?.(!combinedProps.value)}
             _pressed={{ _text: { color: theme.colors[colorScheme + '.100'] } }}
             justifyContent={'flex-start'}
             pointerEvents={pointerBox ? 'auto' : 'box-none'}
             {..._containerStyle}
         >
             <RNSwitch
+                // Bolita blanca sobre el carril: con los dos en light.100, apagado la bolita no se veía
                 trackColor={{
-                    false: theme.colors['light.100'],
+                    false: theme.colors['muted.100'],
                     true: theme.colors[colorScheme + '.100'],
                 }}
-                thumbColor={theme.colors['light.100']}
+                thumbColor={theme.colors['white']}
+                ios_backgroundColor={theme.colors['muted.100']}
                 {...rest}
+                onLayout={e => {
+                    const { width, height } = e.nativeEvent.layout;
+                    if (Math.round(width) !== Math.round(size.w) || Math.round(height) !== Math.round(size.h)) setSize({ w: width, h: height });
+                    rest.onLayout?.(e);
+                }}
                 style={[
                     {
-                        marginRight: (scale - 1) * 31.58,
-                        marginLeft: (scale - 1) * 31.58,
-                        marginTop: (scale - 1) * 14,
+                        marginHorizontal: extraX,
+                        marginVertical: extraY,
                         transform: [{ scale }]
                     },
                     rest.style,

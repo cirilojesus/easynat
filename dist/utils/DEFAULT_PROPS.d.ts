@@ -1,6 +1,6 @@
 import { DimensionValue, FlexStyle } from "react-native";
-import { Theme } from "../theme";
-export type BSDefaultProps = FlexStyle & {
+import { Theme, ThemeColor, ThemeShadow } from "../theme";
+export type EADefaultProps = FlexStyle & {
     p?: DimensionValue;
     m?: DimensionValue;
     px?: DimensionValue;
@@ -15,7 +15,7 @@ export type BSDefaultProps = FlexStyle & {
     mb?: DimensionValue;
     ml?: DimensionValue;
     mr?: DimensionValue;
-    bg?: keyof Theme['colors'] | `#${string}` | `rgb${string}`;
+    bg?: ThemeColor;
     rounded?: DimensionValue;
     roundedTop?: DimensionValue;
     roundedBottom?: DimensionValue;
@@ -24,20 +24,20 @@ export type BSDefaultProps = FlexStyle & {
     roundedX?: DimensionValue;
     roundedY?: DimensionValue;
     borderWidth?: number;
-    borderColor?: keyof Theme["colors"] | `#${string}` | `rgb${string}`;
+    borderColor?: ThemeColor;
     borderTopWidth?: number;
     borderBottomWidth?: number;
     borderLeftWidth?: number;
     borderRightWidth?: number;
-    borderTopColor?: keyof Theme["colors"] | `#${string}` | `rgb${string}`;
-    borderBottomColor?: keyof Theme["colors"] | `#${string}` | `rgb${string}`;
-    borderLeftColor?: keyof Theme["colors"] | `#${string}` | `rgb${string}`;
-    borderRightColor?: keyof Theme["colors"] | `#${string}` | `rgb${string}`;
+    borderTopColor?: ThemeColor;
+    borderBottomColor?: ThemeColor;
+    borderLeftColor?: ThemeColor;
+    borderRightColor?: ThemeColor;
     borderXWidth?: number;
     borderYWidth?: number;
-    borderXColor?: keyof Theme["colors"] | `#${string}` | `rgb${string}`;
-    borderYColor?: keyof Theme["colors"] | `#${string}` | `rgb${string}`;
-    shadow?: keyof Theme['shadows'];
+    borderXColor?: ThemeColor;
+    borderYColor?: ThemeColor;
+    shadow?: ThemeShadow;
     flexDir?: "row" | "column" | "row-reverse" | "column-reverse";
     opacity?: number;
     pointerEvents?: "box-none" | "none" | "box-only" | "auto";
@@ -48,4 +48,4 @@ export type BSDefaultProps = FlexStyle & {
     minW?: DimensionValue;
     minH?: DimensionValue;
 };
-export declare const DEFAULT_PROPS: (props: BSDefaultProps, theme: Theme) => any[];
+export declare const DEFAULT_PROPS: (props: EADefaultProps, theme: Theme) => any[];

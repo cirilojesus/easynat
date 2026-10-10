@@ -17,13 +17,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ScrollView = void 0;
 const react_1 = __importDefault(require("react"));
 const react_native_1 = require("react-native");
-const theme_provider_1 = require("./theme-provider");
 const DEFAULT_PROPS_1 = require("./utils/DEFAULT_PROPS");
 const helpers_1 = require("./utils/helpers");
+const useThemeProps_1 = require("./utils/useThemeProps");
 const ScrollView = (_a) => {
     var { children } = _a, props = __rest(_a, ["children"]);
-    const { theme } = (0, theme_provider_1.useTheme)();
-    const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign({}, props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
+    // Defaults → theme.components.ScrollView → variante → props → plataforma
+    const [combinedProps, theme] = (0, useThemeProps_1.useThemeProps)('ScrollView', props);
     const styles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(combinedProps, theme);
     const contentStyles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)((combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._contentContainerStyle) || {}, theme);
     const scrollStyle = react_native_1.StyleSheet.flatten([
@@ -35,7 +35,7 @@ const ScrollView = (_a) => {
         combinedProps.contentContainerStyle
     ]);
     return (<react_native_1.ScrollView {...combinedProps} style={scrollStyle} contentContainerStyle={scrollContentStyle}>
-            {(0, helpers_1.renderChild)(children, props._text)}
+            {(0, helpers_1.renderChild)(children, combinedProps._text)}
         </react_native_1.ScrollView>);
 };
 exports.ScrollView = ScrollView;

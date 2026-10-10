@@ -1,7 +1,7 @@
 import React from 'react';
 import { DimensionValue, ViewProps } from 'react-native';
-import { BSBoxProps } from './Box';
-interface SkeletonProps extends BSBoxProps {
+import { EABoxProps } from './Box';
+export interface SkeletonProps extends EABoxProps {
     structure: SkeletonItem[];
 }
 type SkeletonItem = ViewProps & {
@@ -10,5 +10,5 @@ type SkeletonItem = ViewProps & {
     rounded?: number | string;
     bg?: string;
 };
-export declare const Skeleton: ({ structure, gap, ...props }: SkeletonProps) => React.JSX.Element;
+export declare const Skeleton: (rawProps: SkeletonProps) => React.JSX.Element;
 export {};

@@ -13,8 +13,36 @@ var __rest = (this && this.__rest) || function (s, e) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DEFAULT_PROPS = void 0;
 const helpers_1 = require("./helpers");
+// Claves de estilo válidas de React Native (View, Text e Image)
+const STYLE_KEYS = new Set([
+    "alignContent", "alignItems", "alignSelf", "aspectRatio", "backfaceVisibility", "backgroundColor",
+    "borderBlockColor", "borderBlockEndColor", "borderBlockStartColor", "borderBottomColor",
+    "borderBottomEndRadius", "borderBottomLeftRadius", "borderBottomRightRadius", "borderBottomStartRadius",
+    "borderBottomWidth", "borderColor", "borderCurve", "borderEndColor", "borderEndEndRadius",
+    "borderEndStartRadius", "borderEndWidth", "borderLeftColor", "borderLeftWidth", "borderRadius",
+    "borderRightColor", "borderRightWidth", "borderStartColor", "borderStartEndRadius",
+    "borderStartStartRadius", "borderStartWidth", "borderStyle", "borderTopColor", "borderTopEndRadius",
+    "borderTopLeftRadius", "borderTopRightRadius", "borderTopStartRadius", "borderTopWidth", "borderWidth",
+    "bottom", "boxShadow", "color", "columnGap", "cursor", "direction", "display", "elevation", "end",
+    "filter", "flex", "flexBasis", "flexDirection", "flexGrow", "flexShrink", "flexWrap", "fontFamily",
+    "fontSize", "fontStyle", "fontVariant", "fontWeight", "gap", "height", "includeFontPadding", "inset",
+    "insetBlock", "insetBlockEnd", "insetBlockStart", "insetInline", "insetInlineEnd", "insetInlineStart",
+    "isolation", "justifyContent", "left", "letterSpacing", "lineHeight", "margin", "marginBlock",
+    "marginBlockEnd", "marginBlockStart", "marginBottom", "marginEnd", "marginHorizontal", "marginInline",
+    "marginInlineEnd", "marginInlineStart", "marginLeft", "marginRight", "marginStart", "marginTop",
+    "marginVertical", "maxHeight", "maxWidth", "minHeight", "minWidth", "mixBlendMode", "objectFit",
+    "opacity", "outlineColor", "outlineOffset", "outlineStyle", "outlineWidth", "overflow", "overlayColor",
+    "padding", "paddingBlock", "paddingBlockEnd", "paddingBlockStart", "paddingBottom", "paddingEnd",
+    "paddingHorizontal", "paddingInline", "paddingInlineEnd", "paddingInlineStart", "paddingLeft",
+    "paddingRight", "paddingStart", "paddingTop", "paddingVertical", "pointerEvents", "position",
+    "resizeMode", "right", "rotation", "rowGap", "scaleX", "scaleY", "shadowColor", "shadowOffset",
+    "shadowOpacity", "shadowRadius", "start", "textAlign", "textAlignVertical", "textDecorationColor",
+    "textDecorationLine", "textDecorationStyle", "textShadowColor", "textShadowOffset", "textShadowRadius",
+    "textTransform", "tintColor", "top", "transform", "transformMatrix", "transformOrigin", "translateX",
+    "translateY", "userSelect", "verticalAlign", "width", "writingDirection", "zIndex",
+]);
 const DEFAULT_PROPS = (props, theme) => {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
     const { 
     // spacing
     p, m, px, py, pt, pb, pl, pr, mx, my, mt, mb, ml, mr, 
@@ -109,7 +137,9 @@ const DEFAULT_PROPS = (props, theme) => {
         pointerEvents !== undefined && { pointerEvents },
         opacity !== undefined && { opacity },
         gap !== undefined && { gap: (0, helpers_1.calcSize)(gap) },
-        others
+        // Solo se pasan a style las props que son estilos; el resto (onPress, children...) se ignora
+        Object.fromEntries(Object.entries(others).filter(([key]) => STYLE_KEYS.has(key))),
+        others.color && { color: ((_l = theme.colors) === null || _l === void 0 ? void 0 : _l[others.color]) || others.color },
     ];
 };
 exports.DEFAULT_PROPS = DEFAULT_PROPS;

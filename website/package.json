@@ -1,0 +1,31 @@
+{
+  "name": "easynat-website",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "api": "node scripts/gen-api.mjs",
+    "predev": "npm run api",
+    "dev": "next dev",
+    "prebuild": "npm run api",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "deploy": "npm run build && firebase deploy --only hosting"
+  },
+  "dependencies": {
+    "next": "16.4.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "shiki": "^4.5.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

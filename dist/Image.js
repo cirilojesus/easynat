@@ -17,15 +17,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Image = void 0;
 const react_1 = __importDefault(require("react"));
 const react_native_1 = require("react-native");
-const theme_provider_1 = require("./theme-provider");
 const DEFAULT_PROPS_1 = require("./utils/DEFAULT_PROPS");
 const Box_1 = require("./Box");
-const Image = (_a) => {
-    var { style, fallback } = _a, props = __rest(_a, ["style", "fallback"]);
-    const { theme } = (0, theme_provider_1.useTheme)();
+const useThemeProps_1 = require("./utils/useThemeProps");
+const Image = (props) => {
     const [error, setError] = react_1.default.useState('');
-    // Overrides por plataforma
-    const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign({}, props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
+    // Defaults → theme.components.Image → variante → props → plataforma
+    const [_a, theme] = (0, useThemeProps_1.useThemeProps)('Image', props), { style, fallback, variant: _variant } = _a, combinedProps = __rest(_a, ["style", "fallback", "variant"]);
     const styles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(combinedProps, theme);
     const baseStyle = react_native_1.StyleSheet.flatten([
         {

@@ -1,19 +1,19 @@
 import React from "react";
 import { FlatList as RNFlatList, FlatListProps } from "react-native";
-import { BSDefaultProps } from "./utils/DEFAULT_PROPS";
-import { BSBoxProps } from "./Box";
+import { EADefaultProps } from "./utils/DEFAULT_PROPS";
+import { EABoxProps } from "./Box";
 /** Props extra de tu proyecto */
-export type BSFlatListProps<T> = FlatListProps<T> & BSDefaultProps & {
-    _ios?: BSFlatListProps<T>;
-    _android?: BSFlatListProps<T>;
-    _web?: BSFlatListProps<T>;
-    _contentContainerStyle?: BSBoxProps;
+export type EAFlatListProps<T> = FlatListProps<T> & EADefaultProps & {
+    _ios?: EAFlatListProps<T>;
+    _android?: EAFlatListProps<T>;
+    _web?: EAFlatListProps<T>;
+    _contentContainerStyle?: EABoxProps;
     variant?: (string & {});
 };
 /** Tipo de instancia que expondrá la ref */
-export type BSFlatListInstance<T> = RNFlatList<T>;
+export type EAFlatListInstance<T> = RNFlatList<T>;
 /** Tipo del componente genérico (igual patrón que Menu) */
-type FlatListComponent = <T = any>(props: BSFlatListProps<T> & {
+type FlatListComponent = <T = any>(props: EAFlatListProps<T> & {
     ref?: React.Ref<RNFlatList<T>>;
 }) => React.ReactElement | null;
 /** ✅ EXPORT FINAL (CLAVE para que el .d.ts NO colapse a any) */

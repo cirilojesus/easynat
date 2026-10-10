@@ -6,9 +6,10 @@ import Animated, {
     withRepeat,
     withTiming,
 } from 'react-native-reanimated';
-import { Box, BSBoxProps } from './Box';
+import { Box, EABoxProps } from './Box';
+import { useThemeProps } from './utils/useThemeProps';
 
-interface SkeletonProps extends BSBoxProps {
+export interface SkeletonProps extends EABoxProps {
     structure: SkeletonItem[]
 }
 
@@ -19,11 +20,9 @@ type SkeletonItem = ViewProps & {
     bg?: string;
 }
 
-export const Skeleton = ({
-    structure = [],
-    gap = 4,
-    ...props
-}: SkeletonProps) => {
+export const Skeleton = (rawProps: SkeletonProps) => {
+    // Defaults → theme.components.Skeleton → variante → props → plataforma
+    const [{ structure = [], gap = 4, variant: _variant, ...props }, theme] = useThemeProps<SkeletonProps>('Skeleton', rawProps);
     const opacity = useSharedValue(0.1);
 
     useEffect(() => {
@@ -45,7 +44,7 @@ export const Skeleton = ({
                     <Animated.View
                         {...x}
                         style={[
-                            { height: x.h || 10, borderRadius: x.rounded || 10, backgroundColor: x.bg || '#ddd' },
+                            { height: x.h || 10, borderRadius: x.rounded || 10, backgroundColor: (x.bg && (theme.colors?.[x.bg as string] ?? x.bg)) || theme.colors?.['light.200'] || '#ddd' },
                             animatedStyle,
                             x.style,
                         ]}

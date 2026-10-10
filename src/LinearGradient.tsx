@@ -1,36 +1,32 @@
 import Svg, { Defs, LinearGradient, RadialGradient, Stop, Rect, SvgProps, RectProps } from "react-native-svg";
-import { useTheme } from "./theme-provider";
-import { BSDefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
-import { Theme } from "./theme";
-import { Platform } from "react-native";
+import { EADefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
+import { ThemeColor } from "./theme";
+import { useThemeProps } from "./utils/useThemeProps";
+import React, { useRef } from "react";
+
+let gradientId = 0;
 
 export type GradientColor = {
-    color: keyof Theme["colors"];
+    color: ThemeColor;
     offset?: number;      // 0–100
     opacity?: number;     // 0–1
 };
 
-export type BSLinearGradientProps = SvgProps & BSDefaultProps & {
+export type EALinearGradientProps = SvgProps & EADefaultProps & {
     colors: GradientColor[];
     angle?: number;
     type?: "linear" | "radial";
     _rect?: RectProps;
-    _ios?: BSLinearGradientProps;
-    _android?: BSLinearGradientProps;
-    _web?: BSLinearGradientProps;
+    _ios?: EALinearGradientProps;
+    _android?: EALinearGradientProps;
+    _web?: EALinearGradientProps;
+    variant?: (string & {});
 }
 
-export const BSLinearGradient: React.FC<BSLinearGradientProps> = ({
-    type = "linear",
-    ...props
-}) => {
-    const { theme } = useTheme();
-    const combinedProps: BSLinearGradientProps = {
-        ...props,
-        ...(Platform.OS === "ios" ? props._ios : {}),
-        ...(Platform.OS === "android" ? props._android : {}),
-        ...(Platform.OS === "web" ? props._web : {}),
-    };
+export const EALinearGradient: React.FC<EALinearGradientProps> = (props) => {
+    const id = useRef(`grad-${gradientId++}`).current;
+    // Defaults → theme.components.LinearGradient → variante → props → plataforma
+    const [{ type = "linear", variant: _variant, ...combinedProps }, theme] = useThemeProps<EALinearGradientProps>('LinearGradient', props);
 
     const svgStyle = DEFAULT_PROPS(combinedProps, theme);
 
@@ -48,7 +44,7 @@ export const BSLinearGradient: React.FC<BSLinearGradientProps> = ({
     const stops = combinedProps.colors.map((c, i) =>
         <Stop
             key={i}
-            offset={`${c.offset ?? (i / (combinedProps.colors.length - 1)) * 100}%`}
+            offset={`${c.offset ?? (combinedProps.colors.length > 1 ? (i / (combinedProps.colors.length - 1)) * 100 : 0)}%`}
             stopColor={theme.colors[c.color] || c.color}
             stopOpacity={c.opacity ?? 1}
         />
@@ -58,11 +54,11 @@ export const BSLinearGradient: React.FC<BSLinearGradientProps> = ({
         <Svg {...combinedProps} style={[combinedProps.style, ...svgStyle]}>
             <Defs>
                 {type === "radial" ? (
-                    <RadialGradient id="grad" cx="50%" cy="50%" r="50%">
+                    <RadialGradient id={id} cx="50%" cy="50%" r="50%">
                         {stops}
                     </RadialGradient>
                 ) : (
-                    <LinearGradient id="grad" {...coords}>
+                    <LinearGradient id={id} {...coords}>
                         {stops}
                     </LinearGradient>
                 )}
@@ -72,7 +68,7 @@ export const BSLinearGradient: React.FC<BSLinearGradientProps> = ({
                 y="0"
                 width="100%"
                 height="100%"
-                fill="url(#grad)"
+                fill={`url(#${id})`}
                 {...combinedProps._rect}
             />
         </Svg>

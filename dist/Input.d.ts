@@ -1,25 +1,26 @@
-/// <reference types="react" />
+import React from "react";
 import { TextInputProps } from "react-native";
-import { BSButtonProps } from "./Button";
-import { BSTextProps } from "./Text";
-import { BSBoxProps } from "./Box";
-import { Theme } from "./theme";
-export type BSTextInputProps = TextInputProps & Omit<BSTextProps, '_ios' | '_android' | '_web'> & {
-    _ios?: Omit<BSTextInputProps, '_ios' | '_android' | '_web'>;
-    _android?: Omit<BSTextInputProps, '_ios' | '_android' | '_web'>;
-    _web?: Omit<BSTextInputProps, '_ios' | '_android' | '_web'>;
+import { EAButtonProps } from "./Button";
+import { EATextProps } from "./Text";
+import { EABoxProps } from "./Box";
+import { ThemeColor } from "./theme";
+export type EATextInputProps = TextInputProps & Omit<EATextProps, '_ios' | '_android' | '_web'> & {
+    _ios?: Omit<EATextInputProps, '_ios' | '_android' | '_web'>;
+    _android?: Omit<EATextInputProps, '_ios' | '_android' | '_web'>;
+    _web?: Omit<EATextInputProps, '_ios' | '_android' | '_web'>;
     label?: string;
-    _label?: BSTextProps;
+    _label?: EATextProps;
     isPassword?: boolean;
     isFloat?: boolean;
     isRequired?: boolean;
     iconLeft?: React.ReactElement;
-    _containerStyle?: BSBoxProps;
-    _focus?: Omit<BSTextInputProps, '_ios' | '_android' | '_web' | '_focus'>;
-    _iconRight?: BSButtonProps;
+    _containerStyle?: EABoxProps;
+    _focus?: Omit<EATextInputProps, '_ios' | '_android' | '_web' | '_focus'>;
+    _iconRight?: EAButtonProps;
     iconRight?: React.ReactElement;
-    color?: keyof Theme["colors"];
-    variant?: (string & {});
+    color?: ThemeColor;
+    variant?: InputVariant | (string & {});
     size?: 'sm' | 'md' | 'lg' | 'xl';
 };
-export declare const Input: React.FC<BSTextInputProps>;
+export type InputVariant = 'outline' | 'filled' | 'underlined' | 'rounded' | 'unstyled';
+export declare const Input: React.FC<EATextInputProps>;

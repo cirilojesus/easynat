@@ -17,25 +17,35 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Switch = void 0;
 const react_1 = __importDefault(require("react"));
 const react_native_1 = require("react-native");
-const theme_provider_1 = require("./theme-provider");
 const DEFAULT_PROPS_1 = require("./utils/DEFAULT_PROPS");
 const Button_1 = require("./Button");
+const useThemeProps_1 = require("./utils/useThemeProps");
 const Switch = (props) => {
-    var _a;
-    const { theme } = (0, theme_provider_1.useTheme)();
-    const styles_default = ((_a = theme === null || theme === void 0 ? void 0 : theme.components) === null || _a === void 0 ? void 0 : _a.Switch) || {};
-    const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, styles_default), props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
+    // Defaults → theme.components.Switch → variante → props → plataforma
+    const [combinedProps, theme] = (0, useThemeProps_1.useThemeProps)('Switch', props);
     const styles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(combinedProps, theme);
-    const { colorScheme = "primary", _containerStyle, pointerBox, size = 1, label, scale = 1 } = combinedProps, rest = __rest(combinedProps, ["colorScheme", "_containerStyle", "pointerBox", "size", "label", "scale"]);
-    return (<Button_1.Button variant="unstyle" height={28 + (scale - 1) * 28} p={0} onPress={() => props.onValueChange(!props.value)} _pressed={{ _text: { color: theme.colors[colorScheme + '.100'] } }} justifyContent={'flex-start'} pointerEvents={pointerBox ? 'auto' : 'box-none'} {..._containerStyle}>
-            <react_native_1.Switch trackColor={{
-            false: theme.colors['light.100'],
+    const { colorScheme = "primary", _containerStyle, pointerBox, label, scale = 1, variant: _variant } = combinedProps, rest = __rest(combinedProps, ["colorScheme", "_containerStyle", "pointerBox", "label", "scale", "variant"]);
+    // transform: scale no ocupa espacio: se compensa con margen. Cada lado crece la MITAD del aumento del
+    // tamaño real del switch (se mide; antes era un ancho fijo y todo el aumento a cada lado, el doble)
+    const [size, setSize] = react_1.default.useState({ w: 51, h: 31 });
+    const extraX = (scale - 1) * size.w / 2;
+    const extraY = (scale - 1) * size.h / 2;
+    return (<Button_1.Button variant="unstyle" minH={size.h * scale} p={0} onPress={() => { var _a; return !combinedProps.disabled && ((_a = combinedProps.onValueChange) === null || _a === void 0 ? void 0 : _a.call(combinedProps, !combinedProps.value)); }} _pressed={{ _text: { color: theme.colors[colorScheme + '.100'] } }} justifyContent={'flex-start'} pointerEvents={pointerBox ? 'auto' : 'box-none'} {..._containerStyle}>
+            <react_native_1.Switch 
+    // Bolita blanca sobre el carril: con los dos en light.100, apagado la bolita no se veía
+    trackColor={{
+            false: theme.colors['muted.100'],
             true: theme.colors[colorScheme + '.100'],
-        }} thumbColor={theme.colors['light.100']} {...rest} style={[
+        }} thumbColor={theme.colors['white']} ios_backgroundColor={theme.colors['muted.100']} {...rest} onLayout={e => {
+            var _a;
+            const { width, height } = e.nativeEvent.layout;
+            if (Math.round(width) !== Math.round(size.w) || Math.round(height) !== Math.round(size.h))
+                setSize({ w: width, h: height });
+            (_a = rest.onLayout) === null || _a === void 0 ? void 0 : _a.call(rest, e);
+        }} style={[
             {
-                marginRight: (scale - 1) * 31.58,
-                marginLeft: (scale - 1) * 31.58,
-                marginTop: (scale - 1) * 14,
+                marginHorizontal: extraX,
+                marginVertical: extraY,
                 transform: [{ scale }]
             },
             rest.style,

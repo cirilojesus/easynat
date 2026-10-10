@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+/* Colores de la marca (los de la librería) */
+:root {
+  --background: #ffffff;
+  --foreground: #18181b;
+  --muted: #71717a;
+  --border: #e4e4e7;
+  --surface: #f8f8fb;
+  --brand: #4f46e5;
+  --brand-2: #ec4899;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0b0b10;
+    --foreground: #ececf1;
+    --muted: #a1a1aa;
+    --border: #26262e;
+    --surface: #13131a;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-surface: var(--surface);
+  --color-brand: var(--brand);
+  --color-brand-2: var(--brand-2);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+/* Bloques de código de Shiki (tema claro y oscuro) */
+.shiki-wrap pre {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  background: transparent !important;
+}
+.shiki-wrap code { font-family: var(--font-geist-mono), ui-monospace, monospace; }
+@media (prefers-color-scheme: dark) {
+  .shiki-wrap .shiki,
+  .shiki-wrap .shiki span {
+    color: var(--shiki-dark) !important;
+  }
+}
+
+/* Texto de los tipos (props) */
+.type-text { font-family: var(--font-geist-mono), ui-monospace, monospace; font-size: 0.78rem; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 5rem; }

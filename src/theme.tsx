@@ -1,9 +1,13 @@
-import * as COMPONENTS from './';
+import type * as COMPONENTS from './';
 
 export type COLOR_SCHEME = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' |
     'white' | 'light' | 'muted' | 'silver' | 'gray' | 'dark' | 'black' | (string & {})
-export type VARIANT_BUTTON = "solid" | "outline" | "ghost" | 'link' | 'subtle'
+export type VARIANT_BUTTON = "solid" | "outline" | "ghost" | 'link' | 'subtle' | 'unstyled'
 
+/**
+ * Los colores por defecto. Cada uno tiene .50 (suave, translúcido), .100 (normal) y .200 (oscuro). Se usan por nombre
+ * en las props de color (bg="primary.100") y se cambian en el tema del ThemeProvider
+ */
 export const COLORS_THEME = {
     'primary.50': "#4e46e56f",
     'primary.100': "#4F46E5",
@@ -51,24 +55,121 @@ export const COLORS_THEME = {
     'info.50': "#4ac4e370",
     'info.100': "#4ac4e3ff",
     'info.200': "#35adcbff",
+    // Semánticos: lo que usan los componentes para el fondo, las superficies, los bordes y el texto. Cambian con el modo
+    'background': "#ffffff",
+    'surface': "#ffffff",
+    'surface.50': "#f4f4f5",
+    'border': "#e2e2e2",
+    'text': "#0F0F0F",
+    'text.muted': "#4f4f4f",
+    'text.subtle': "#a0a0a0",
+    /** Texto e iconos encima de un color (botones solid, etiquetas): blanco en los dos modos */
+    'contrast': "#ffffff",
 }
 
-export type ALL_PROPS = COMPONENTS.BSTextProps & COMPONENTS.BSTextInputProps
-    & COMPONENTS.BSBoxProps & COMPONENTS.BSFlatListProps<any>
-    & COMPONENTS.BSPressableProps
-    & COMPONENTS.BSModalProps & COMPONENTS.BSButtonProps
+/**
+ * Los colores del modo oscuro que cambian respecto al claro: los semánticos y la escala de grises (invertida: "light"
+ * sigue siendo el gris suave de fondos y bordes, "dark" el texto fuerte). Los de marca (primary, success…) son los mismos.
+ * Se cambian en theme.dark.colors del ThemeProvider
+ */
+export const DARK_COLORS = {
+    'background': "#0b0b0f",
+    'surface': "#17171c",
+    'surface.50': "#202027",
+    'border': "#2c2c35",
+    'text': "#ececf1",
+    'text.muted': "#b4b4bd",
+    'text.subtle': "#80808a",
+    'contrast': "#ffffff",
+    'light': '#2c2c35',
+    'light.50': '#ffffff12',
+    'light.100': '#2c2c35',
+    'light.200': '#363640',
+    'muted': '#4a4a55',
+    'muted.50': '#4a4a5566',
+    'muted.100': '#4a4a55',
+    'muted.200': '#575763',
+    'silver': '#8b8b95',
+    'silver.50': '#8b8b9566',
+    'silver.100': '#8b8b95',
+    'silver.200': '#9a9aa4',
+    'gray': '#b4b4bd',
+    'gray.50': '#b4b4bd59',
+    'gray.100': '#b4b4bd',
+    'gray.200': '#c8c8d0',
+    'dark': '#e4e4e9',
+    'dark.50': '#e4e4e950',
+    'dark.100': '#e4e4e9',
+    'dark.200': '#f4f4f7',
+} satisfies Partial<Record<keyof typeof COLORS_THEME, string>>;
+
+export type ALL_PROPS = COMPONENTS.EATextProps & COMPONENTS.EATextInputProps
+    & COMPONENTS.EABoxProps & COMPONENTS.EAFlatListProps<any>
+    & COMPONENTS.EAPressableProps
+    & COMPONENTS.EAModalProps & COMPONENTS.EAButtonProps
 
 export type VARIANTS_TYPE = Record<string, Partial<ALL_PROPS>>
+
+export type ComponentTheme<P> = Partial<P> & { variants?: Record<string, Partial<P>> }
+
+/**
+ * Props por defecto y variantes de cada componente: theme.components.Button = { rounded: 2, variants: { ... } }.
+ * Orden de aplicación: defaults del componente → estas props → variante → tamaño → props → _ios/_android/_web
+ */
+export type ComponentsTheme = {
+    Accordion?: ComponentTheme<COMPONENTS.AccordionProps>
+    Alert?: ComponentTheme<COMPONENTS.EAAlertProps>
+    AsyncList?: ComponentTheme<COMPONENTS.AsyncListProps<any>>
+    Box?: ComponentTheme<COMPONENTS.EABoxProps>
+    Button?: ComponentTheme<COMPONENTS.EAButtonProps>
+    Carousel?: ComponentTheme<COMPONENTS.CarouselType>
+    /** Para todos los tipos (los defaults de cada type van por debajo) */
+    Chart?: ComponentTheme<COMPONENTS.ChartProps>
+    CheckBox?: ComponentTheme<COMPONENTS.EACheckBoxProps>
+    Collapse?: ComponentTheme<COMPONENTS.CollapseProps>
+    DatePicker?: ComponentTheme<COMPONENTS.DatePickerType>
+    /** Solo _box (contenedor) y _error (mensaje de error): el resto lo tematiza cada control */
+    EAForm?: ComponentTheme<Pick<COMPONENTS.InputFormParams<any>, '_box' | '_error'>>
+    Filter?: ComponentTheme<COMPONENTS.FilterProps>
+    FlatList?: ComponentTheme<COMPONENTS.EAFlatListProps<any>>
+    Icon?: ComponentTheme<COMPONENTS.IconProps<any>>
+    Image?: ComponentTheme<COMPONENTS.EAImageProps>
+    Input?: ComponentTheme<COMPONENTS.EATextInputProps>
+    KeyboardAvoidingView?: ComponentTheme<COMPONENTS.EAKeyboardAvoidingProps>
+    Label?: ComponentTheme<COMPONENTS.LabelType>
+    LinearGradient?: ComponentTheme<COMPONENTS.EALinearGradientProps>
+    Menu?: ComponentTheme<COMPONENTS.EAMenuProps<any>>
+    Modal?: ComponentTheme<COMPONENTS.EAModalProps>
+    Pressable?: ComponentTheme<COMPONENTS.EAPressableProps>
+    ProgressBar?: ComponentTheme<COMPONENTS.EAProgressBarProps>
+    Radio?: ComponentTheme<COMPONENTS.EARadioProps>
+    RenderHTML?: ComponentTheme<COMPONENTS.EARenderHTMLProps>
+    RichTextEditor?: ComponentTheme<COMPONENTS.RichTextEditorProps>
+    ImageViewer?: ComponentTheme<COMPONENTS.ImageViewerProps>
+    ImageEditor?: ComponentTheme<COMPONENTS.ImageEditorProps>
+    PDFViewer?: ComponentTheme<COMPONENTS.PDFViewerProps>
+    ScrollView?: ComponentTheme<COMPONENTS.EAScrollViewProps>
+    SearchInput?: ComponentTheme<COMPONENTS.SearchInputModel<any>>
+    Select?: ComponentTheme<COMPONENTS.EASelectProps>
+    Slider?: ComponentTheme<COMPONENTS.SliderProps>
+    Skeleton?: ComponentTheme<COMPONENTS.SkeletonProps>
+    Spinner?: ComponentTheme<COMPONENTS.EASpinnerProps>
+    Stagger?: ComponentTheme<COMPONENTS.StaggerProps>
+    SpinnerOverlay?: ComponentTheme<COMPONENTS.SpinnerOverlayOptions>
+    HoldButton?: ComponentTheme<COMPONENTS.HoldButtonProps>
+    SlideButton?: ComponentTheme<COMPONENTS.SlideButtonProps>
+    StatusBar?: ComponentTheme<COMPONENTS.EAStatusBarProps>
+    Switch?: ComponentTheme<COMPONENTS.EASwitchProps>
+    Table?: ComponentTheme<COMPONENTS.TableProps<any>>
+    Text?: ComponentTheme<COMPONENTS.EATextProps>
+}
 
 export const defaultTheme: {
     colors?: Partial<Record<keyof typeof COLORS_THEME | (string & {}), string>>,
     shadows?: Record<1 | 2 | 3 | 4 | 5 | 6 | string, any>,
     fontFamily?: string,
     fonts?: Record<string, string>
-    components?: Partial<Omit<
-        Record<keyof typeof COMPONENTS, Partial<Record<'variants', VARIANTS_TYPE> & Partial<ALL_PROPS>>>,
-        "theme" | "defaultTheme" | "ThemeProvider" | "useTheme"
-    >>
+    components?: ComponentsTheme
 } = {
     colors: COLORS_THEME,
     shadows: {
@@ -81,6 +182,11 @@ export const defaultTheme: {
     }
 }
 
+/** Un color: el nombre de uno del tema ('primary.100', 'surface', 'text'…; con autocompletado) o cualquier color ('#fff', 'transparent'…) */
+export type ThemeColor = keyof typeof COLORS_THEME | (string & {});
+/** Una sombra del tema: 1 a 6 (o el nombre de una propia) */
+export type ThemeShadow = 1 | 2 | 3 | 4 | 5 | 6 | (string & {}) | (number & {});
+
 export const theme: {
     light: typeof defaultTheme
     dark: typeof defaultTheme
@@ -89,7 +195,10 @@ export const theme: {
         ...defaultTheme
     },
     dark: {
-        ...defaultTheme
+        ...defaultTheme,
+        colors: { ...COLORS_THEME, ...DARK_COLORS },
+        // En oscuro las sombras apenas se ven: un poco más marcadas
+        shadows: Object.fromEntries(Object.entries(defaultTheme.shadows!).map(([k, v]) => [k, { ...v, shadowOpacity: Math.min(0.6, v.shadowOpacity * 2) }])) as typeof defaultTheme.shadows,
     }
 };
 

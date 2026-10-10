@@ -1,19 +1,20 @@
-/// <reference types="react" />
 import { SvgProps, RectProps } from "react-native-svg";
-import { BSDefaultProps } from "./utils/DEFAULT_PROPS";
-import { Theme } from "./theme";
+import { EADefaultProps } from "./utils/DEFAULT_PROPS";
+import { ThemeColor } from "./theme";
+import React from "react";
 export type GradientColor = {
-    color: keyof Theme["colors"];
+    color: ThemeColor;
     offset?: number;
     opacity?: number;
 };
-export type BSLinearGradientProps = SvgProps & BSDefaultProps & {
+export type EALinearGradientProps = SvgProps & EADefaultProps & {
     colors: GradientColor[];
     angle?: number;
     type?: "linear" | "radial";
     _rect?: RectProps;
-    _ios?: BSLinearGradientProps;
-    _android?: BSLinearGradientProps;
-    _web?: BSLinearGradientProps;
+    _ios?: EALinearGradientProps;
+    _android?: EALinearGradientProps;
+    _web?: EALinearGradientProps;
+    variant?: (string & {});
 };
-export declare const BSLinearGradient: React.FC<BSLinearGradientProps>;
+export declare const EALinearGradient: React.FC<EALinearGradientProps>;

@@ -1,22 +1,18 @@
-import { StatusBar as RNStatusBar, StatusBarProps as RNStatusBarProps, Platform } from "react-native";
-import { useTheme } from "./theme-provider";
-import { BSDefaultProps } from "./utils/DEFAULT_PROPS";
+import React from "react";
+import { StatusBar as RNStatusBar, StatusBarProps as RNStatusBarProps } from "react-native";
+import { EADefaultProps } from "./utils/DEFAULT_PROPS";
+import { useThemeProps } from "./utils/useThemeProps";
 
-export type BSStatusBarProps = RNStatusBarProps & BSDefaultProps & {
-    _ios?: BSStatusBarProps;
-    _android?: BSStatusBarProps;
-    _web?: BSStatusBarProps;
+export type EAStatusBarProps = RNStatusBarProps & EADefaultProps & {
+    _ios?: EAStatusBarProps;
+    _android?: EAStatusBarProps;
+    _web?: EAStatusBarProps;
+    variant?: (string & {});
 };
 
-export const StatusBar: React.FC<BSStatusBarProps> = ({ ...props }) => {
-    const { theme } = useTheme();
-
-    const combinedProps: BSStatusBarProps = {
-        ...props,
-        ...(Platform.OS === "ios" ? props._ios : {}),
-        ...(Platform.OS === "android" ? props._android : {}),
-        ...(Platform.OS === "web" ? props._web : {}),
-    };
+export const StatusBar: React.FC<EAStatusBarProps> = (props) => {
+    // Defaults → theme.components.StatusBar → variante → props → plataforma
+    const [combinedProps, theme] = useThemeProps<EAStatusBarProps>('StatusBar', props);
 
     return (
         <RNStatusBar

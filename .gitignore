@@ -1,3 +1,16 @@
 
 # dependencies
 node_modules/
+
+# macOS
+.DS_Store
+
+# Playground local de pruebas
+.playground/
+
+# TypeScript y paquetes de npm generados
+*.tsbuildinfo
+*.tgz
+
+# Compilación de las pruebas
+tests/.build/

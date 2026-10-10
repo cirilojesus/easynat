@@ -10,21 +10,23 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Pressable = void 0;
+const react_1 = __importDefault(require("react"));
 const react_native_1 = require("react-native");
-const theme_provider_1 = require("./theme-provider");
 const DEFAULT_PROPS_1 = require("./utils/DEFAULT_PROPS");
 const helpers_1 = require("./utils/helpers");
+const useThemeProps_1 = require("./utils/useThemeProps");
 const Pressable = (_a) => {
-    var _b, _c, _d, _e;
+    var _b;
     var props = __rest(_a, []);
-    const { theme } = (0, theme_provider_1.useTheme)();
-    const props_default = ((_b = theme === null || theme === void 0 ? void 0 : theme.components) === null || _b === void 0 ? void 0 : _b.Pressable) || {};
-    const props_variant = ((_d = (_c = theme === null || theme === void 0 ? void 0 : theme.components) === null || _c === void 0 ? void 0 : _c.Pressable) === null || _d === void 0 ? void 0 : _d.variants) || {};
-    const combinedProps = Object.assign(Object.assign(Object.assign(Object.assign({}, props), (react_native_1.Platform.OS === "ios" ? props._ios : {})), (react_native_1.Platform.OS === "android" ? props._android : {})), (react_native_1.Platform.OS === "web" ? props._web : {}));
-    const styles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(Object.assign(Object.assign(Object.assign({}, props_default), props_variant[props_default.variant || combinedProps.variant]), combinedProps), theme);
-    const pressedStyles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(Object.assign(Object.assign({}, (_e = props_variant[props_default.variant || combinedProps.variant]) === null || _e === void 0 ? void 0 : _e._pressed), combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._pressed), theme);
+    // Defaults → theme.components.Pressable → variante → props → plataforma
+    const [combinedProps, theme] = (0, useThemeProps_1.useThemeProps)('Pressable', props);
+    const styles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(combinedProps, theme);
+    const pressedStyles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)((_b = combinedProps._pressed) !== null && _b !== void 0 ? _b : {}, theme);
     const baseStyle = react_native_1.StyleSheet.flatten([
         combinedProps.style,
         combinedProps.disabled && { opacity: .5 },

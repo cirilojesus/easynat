@@ -3,39 +3,28 @@ import {
     Image as RNImage,
     ImageProps,
     ImageStyle,
-    Platform,
     StyleSheet,
-    View,
     ImageSourcePropType,
 } from "react-native";
-import { useTheme } from "./theme-provider";
-import { BSDefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
-import { Box, BSBoxProps } from "./Box";
+import { EADefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
+import { Box, EABoxProps } from "./Box";
+import { useThemeProps } from "./utils/useThemeProps";
 
-export type BSImageProps = ImageProps & BSDefaultProps & {
-    _alt?: BSBoxProps; // texto fallback si no carga la imagen
-    _ios?: BSImageProps;
-    _android?: BSImageProps;
-    _web?: BSImageProps;
+export type EAImageProps = ImageProps & EADefaultProps & {
+    _alt?: EABoxProps; // texto fallback si no carga la imagen
+    _ios?: EAImageProps;
+    _android?: EAImageProps;
+    _web?: EAImageProps;
     fallback?: ImageSourcePropType; // nodo alternativo si falla la imagen
     size?: number
+    variant?: (string & {});
 };
 
-export const Image: React.FC<BSImageProps> = ({
-    style,
-    fallback,
-    ...props
-}) => {
-    const { theme } = useTheme();
+export const Image: React.FC<EAImageProps> = (props) => {
     const [error, setError] = React.useState<'fallback' | 'alt' | ''>('');
 
-    // Overrides por plataforma
-    const combinedProps: BSImageProps = {
-        ...props,
-        ...(Platform.OS === "ios" ? props._ios : {}),
-        ...(Platform.OS === "android" ? props._android : {}),
-        ...(Platform.OS === "web" ? props._web : {}),
-    };
+    // Defaults → theme.components.Image → variante → props → plataforma
+    const [{ style, fallback, variant: _variant, ...combinedProps }, theme] = useThemeProps<EAImageProps>('Image', props);
 
     const styles = DEFAULT_PROPS(combinedProps, theme);
     const baseStyle = StyleSheet.flatten<ImageStyle>([

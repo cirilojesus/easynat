@@ -1,13 +1,14 @@
 import React from "react";
 import { ImageProps, ImageSourcePropType } from "react-native";
-import { BSDefaultProps } from "./utils/DEFAULT_PROPS";
-import { BSBoxProps } from "./Box";
-export type BSImageProps = ImageProps & BSDefaultProps & {
-    _alt?: BSBoxProps;
-    _ios?: BSImageProps;
-    _android?: BSImageProps;
-    _web?: BSImageProps;
+import { EADefaultProps } from "./utils/DEFAULT_PROPS";
+import { EABoxProps } from "./Box";
+export type EAImageProps = ImageProps & EADefaultProps & {
+    _alt?: EABoxProps;
+    _ios?: EAImageProps;
+    _android?: EAImageProps;
+    _web?: EAImageProps;
     fallback?: ImageSourcePropType;
     size?: number;
+    variant?: (string & {});
 };
-export declare const Image: React.FC<BSImageProps>;
+export declare const Image: React.FC<EAImageProps>;

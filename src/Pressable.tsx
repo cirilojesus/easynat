@@ -1,33 +1,25 @@
-import { Pressable as PressableRN, PressableProps, StyleSheet, Platform } from "react-native";
-import { useTheme } from "./theme-provider";
-import { BSDefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
+import React from "react";
+import { Pressable as PressableRN, PressableProps, StyleSheet } from "react-native";
+import { EADefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
 import { renderChild } from "./utils/helpers";
-import { BSTextProps } from "./Text";
+import { useThemeProps } from "./utils/useThemeProps";
+import { EATextProps } from "./Text";
 
-export type BSPressableProps = PressableProps & BSDefaultProps & {
-    _text?: BSTextProps;
-    _ios?: Omit<BSPressableProps, '_ios' | '_android' | '_web'>;
-    _android?: Omit<BSPressableProps, '_ios' | '_android' | '_web'>;
-    _web?: Omit<BSPressableProps, '_ios' | '_android' | '_web'>;
-    _pressed?: Omit<BSPressableProps, '_pressed' | '_ios' | '_android' | '_web'>;
+export type EAPressableProps = PressableProps & EADefaultProps & {
+    _text?: EATextProps;
+    _ios?: Omit<EAPressableProps, '_ios' | '_android' | '_web'>;
+    _android?: Omit<EAPressableProps, '_ios' | '_android' | '_web'>;
+    _web?: Omit<EAPressableProps, '_ios' | '_android' | '_web'>;
+    _pressed?: Omit<EAPressableProps, '_pressed' | '_ios' | '_android' | '_web'>;
     variant?: (string & {});
 };
 
-export const Pressable: React.FC<BSPressableProps> = ({ ...props }) => {
-    const { theme } = useTheme();
-    const props_default = theme?.components?.Pressable || {}
-    const props_variant = theme?.components?.Pressable?.variants || {}
-
-    const combinedProps: BSPressableProps = {
-        ...props,
-        ...(Platform.OS === "ios" ? props._ios : {}),
-        ...(Platform.OS === "android" ? props._android : {}),
-        ...(Platform.OS === "web" ? props._web : {}),
-    };
-
-    const styles = DEFAULT_PROPS({ ...props_default, ...props_variant[props_default.variant || combinedProps.variant], ...combinedProps }, theme);
-    const pressedStyles = DEFAULT_PROPS({ ...props_variant[props_default.variant || combinedProps.variant]?._pressed, ...combinedProps?._pressed }, theme);
-    const baseStyle = StyleSheet.flatten<BSPressableProps>([
+export const Pressable: React.FC<EAPressableProps> = ({ ...props }) => {
+    // Defaults → theme.components.Pressable → variante → props → plataforma
+    const [combinedProps, theme] = useThemeProps<EAPressableProps>('Pressable', props);
+    const styles = DEFAULT_PROPS(combinedProps, theme);
+    const pressedStyles = DEFAULT_PROPS(combinedProps._pressed ?? {}, theme);
+    const baseStyle = StyleSheet.flatten<EAPressableProps>([
         combinedProps.style,
         combinedProps.disabled && { opacity: .5 },
         ...styles,

@@ -1,9 +1,11 @@
 export * from './theme'
 export * from './theme-provider'
 export * from './utils/helpers';
-export * from './utils/useKeyboardHeight';
-export * from './utils/useAndroidKeyboardPadding';
+export * from './utils/keyboard';
+export * from './utils/useThemeProps';
 export * from './utils/translate';
+export * from './utils/color';
+export { toDataUri, isWebViewAvailable } from './utils/webview';
 export * from './Box'
 export * from './Text'
 export * from './ScrollView'
@@ -12,6 +14,7 @@ export * from './KeyboardAvoidingView'
 export * from './Button'
 export * from './Pressable'
 export * from './Select'
+export * from './Slider'
 export * from './Icon'
 export * from './Alert'
 export * from './FlatList'
@@ -35,3 +38,13 @@ export * from './Carousel'
 export * from './Stagger'
 export * from './Skeleton'
 export * from './Label'
+export * from './Portal'
+export * from './Chart'
+export * from './RichTextEditor'
+export * from './ImageViewer'
+export * from './ImageEditor'
+export * from './PDFViewer'
+export * from './Table'
+export * from './Filter'
+export * from './AsyncList'
+export { addTapListener, useTapOutside, touchHandlers, emitTap } from './utils/touches'
