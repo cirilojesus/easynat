@@ -41,6 +41,15 @@ export type EAMenuTriggerProps = {
 export type EAMenuRenderItemInfo<T> = ListRenderItemInfo<T> & {
     close: () => void;
 };
+/**
+ * Props del Menu. Las props de estilo (bg, p, rounded, shadow…) van a la caja desplegable.
+ *
+ * Los márgenes (`m`, `mx`, `my`, `mt`, `mb`, `ml`, `mr`, o margin… en `style` o en el tema) no se aplican como
+ * margen: se convierten en un desplazamiento de la caja respecto a su posición junto al trigger,
+ * x = izquierdo − derecho, y = superior − inferior (`mt={2}` la baja 8 px, `mr={2}` la mueve 8 px a la izquierda;
+ * los negativos la mueven al revés). Se suma antes de ajustarla a la pantalla, así que nunca se sale de ella.
+ * Como en el resto de la librería, 0.5–6 se multiplican por 4 y los demás números son px (los % se ignoran).
+ */
 export type EAMenuProps<T = unknown> = ViewProps & EADefaultProps & {
     trigger?: (props: EAMenuTriggerProps) => React.ReactNode;
     /** El menú monta ya abierto (sin animación de entrada) */

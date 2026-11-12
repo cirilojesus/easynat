@@ -1,5 +1,11 @@
 # Cambios
 
+## Próxima versión
+
+- **Menu en Android (edge-to-edge):** el menú ya no tapa el botón que lo abre. Se medía el trigger con `measureInWindow`, que en Android resta la barra de estado, mientras que el Portal empieza en y = 0; ahora se mide con `measure` (pageX/pageY), la misma referencia que el Portal, en iOS y Android.
+- **SearchInput** (`listType="absolute"`): mismo cambio; el espacio libre arriba y abajo del input ya no sale desplazado en Android.
+- **Menu: márgenes como desplazamiento.** `m`, `mx`, `my`, `mt`, `mb`, `ml` y `mr` (o `margin…` en `style` o en el tema) mueven la caja en cualquier dirección (x = izquierdo − derecho, y = superior − inferior, también negativos) y se aplican antes de ajustarla a la pantalla, así que no se sale. Antes `mr` y `mb` no hacían nada y `ml` / `mt` podían sacarla de la pantalla.
+
 ## 1.0.0 — primera versión
 
 La primera versión publicada de easynat.

@@ -202,6 +202,66 @@ const pressItem = async txt => {
     await act(async () => r.current.close()); await wait(250); await act(async () => a.unmount());
     ok('sigue al trigger mientras está abierto, sin re-renders si no se mueve');
   }
+  // 14. Android edge-to-edge: measureInWindow resta la barra de estado; el menú usa measure (pageY), la
+  //     misma referencia que el Portal, y queda justo debajo del trigger (no encima tapándolo)
+  {
+    env.triggerLayout = { x: 20, y: 300, width: 200, height: 40 };
+    env.statusBarOffset = 32;
+    const r = React.createRef(); let a;
+    await act(async () => { a = TR.create(h(Menu, { ref: r, trigger: () => h(RN.Text, null, 'sb') }, ...items)) });
+    await act(async () => r.current.open()); await settle();
+    assert.equal(style().top, 300 + 40 + 4, 'top = y + alto + GAP con las coordenadas de measure (sin restar la barra de estado)');
+    assert.equal(style().left, 20);
+    await act(async () => r.current.close()); await wait(250); await act(async () => a.unmount());
+    env.statusBarOffset = 0;
+    ok('Android edge-to-edge: mide con measure (pageX/pageY) y no tapa el trigger');
+  }
+
+  // 15. Márgenes del Menu = desplazamiento de la caja (x = ml − mr, y = mt − mb), sin salirse de la pantalla
+  {
+    const abrir = async (props, trig, width = 150) => {
+      env.triggerLayout = trig;
+      const r = React.createRef(); let a;
+      await act(async () => { a = TR.create(h(Menu, { ref: r, ...props, trigger: () => h(RN.Text, null, 'mg') }, ...items)) });
+      await act(async () => r.current.open()); await settle(width);
+      const st = style();
+      await act(async () => r.current.close()); await wait(250); await act(async () => a.unmount());
+      return st;
+    };
+    const trig = { x: 100, y: 300, width: 100, height: 40 };
+    const base = 300 + 40 + 4;
+    let st = await abrir({ ml: 3, mt: 2 }, trig);
+    assert.deepEqual([st.left, st.top], [100 + 12, base + 8], 'ml / mt (escala ×4) desplazan a la derecha y abajo');
+    assert.equal(st.marginLeft, undefined, 'sin margen en la caja');
+    assert.equal(st.marginTop, undefined);
+    st = await abrir({ mr: 3, mb: 2 }, trig);
+    assert.deepEqual([st.left, st.top], [100 - 12, base - 8], 'mr / mb desplazan a la izquierda y arriba (antes no hacían nada)');
+    assert.equal(st.marginRight, undefined);
+    st = await abrir({ ml: -10, mt: -5 }, trig);
+    assert.deepEqual([st.left, st.top], [100 - 10, base - 5], 'negativos (px) desplazan al revés');
+    st = await abrir({ mx: 2, my: 2 }, trig);
+    assert.deepEqual([st.left, st.top], [100, base], 'mx / my se compensan (izquierdo − derecho)');
+    st = await abrir({ m: 2, ml: 4 }, trig);
+    assert.deepEqual([st.left, st.top], [100 + 16 - 8, base], 'el lado gana al general (ml sobre m)');
+    st = await abrir({ ml: 40, style: { marginTop: 10 } }, trig);
+    assert.deepEqual([st.left, st.top], [100 + 40, base + 10], 'también margin… desde style; 40 son px');
+    assert.equal(st.maxHeight, 800 - 10 - (300 + 40) - 4 - 8 - 10, 'bajarla reduce el alto disponible');
+    // Cerca del borde derecho: el desplazamiento se suma antes de ajustarla a la pantalla
+    st = await abrir({ ml: 6 }, { x: 330, y: 200, width: 60, height: 30 }, 180);
+    assert.equal(st.left, 400 - 180 - 8, 'ml cerca del borde derecho: no se sale');
+    st = await abrir({ mr: 6 }, { x: 10, y: 200, width: 60, height: 30 }, 180);
+    assert.equal(st.left, 8, 'mr cerca del borde izquierdo: no se sale');
+    // Arriba (anclada con bottom): mb la sube, mt la baja
+    st = await abrir({ mb: 2 }, { x: 20, y: 720, width: 200, height: 40 });
+    assert.equal(st.bottom, 800 - 720 + 4 + 8, 'placement arriba: mb la sube');
+    // Al lado (placement right): ml / mt también
+    st = await abrir({ placement: 'right', ml: 2, mt: 2 }, { x: 20, y: 300, width: 150, height: 40 });
+    assert.deepEqual([st.left, st.top], [20 + 150 + 4 + 8, 300 + 8], 'placement right: desplazada');
+    // Un mt negativo grande no la saca por arriba
+    st = await abrir({ mt: -1000 }, trig);
+    assert.equal(st.top, 20 + 8, 'no se sale por arriba (insets.top + borde)');
+    ok('márgenes del Menu: desplazan la caja en las 4 direcciones (también negativos) sin salirse de la pantalla');
+  }
   assert.equal(siblings.size, 0, 'sin siblings huérfanos');
   assert.ok(RN.Keyboard.count <= 5, 'listeners de teclado acotados, no uno por menú');
 })().catch(e => { console.error('FALLO', e); process.exit(1) });

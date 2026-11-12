@@ -151,6 +151,15 @@ const pressItem = async txt => {
     assert.equal(listaAbs(app).props.top, 0, 'fixedPlacement top: sigue arriba aunque no quepa');
     await act(async () => app.unmount());
     ok('modo absolute: placement bottom/top, cambia de lado si no cabe (también con teclado) y limita su alto');
+    // Android edge-to-edge: measureInWindow resta la barra de estado (32). Con measure (pageY) el espacio de
+    // arriba es el real: y 200 → 200 - 20 - 4 - 8 = 168 ≥ 160, se queda arriba (con la y de measureInWindow
+    // saldrían 136 y pasaría abajo)
+    env.statusBarOffset = 32;
+    app = await abrir({ placement: 'top' }, { x: 20, y: 200, width: 300, height: 44 });
+    assert.equal(listaAbs(app).props.top, 0, 'edge-to-edge: mide con measure y se queda arriba');
+    await act(async () => app.unmount());
+    env.statusBarOffset = 0;
+    ok('modo absolute: mide con measure (pageY), sin el desfase de la barra de estado de Android');
   }
 
   // Menu: con el trigger bajo el teclado, la lista no baja de la parte superior del teclado

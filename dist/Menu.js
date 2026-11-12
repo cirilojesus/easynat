@@ -57,6 +57,24 @@ const keyboard_1 = require("./utils/keyboard");
 const useThemeProps_1 = require("./utils/useThemeProps");
 const Box_1 = require("./Box");
 const Text_1 = require("./Text");
+const MARGIN_KEYS = ['margin', 'marginHorizontal', 'marginVertical', 'marginLeft', 'marginRight', 'marginTop', 'marginBottom',
+    'marginStart', 'marginEnd'];
+/**
+ * Quita los márgenes del estilo de la caja y los convierte en desplazamiento (ver EAMenuProps).
+ * Con left/top fijados, un margen no separa de nada (mr/mb no hacían nada) y ml/mt movían la caja
+ * después de ajustarla a la pantalla (se podía salir). Prioridad como en RN: lado > eje > margin
+ */
+const marginsToOffset = (style) => {
+    const s = Object.assign({}, style);
+    const m = {};
+    MARGIN_KEYS.forEach(k => { m[k] = s[k]; delete s[k]; });
+    const num = (...vals) => { const v = vals.find(x => x !== undefined); return typeof v === 'number' ? v : 0; };
+    const left = num(m.marginLeft, m.marginStart, m.marginHorizontal, m.margin);
+    const right = num(m.marginRight, m.marginEnd, m.marginHorizontal, m.margin);
+    const top = num(m.marginTop, m.marginVertical, m.margin);
+    const bottom = num(m.marginBottom, m.marginVertical, m.margin);
+    return { style: s, offset: { x: left - right, y: top - bottom } };
+};
 const MenuItem = () => null;
 MenuItem.displayName = "MenuItem";
 /** Línea separadora entre items */
@@ -90,7 +108,7 @@ const GAP = 4;
 const EDGE = 8;
 // Si en el lado preferido hay menos de esto y en el otro hay más, se cambia de lado
 const MIN_SPACE = 160;
-function MenuContent({ triggerLayout, positioned, placement, menuDir, useTriggerWidth, fixedPlacement, animation, style, onReady, children }) {
+function MenuContent({ triggerLayout, positioned, placement, menuDir, useTriggerWidth, fixedPlacement, animation, style, offset: shift, onReady, children }) {
     const window = (0, react_native_1.useWindowDimensions)();
     const insets = (0, react_native_safe_area_context_1.useSafeAreaInsets)();
     const keyboardHeight = (0, keyboard_1.useKeyboardHeight)();
@@ -109,11 +127,11 @@ function MenuContent({ triggerLayout, positioned, placement, menuDir, useTrigger
         const side = fixedPlacement ? placement : placement === 'right'
             ? (spaceRight < width && spaceLeft > spaceRight ? 'left' : 'right')
             : (spaceLeft < width && spaceRight > spaceLeft ? 'right' : 'left');
-        const x = side === 'right' ? triggerLayout.x + triggerLayout.width + GAP : triggerLayout.x - width - GAP;
+        const x = (side === 'right' ? triggerLayout.x + triggerLayout.width + GAP : triggerLayout.x - width - GAP) + shift.x;
         const minTop = insets.top + EDGE;
         const bottomLimit = window.height - keyboardHeight - insets.bottom - EDGE;
         // Alineado con la parte superior del trigger, pero subiéndolo si no cabe por abajo
-        const top = Math.max(Math.min(triggerLayout.y, bottomLimit - menuSize.h), minTop);
+        const top = Math.max(Math.min(triggerLayout.y + shift.y, bottomLimit - menuSize.h), minTop);
         position = { left: clampLeft(x), top, maxHeight: bottomLimit - minTop };
         offset = { translateX: animation.interpolate({ inputRange: [0, 1], outputRange: [side === 'right' ? -6 : 6, 0] }) };
     }
@@ -123,16 +141,18 @@ function MenuContent({ triggerLayout, positioned, placement, menuDir, useTrigger
             ? (spaceBelow < MIN_SPACE && spaceAbove > spaceBelow ? 'top' : 'bottom')
             : (spaceAbove < MIN_SPACE && spaceBelow > spaceAbove ? 'bottom' : 'top');
         // Horizontal: alineado con el trigger según menuDir y sin salirse de la pantalla
-        const desiredLeft = menuDir === 'left' ? triggerLayout.x : triggerLayout.x + triggerLayout.width - width;
+        const desiredLeft = (menuDir === 'left' ? triggerLayout.x : triggerLayout.x + triggerLayout.width - width) + shift.x;
         if (side === 'bottom') {
-            position = { left: clampLeft(desiredLeft), top: triggerLayout.y + triggerLayout.height + GAP, maxHeight: Math.max(spaceBelow, 0) };
+            // El desplazamiento vertical no la saca por arriba y reduce (o amplía) el alto disponible
+            const top = Math.max(triggerLayout.y + triggerLayout.height + GAP + shift.y, insets.top + EDGE);
+            position = { left: clampLeft(desiredLeft), top, maxHeight: Math.max(spaceBelow - (top - (triggerLayout.y + triggerLayout.height + GAP)), 0) };
         }
         else {
             // Arriba se ancla con `bottom` para no depender de la altura del menú (sin saltos en el primer frame).
             // Si el trigger quedó bajo el teclado (p. ej. iOS sin scroll automático), el menú no baja de
             // la parte superior del teclado y reduce su alto para caber
             const minBottom = (keyboardHeight || insets.bottom) + EDGE;
-            const bottom = Math.max(window.height - triggerLayout.y + GAP, minBottom);
+            const bottom = Math.max(window.height - triggerLayout.y + GAP - shift.y, minBottom);
             position = { left: clampLeft(desiredLeft), bottom, maxHeight: Math.max(window.height - bottom - insets.top - EDGE, 0) };
         }
         offset = { translateY: animation.interpolate({ inputRange: [0, 1], outputRange: [side === 'bottom' ? -6 : 6, 0] }) };
@@ -194,7 +214,8 @@ function InternalMenu(rawProps, ref) {
     const propsRef = (0, react_1.useRef)(combinedProps);
     propsRef.current = combinedProps;
     const styles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(combinedProps, theme);
-    const contentStyle = react_native_1.StyleSheet.flatten([style, ...styles]);
+    // Los márgenes no van a la caja: se convierten en desplazamiento (ver EAMenuProps)
+    const { style: contentStyle, offset } = marginsToOffset(react_native_1.StyleSheet.flatten([style, ...styles]));
     const animate = (0, react_1.useCallback)((toValue, callBack) => {
         var _a;
         react_native_1.Animated.timing(animation, {
@@ -215,15 +236,18 @@ function InternalMenu(rawProps, ref) {
         else
             animate(1, () => { var _a, _b; return isOpen.current && ((_b = (_a = propsRef.current).onOpen) === null || _b === void 0 ? void 0 : _b.call(_a)); });
     };
-    // Mide el trigger desde su contenedor (funciona con o sin evento, y abriendo por ref)
+    // Mide el trigger desde su contenedor (funciona con o sin evento, y abriendo por ref).
+    // Con measure (pageX/pageY) y no measureInWindow: en Android, measureInWindow resta la barra de estado
+    // (con edge-to-edge la y sale ~24–40 px menor) y el Portal empieza en y = 0 de la raíz, así que el menú
+    // tapaba el trigger. measure da la posición respecto a la raíz, la misma referencia que el Portal (iOS y Android)
     const measureTrigger = () => {
         const node = triggerRef.current;
         // Solo re-renderiza si la posición cambió de verdad (se mide a menudo mientras está abierto)
         const done = (l) => setLayout(prev => prev && Math.abs(prev.x - l.x) < 1 && Math.abs(prev.y - l.y) < 1
             && Math.abs(prev.width - l.width) < 1 && Math.abs(prev.height - l.height) < 1 ? prev : l);
-        if (!(node === null || node === void 0 ? void 0 : node.measureInWindow))
+        if (!(node === null || node === void 0 ? void 0 : node.measure))
             return done({ x: 0, y: 0, width: 0, height: 0 });
-        node.measureInWindow((x, y, width, height) => done({ x, y, width, height }));
+        node.measure((_x, _y, width, height, pageX, pageY) => done({ x: pageX, y: pageY, width, height }));
     };
     const open = (0, react_1.useCallback)(() => {
         if (isOpen.current)
@@ -311,7 +335,7 @@ function InternalMenu(rawProps, ref) {
                     <MenuContext.Provider value={contextValue}>
                         <react_native_1.View style={react_native_1.StyleSheet.absoluteFill} pointerEvents={"box-none"}>
                             {combinedProps.backdrop && <Pressable_1.Pressable onPress={() => combinedProps.backdrop != 'static' && close()} flex={1}/>}
-                            <MenuContent triggerLayout={layout !== null && layout !== void 0 ? layout : { x: 0, y: 0, width: 0, height: 0 }} positioned={layout !== null} placement={placement} menuDir={menuDir} useTriggerWidth={combinedProps.useTriggerWidth} animation={animation} style={contentStyle} onReady={onContentReady} fixedPlacement={combinedProps.fixedPlacement}>
+                            <MenuContent triggerLayout={layout !== null && layout !== void 0 ? layout : { x: 0, y: 0, width: 0, height: 0 }} positioned={layout !== null} placement={placement} menuDir={menuDir} useTriggerWidth={combinedProps.useTriggerWidth} animation={animation} style={contentStyle} offset={offset} onReady={onContentReady} fixedPlacement={combinedProps.fixedPlacement}>
                                 <FlatList_1.FlatList initialNumToRender={15} maxToRenderPerBatch={10} windowSize={10} nestedScrollEnabled keyboardShouldPersistTaps={"handled"} ListEmptyComponent={emptyContent} {...combinedProps._contentStyle} data={items} renderItem={renderFlatListItem}/>
                             </MenuContent>
                         </react_native_1.View>

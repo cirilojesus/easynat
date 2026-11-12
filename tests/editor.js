@@ -5,6 +5,8 @@ const { h, TR, act, env, lib, wait } = H;
 const ok = msg => console.log('OK ' + msg);
 
 (async () => {
+  // Los editores no se miden salvo donde la prueba lo pide (env.measure): sin medida no reaccionan a toques fuera
+  env.measure = false;
   const { RichTextEditor } = lib('index');
   const { FormGroupRef } = lib('EAForm');
   const render = async el => { let t; await act(async () => { t = TR.create(el) }); return t };
@@ -230,7 +232,7 @@ const ok = msg => console.log('OK ' + msg);
     touchHandlers.onTouchStart(ev(50, 50, 2)); touchHandlers.onTouchEnd(ev(50, 50));
     assert.equal(taps.length, 1, 'dos dedos: no cuenta');
     stop();
-    env.measure = null;
+    env.measure = false;
     ok('subíndice/superíndice/justificado, interlineado y espaciado, cerrar el teclado al tocar fuera (blurOnOutsidePress) y arrastrar no cuenta');
   }
 
@@ -271,7 +273,7 @@ const ok = msg => console.log('OK ' + msg);
     emitTap(50, 400); assert.deepEqual(calls, ['fuera'], 'fuera: se llama');
     await act(async () => t.update(h(Panel, { enabled: false })));
     emitTap(50, 400); assert.deepEqual(calls, ['fuera'], 'desactivado: no escucha');
-    env.measure = null;
+    env.measure = false;
     ok('useTapOutside: fuera llama, dentro no, desactivado no escucha');
   }
 })().catch(e => { console.error('FALLO', e); process.exit(1) });

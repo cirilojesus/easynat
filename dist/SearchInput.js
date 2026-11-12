@@ -82,9 +82,11 @@ const AbsoluteDropdown = ({ open, focused, placement, fixedPlacement, maxListHei
     const [listHeight, setListHeight] = (0, react_1.useState)(0);
     // Espacio libre arriba y abajo del input; null hasta medirlo (mientras tanto la lista no se muestra)
     const [space, setSpace] = (0, react_1.useState)(null);
+    // measure (pageY) y no measureInWindow: en Android measureInWindow resta la barra de estado (edge-to-edge)
+    // y el espacio de arriba y abajo salía mal; pageY es respecto a la raíz, como window.height y los insets
     const measure = () => {
         var _a, _b;
-        (_b = (_a = anchorRef.current) === null || _a === void 0 ? void 0 : _a.measureInWindow) === null || _b === void 0 ? void 0 : _b.call(_a, (_x, y, _w, h) => {
+        (_b = (_a = anchorRef.current) === null || _a === void 0 ? void 0 : _a.measure) === null || _b === void 0 ? void 0 : _b.call(_a, (_x, _y, _w, h, _pageX, y) => {
             const bottomLimit = window.height - (keyboardHeight || insets.bottom);
             const next = { below: bottomLimit - (y + h) - GAP - EDGE, above: y - insets.top - GAP - EDGE };
             // Solo re-renderiza si cambió (se mide a menudo mientras está abierta)

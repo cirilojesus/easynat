@@ -11,8 +11,14 @@ const { act } = TR;
 
 const host = name => {
   const C = React.forwardRef((p, ref) => {
-    // measureInWindow devuelve la posición simulada del trigger (env.triggerLayout)
-    React.useImperativeHandle(ref, () => ({ setNativeProps() {}, measure: cb => { if (env.measure) cb(...env.measure) }, measureInWindow: cb => { const l = env.triggerLayout; setTimeout(() => cb(l.x, l.y, l.width, l.height)) } }));
+    // measure: env.measure (al momento), nada si env.measure === false o, si no, la posición simulada del trigger (env.triggerLayout) de forma
+    // asíncrona, con pageX/pageY respecto a la raíz. measureInWindow simula Android edge-to-edge: resta la
+    // barra de estado (env.statusBarOffset), como hace RN; quien lo use para colocar algo en el Portal falla
+    React.useImperativeHandle(ref, () => ({
+      setNativeProps() {},
+      measure: cb => { if (env.measure) return cb(...env.measure); if (env.measure === false) return; const l = env.triggerLayout; setTimeout(() => cb(0, 0, l.width, l.height, l.x, l.y)) },
+      measureInWindow: cb => { const l = env.triggerLayout; setTimeout(() => cb(l.x, l.y - env.statusBarOffset, l.width, l.height)) },
+    }));
     return h(name, p, typeof p.children === 'function' ? p.children({ pressed: false }) : p.children);
   });
   C.displayName = name;
@@ -101,7 +107,7 @@ const reanimated = {
 // root-siblings: inserta, actualiza y quita de forma ASÍNCRONA (setTimeout), como la librería real
 const siblings = new Map();
 let sid = 0;
-const env = { siblingRoot: null, triggerLayout: { x: 20, y: 300, width: 200, height: 40 }, scrolls: [], timingCallbacks: false };
+const env = { siblingRoot: null, triggerLayout: { x: 20, y: 300, width: 200, height: 40 }, statusBarOffset: 0, scrolls: [], timingCallbacks: false };
 const renderSiblings = () => env.siblingRoot?.update(h('SiblingRoot', null, ...[...siblings].map(([id, el]) => h(React.Fragment, { key: id }, el))));
 class RootSiblings {
   constructor(el) { this.id = ++sid; setTimeout(() => { siblings.set(this.id, el); renderSiblings() }) }

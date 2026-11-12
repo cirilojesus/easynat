@@ -70,6 +70,15 @@ export type EAMenuTriggerProps = {
 /** Lo que recibe `renderItem`: lo de FlatList más close() para cerrar el menú al elegir */
 export type EAMenuRenderItemInfo<T> = ListRenderItemInfo<T> & { close: () => void };
 
+/**
+ * Props del Menu. Las props de estilo (bg, p, rounded, shadow…) van a la caja desplegable.
+ *
+ * Los márgenes (`m`, `mx`, `my`, `mt`, `mb`, `ml`, `mr`, o margin… en `style` o en el tema) no se aplican como
+ * margen: se convierten en un desplazamiento de la caja respecto a su posición junto al trigger,
+ * x = izquierdo − derecho, y = superior − inferior (`mt={2}` la baja 8 px, `mr={2}` la mueve 8 px a la izquierda;
+ * los negativos la mueven al revés). Se suma antes de ajustarla a la pantalla, así que nunca se sale de ella.
+ * Como en el resto de la librería, 0.5–6 se multiplican por 4 y los demás números son px (los % se ignoran).
+ */
 export type EAMenuProps<T = unknown> = ViewProps & EADefaultProps & {
     trigger?: (props: EAMenuTriggerProps) => React.ReactNode;
     /** El menú monta ya abierto (sin animación de entrada) */
@@ -109,6 +118,27 @@ export type EAMenuProps<T = unknown> = ViewProps & EADefaultProps & {
 };
 
 type Layout = { x: number; y: number; width: number; height: number };
+type Offset = { x: number; y: number };
+
+const MARGIN_KEYS = ['margin', 'marginHorizontal', 'marginVertical', 'marginLeft', 'marginRight', 'marginTop', 'marginBottom',
+    'marginStart', 'marginEnd'] as const;
+
+/**
+ * Quita los márgenes del estilo de la caja y los convierte en desplazamiento (ver EAMenuProps).
+ * Con left/top fijados, un margen no separa de nada (mr/mb no hacían nada) y ml/mt movían la caja
+ * después de ajustarla a la pantalla (se podía salir). Prioridad como en RN: lado > eje > margin
+ */
+const marginsToOffset = (style: ViewStyle): { style: ViewStyle; offset: Offset } => {
+    const s: any = { ...style };
+    const m: any = {};
+    MARGIN_KEYS.forEach(k => { m[k] = s[k]; delete s[k] });
+    const num = (...vals: any[]) => { const v = vals.find(x => x !== undefined); return typeof v === 'number' ? v : 0 };
+    const left = num(m.marginLeft, m.marginStart, m.marginHorizontal, m.margin);
+    const right = num(m.marginRight, m.marginEnd, m.marginHorizontal, m.margin);
+    const top = num(m.marginTop, m.marginVertical, m.margin);
+    const bottom = num(m.marginBottom, m.marginVertical, m.margin);
+    return { style: s, offset: { x: left - right, y: top - bottom } };
+};
 
 const MenuItem: React.FC<EAMenuItemType> = () => null;
 MenuItem.displayName = "MenuItem";
@@ -157,13 +187,15 @@ type ContentProps = {
     useTriggerWidth?: boolean;
     animation: Animated.Value;
     style: ViewStyle;
+    /** Desplazamiento de la caja (de los márgenes del Menu), antes de ajustarla a la pantalla */
+    offset: Offset;
     /** Ya está en su sitio y con su tamaño: se puede mostrar */
     onReady: () => void;
     fixedPlacement?: boolean;
     children: React.ReactNode;
 };
 
-function MenuContent({ triggerLayout, positioned, placement, menuDir, useTriggerWidth, fixedPlacement, animation, style, onReady, children }: ContentProps) {
+function MenuContent({ triggerLayout, positioned, placement, menuDir, useTriggerWidth, fixedPlacement, animation, style, offset: shift, onReady, children }: ContentProps) {
     const window = useWindowDimensions();
     const insets = useSafeAreaInsets();
     const keyboardHeight = useKeyboardHeight();
@@ -185,11 +217,11 @@ function MenuContent({ triggerLayout, positioned, placement, menuDir, useTrigger
         const side = fixedPlacement ? placement : placement === 'right'
             ? (spaceRight < width && spaceLeft > spaceRight ? 'left' : 'right')
             : (spaceLeft < width && spaceRight > spaceLeft ? 'right' : 'left');
-        const x = side === 'right' ? triggerLayout.x + triggerLayout.width + GAP : triggerLayout.x - width - GAP;
+        const x = (side === 'right' ? triggerLayout.x + triggerLayout.width + GAP : triggerLayout.x - width - GAP) + shift.x;
         const minTop = insets.top + EDGE;
         const bottomLimit = window.height - keyboardHeight - insets.bottom - EDGE;
         // Alineado con la parte superior del trigger, pero subiéndolo si no cabe por abajo
-        const top = Math.max(Math.min(triggerLayout.y, bottomLimit - menuSize.h), minTop);
+        const top = Math.max(Math.min(triggerLayout.y + shift.y, bottomLimit - menuSize.h), minTop);
         position = { left: clampLeft(x), top, maxHeight: bottomLimit - minTop };
         offset = { translateX: animation.interpolate({ inputRange: [0, 1], outputRange: [side === 'right' ? -6 : 6, 0] }) };
     } else {
@@ -198,15 +230,17 @@ function MenuContent({ triggerLayout, positioned, placement, menuDir, useTrigger
             ? (spaceBelow < MIN_SPACE && spaceAbove > spaceBelow ? 'top' : 'bottom')
             : (spaceAbove < MIN_SPACE && spaceBelow > spaceAbove ? 'bottom' : 'top');
         // Horizontal: alineado con el trigger según menuDir y sin salirse de la pantalla
-        const desiredLeft = menuDir === 'left' ? triggerLayout.x : triggerLayout.x + triggerLayout.width - width;
+        const desiredLeft = (menuDir === 'left' ? triggerLayout.x : triggerLayout.x + triggerLayout.width - width) + shift.x;
         if (side === 'bottom') {
-            position = { left: clampLeft(desiredLeft), top: triggerLayout.y + triggerLayout.height + GAP, maxHeight: Math.max(spaceBelow, 0) };
+            // El desplazamiento vertical no la saca por arriba y reduce (o amplía) el alto disponible
+            const top = Math.max(triggerLayout.y + triggerLayout.height + GAP + shift.y, insets.top + EDGE);
+            position = { left: clampLeft(desiredLeft), top, maxHeight: Math.max(spaceBelow - (top - (triggerLayout.y + triggerLayout.height + GAP)), 0) };
         } else {
             // Arriba se ancla con `bottom` para no depender de la altura del menú (sin saltos en el primer frame).
             // Si el trigger quedó bajo el teclado (p. ej. iOS sin scroll automático), el menú no baja de
             // la parte superior del teclado y reduce su alto para caber
             const minBottom = (keyboardHeight || insets.bottom) + EDGE;
-            const bottom = Math.max(window.height - triggerLayout.y + GAP, minBottom);
+            const bottom = Math.max(window.height - triggerLayout.y + GAP - shift.y, minBottom);
             position = { left: clampLeft(desiredLeft), bottom, maxHeight: Math.max(window.height - bottom - insets.top - EDGE, 0) };
         }
         offset = { translateY: animation.interpolate({ inputRange: [0, 1], outputRange: [side === 'bottom' ? -6 : 6, 0] }) };
@@ -297,7 +331,8 @@ function InternalMenu<T>(
     propsRef.current = combinedProps;
 
     const styles = DEFAULT_PROPS(combinedProps, theme);
-    const contentStyle = StyleSheet.flatten<ViewStyle>([style, ...styles]);
+    // Los márgenes no van a la caja: se convierten en desplazamiento (ver EAMenuProps)
+    const { style: contentStyle, offset } = marginsToOffset(StyleSheet.flatten<ViewStyle>([style, ...styles]));
 
     const animate = useCallback((toValue: 0 | 1, callBack?: () => void) => {
         Animated.timing(animation, {
@@ -316,14 +351,17 @@ function InternalMenu<T>(
         else animate(1, () => isOpen.current && propsRef.current.onOpen?.());
     };
 
-    // Mide el trigger desde su contenedor (funciona con o sin evento, y abriendo por ref)
+    // Mide el trigger desde su contenedor (funciona con o sin evento, y abriendo por ref).
+    // Con measure (pageX/pageY) y no measureInWindow: en Android, measureInWindow resta la barra de estado
+    // (con edge-to-edge la y sale ~24–40 px menor) y el Portal empieza en y = 0 de la raíz, así que el menú
+    // tapaba el trigger. measure da la posición respecto a la raíz, la misma referencia que el Portal (iOS y Android)
     const measureTrigger = () => {
         const node = triggerRef.current;
         // Solo re-renderiza si la posición cambió de verdad (se mide a menudo mientras está abierto)
         const done = (l: Layout) => setLayout(prev => prev && Math.abs(prev.x - l.x) < 1 && Math.abs(prev.y - l.y) < 1
             && Math.abs(prev.width - l.width) < 1 && Math.abs(prev.height - l.height) < 1 ? prev : l);
-        if (!node?.measureInWindow) return done({ x: 0, y: 0, width: 0, height: 0 });
-        node.measureInWindow((x, y, width, height) => done({ x, y, width, height }));
+        if (!node?.measure) return done({ x: 0, y: 0, width: 0, height: 0 });
+        node.measure((_x, _y, width, height, pageX, pageY) => done({ x: pageX, y: pageY, width, height }));
     };
 
     const open = useCallback(() => {
@@ -437,6 +475,7 @@ function InternalMenu<T>(
                                 useTriggerWidth={combinedProps.useTriggerWidth}
                                 animation={animation}
                                 style={contentStyle}
+                                offset={offset}
                                 onReady={onContentReady}
                                 fixedPlacement={combinedProps.fixedPlacement}
                             >
