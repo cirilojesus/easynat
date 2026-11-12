@@ -42,6 +42,13 @@ export type EATooltipProps = Omit<ViewProps, 'children'> & EADefaultProps & {
     children: React.ReactNode | ((props: TooltipTriggerProps) => React.ReactNode);
     /** Lado preferido; si no cabe y en el otro hay más sitio, se coloca en el otro. Por defecto 'top' */
     placement?: 'top' | 'bottom';
+    /**
+     * 'portal' (por defecto): se pinta encima de toda la app (en un Portal) y sigue al trigger midiéndolo.
+     * 'absolute': se pinta junto al trigger (position absolute), dentro de su pantalla: se mueve con él sin medir
+     * (scroll, animaciones) y le llegan los contextos de la pantalla. Lo puede tapar o recortar un contenedor
+     * con overflow: 'hidden' o un hermano de un contenedor superior con más zIndex
+     */
+    mode?: 'portal' | 'absolute';
     /** Cómo se abre con un elemento como children: 'press' (tocar, por defecto) o 'longPress' (mantener pulsado) */
     openOn?: 'press' | 'longPress';
     /** Se cierra solo tras estos ms (0: no se cierra solo). Por defecto 3000 */
@@ -88,37 +95,43 @@ const TOOLTIP_DEFAULTS: Partial<EATooltipProps> = {
 /* ---------------- Burbuja (solo montada abierta) ---------------- */
 
 type BubbleProps = {
+    /** Posición del trigger en la pantalla */
     trigger: Layout;
     placement: 'top' | 'bottom';
     hasArrow: boolean;
+    /** Junto al trigger (position absolute dentro de él) en vez de en el Portal */
+    relative: boolean;
     style: ViewStyle;
     animation: Animated.Value;
     onReady: () => void;
     children: React.ReactNode;
 };
 
-function Bubble({ trigger, placement, hasArrow, style, animation, onReady, children }: BubbleProps) {
+function Bubble({ trigger, placement, hasArrow, relative, style, animation, onReady, children }: BubbleProps) {
     const window = useWindowDimensions();
     const insets = useSafeAreaInsets();
+    // Tamaño de la burbuja + flecha (su ancho natural, como mucho maxWidth)
     const [size, setSize] = useState({ w: 0, h: 0 });
     const sized = size.w > 0;
 
-    // size: el conjunto burbuja + flecha
     const needed = size.h + GAP;
     const spaceAbove = trigger.y - insets.top - EDGE;
     const spaceBelow = window.height - insets.bottom - EDGE - (trigger.y + trigger.height);
     const side = placement === 'top'
         ? (spaceAbove < needed && spaceBelow > spaceAbove ? 'bottom' : 'top')
         : (spaceBelow < needed && spaceAbove > spaceBelow ? 'top' : 'bottom');
-    // Centrada en el trigger, sin salirse de la pantalla
+    // Centrada en el trigger, sin salirse de la pantalla (x en la pantalla)
     const center = trigger.x + trigger.width / 2;
     const left = Math.min(Math.max(center - size.w / 2, EDGE), Math.max(window.width - size.w - EDGE, EDGE));
-    const position: ViewStyle = !sized
-        // Primero se mide oculta en la esquina (con todo el ancho, para no partir el texto antes de tiempo)
-        ? { left: 0, top: 0 }
+    // Una franja del ancho de la pantalla, encima o debajo del trigger; la burbuja va dentro con marginLeft.
+    // En el Portal en coordenadas de la pantalla; en 'absolute', relativas al trigger
+    const strip: ViewStyle = relative
+        ? side === 'top'
+            ? { left: -trigger.x, width: window.width, bottom: trigger.height + GAP }
+            : { left: -trigger.x, width: window.width, top: trigger.height + GAP }
         : side === 'top'
-            ? { left, bottom: window.height - trigger.y + GAP }
-            : { left, top: trigger.y + trigger.height + GAP };
+            ? { left: 0, width: window.width, bottom: window.height - trigger.y + GAP }
+            : { left: 0, width: window.width, top: trigger.y + trigger.height + GAP };
     // La flecha apunta al centro del trigger aunque la burbuja se haya desplazado para caber (sin pasar de las esquinas)
     const radius = Number(style.borderRadius) || 0;
     const minArrow = Math.max(radius, 4);
@@ -148,24 +161,29 @@ function Bubble({ trigger, placement, hasArrow, style, animation, onReady, child
 
     return (
         <Animated.View
-            accessibilityRole="text"
             pointerEvents="none"
-            onLayout={e => {
-                const { width: w, height: h } = e.nativeEvent.layout;
-                if (Math.round(w) !== Math.round(size.w) || Math.round(h) !== Math.round(size.h)) setSize({ w, h });
-            }}
             style={{
                 position: 'absolute',
-                ...position,
+                ...strip,
                 alignItems: 'flex-start',
-                maxWidth,
+                zIndex: 1000,
+                elevation: 1000,
                 opacity: sized ? animation : 0,
                 transform: [{ translateY: animation.interpolate({ inputRange: [0, 1], outputRange: [side === 'top' ? 4 : -4, 0] }) }],
             }}
         >
-            {side === 'bottom' && arrow}
-            <View style={[style, { maxWidth }]}>{children}</View>
-            {side === 'top' && arrow}
+            <View
+                accessibilityRole="text"
+                style={{ marginLeft: sized ? left : 0, maxWidth, alignItems: 'flex-start' }}
+                onLayout={e => {
+                    const { width: w, height: h } = e.nativeEvent.layout;
+                    if (Math.round(w) !== Math.round(size.w) || Math.round(h) !== Math.round(size.h)) setSize({ w, h });
+                }}
+            >
+                {side === 'bottom' && arrow}
+                <View style={[style, { maxWidth }]}>{children}</View>
+                {side === 'top' && arrow}
+            </View>
         </Animated.View>
     );
 }
@@ -175,13 +193,14 @@ function Bubble({ trigger, placement, hasArrow, style, animation, onReady, child
 /**
  * Burbuja con un texto corto junto a un elemento (un icono de información, un botón con solo icono…). Se abre al
  * tocarlo (o al mantenerlo pulsado con openOn="longPress"), se cierra sola tras `duration`, al tocar en cualquier
- * sitio o con el botón atrás. Se pinta en un Portal, encima de todo, sin salirse de la pantalla
+ * sitio o con el botón atrás. Se pinta en un Portal, encima de todo (o junto al trigger con mode="absolute"), sin salirse
+ * de la pantalla
  */
 export const Tooltip = forwardRef<TooltipRef, EATooltipProps>((rawProps, ref) => {
     // Defaults → theme.components.Tooltip → variante → props → plataforma
     const [{
         label, children, placement, openOn, duration, isOpen: controlled, defaultOpen, onOpenChange, hasArrow, disabled,
-        _text, _trigger, style, variant: _variant, ...props
+        _text, _trigger, style, mode, variant: _variant, ...props
     }, theme] = useThemeProps<EATooltipProps>('Tooltip', rawProps, { defaults: TOOLTIP_DEFAULTS });
 
     const [internal, setInternal] = useState(!!defaultOpen);
@@ -267,9 +286,28 @@ export const Tooltip = forwardRef<TooltipRef, EATooltipProps>((rawProps, ref) =>
         ? <Text color="background" fontSize={13} {..._text}>{label}</Text>
         : label;
 
+    const relative = mode === 'absolute';
+    const bubble = mounted && layout && (
+        <Bubble
+            trigger={layout}
+            placement={placement ?? 'top'}
+            hasArrow={hasArrow !== false}
+            relative={relative}
+            style={bubbleStyle}
+            animation={animation}
+            onReady={() => {
+                if (openRef.current) Animated.timing(animation, { toValue: 1, duration: 120, useNativeDriver: true }).start();
+            }}
+        >
+            {label_}
+        </Bubble>
+    );
+
     return (
         <>
-            <View ref={triggerRef} collapsable={false} style={StyleSheet.flatten(DEFAULT_PROPS(_trigger || {}, theme))}>
+            {/* En 'absolute', abierto, el contenedor del trigger sube de capa para que la burbuja quede encima de sus hermanos */}
+            <View ref={triggerRef} collapsable={false}
+                style={[StyleSheet.flatten(DEFAULT_PROPS(_trigger || {}, theme)), relative && mounted && { zIndex: 1000, elevation: 1000 }]}>
                 {typeof children === 'function'
                     ? children(triggerProps)
                     : (
@@ -280,25 +318,11 @@ export const Tooltip = forwardRef<TooltipRef, EATooltipProps>((rawProps, ref) =>
                             {children}
                         </Pressable>
                     )}
+                {relative && bubble}
             </View>
-            {mounted && (
+            {!relative && mounted && (
                 <Portal>
-                    <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
-                        {layout && (
-                            <Bubble
-                                trigger={layout}
-                                placement={placement ?? 'top'}
-                                hasArrow={hasArrow !== false}
-                                style={bubbleStyle}
-                                animation={animation}
-                                onReady={() => {
-                                    if (openRef.current) Animated.timing(animation, { toValue: 1, duration: 120, useNativeDriver: true }).start();
-                                }}
-                            >
-                                {label_}
-                            </Bubble>
-                        )}
-                    </View>
+                    <View style={StyleSheet.absoluteFill} pointerEvents="box-none">{bubble}</View>
                 </Portal>
             )}
         </>

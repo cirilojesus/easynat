@@ -60,12 +60,15 @@ const Image = (props) => {
     const { size } = combinedProps;
     // Sin size: todo el ancho y, si tampoco hay alto ni proporción, la proporción real de la imagen (sin ella,
     // una imagen remota con width 100% saldría con alto 0)
-    const auto = !size && own.height == null && own.aspectRatio == null && own.flex == null;
+    // (con flex también: en una fila, flex da el ancho y la proporción el alto; en una columna con alto y ancho
+    // fijados, Yoga ignora la proporción)
+    const auto = !size && own.height == null && own.aspectRatio == null;
     const ratio = useAspectRatio(combinedProps.source, auto);
     const baseStyle = react_native_1.StyleSheet.flatten([
         size
             ? { width: size, height: size }
-            : Object.assign({ width: '100%' }, (auto && ratio ? { aspectRatio: ratio } : null)),
+            // flexShrink: en una fila, varias imágenes sin ancho se reparten el espacio en vez de salirse
+            : Object.assign({ width: '100%', flexShrink: 1 }, (auto && ratio ? { aspectRatio: ratio } : null)),
         own,
     ]);
     if (error == 'fallback') {

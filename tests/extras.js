@@ -3,7 +3,7 @@
 const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
-const { React, h, TR, act, RN, env, lib, wait, mountSiblings, shown } = require('./harness');
+const { React, h, TR, act, RN, env, reanimated, lib, wait, mountSiblings, shown, texts } = require('./harness');
 const ok = msg => console.log('OK ' + msg);
 const flat = s => Object.assign({}, ...[].concat(s).flat(9).filter(Boolean));
 const render = async el => { let t; await act(async () => { t = TR.create(el) }); return t };
@@ -46,6 +46,10 @@ const textos = t => t.root.findAll(n => n.type === 'Text').map(n => n.children.f
     assert.deepEqual([img(t).width, img(t).height, img(t).aspectRatio], ['100%', 120, undefined], 'con alto propio: sin proporción automática');
     t = await render(h(Image, { source: { uri: 'https://x/c.jpg' }, w: 200 })); await wait(10);
     assert.deepEqual([img(t).width, img(t).aspectRatio], [200, 2], 'con ancho propio: alto según la proporción');
+    t = await render(h(Image, { source: { uri: 'https://x/d.jpg' }, flex: 1 })); await wait(10);
+    assert.deepEqual([img(t).flex, img(t).aspectRatio, img(t).flexShrink], [1, 2, 1], 'con flex (en una fila): mantiene la proporción');
+    t = await render(h(Image, { source: { uri: 'https://x/e.jpg' } })); await wait(10);
+    assert.equal(img(t).flexShrink, 1, 'por defecto flexShrink 1: en una fila se reparten el ancho');
     // Si no carga: hueco gris con icono (y alt), del mismo tamaño
     t = await render(h(Image, { source: { uri: 'https://x/rota.jpg' }, alt: 'Foto' })); await wait(10);
     await act(async () => t.root.findAll(n => n.type === 'Image')[0].props.onError());
@@ -81,9 +85,12 @@ const textos = t => t.root.findAll(n => n.type === 'Text').map(n => n.children.f
 
   // ---- Tooltip: se abre al tocar, sobre el trigger y centrado, sin salirse; se cierra solo, al tocar fuera y con atrás
   {
-    const burbuja = () => env.siblingRoot.root.findAll(n => n.type === 'AnimatedView' && n.props.onLayout)[0];
-    const st = () => flat(burbuja().props.style);
-    const op = () => { const o = st().opacity; return typeof o === 'object' ? o.v : o };
+    // Franja (AnimatedView, posición vertical) y dentro la burbuja + flecha (View con onLayout, marginLeft)
+    let raiz = () => env.siblingRoot.root;
+    const franja = () => raiz().findAll(n => n.type === 'AnimatedView' && n.props.pointerEvents === 'none')[0];
+    const burbuja = () => franja().findAll(n => n.type === 'View' && n.props.onLayout)[0];
+    const st = () => ({ ...flat(franja().props.style), left: flat(burbuja().props.style).marginLeft });
+    const op = () => { const o = flat(franja().props.style).opacity; return typeof o === 'object' ? o.v : o };
     const medir = async (w = 100, hh = 30) => { await act(async () => burbuja().props.onLayout({ nativeEvent: { layout: { width: w, height: hh } } })); await wait(200) };
     const { emitTap } = lib('index');
 
@@ -147,7 +154,23 @@ const textos = t => t.root.findAll(n => n.type === 'Text').map(n => n.children.f
     assert.ok(shown('Ctrl') && ref.current.isOpen() && tp.isOpen, 'abierto por la prop');
     await act(async () => t.unmount()); await wait(20);
     assert.ok(!shown('Ctrl'), 'al desmontar no queda nada');
-    ok('Tooltip: abre al tocar o mantener, centrado sin salirse, cambia de lado, se cierra solo / fuera / con atrás, controlado y por ref');
+    // mode="absolute": junto al trigger (sin Portal), coordenadas relativas a él
+    env.triggerLayout = { x: 150, y: 300, width: 40, height: 40 };
+    t = await render(h(Tooltip, { label: 'Abs', mode: 'absolute', duration: 0 }, h(RN.Text, null, 'a')));
+    await act(async () => trigger().props.onPress()); await wait(10);
+    assert.ok(!shown('Abs'), 'absolute: no va al Portal');
+    raiz = () => t.root;
+    assert.ok(texts(t).includes('Abs'), 'absolute: dentro del árbol del trigger');
+    await medir();
+    assert.equal(op(), 1);
+    assert.equal(flat(franja().props.style).bottom, 40 + 6, 'encima del trigger (relativo a él)');
+    assert.equal(flat(franja().props.style).left, -150, 'franja del ancho de la pantalla');
+    assert.equal(st().left, 150 + 20 - 50, 'centrada sobre el trigger');
+    const cont = t.root.findAll(n => n.type === 'View' && n.props.collapsable === false)[0];
+    assert.equal(flat(cont.props.style).zIndex, 1000, 'abierto: el contenedor sube de capa');
+    await act(async () => t.unmount()); await wait(20);
+    raiz = () => env.siblingRoot.root;
+    ok('Tooltip: abre al tocar o mantener, centrado sin salirse, en Portal o absolute, cambia de lado, se cierra solo / fuera / con atrás, controlado y por ref');
   }
 
   // ---- Breadcrumbs: actual sin pulsar, separadores, maxItems con menú, options, variantes y contenido extra
@@ -206,8 +229,11 @@ const textos = t => t.root.findAll(n => n.type === 'Text').map(n => n.children.f
     const visible = t => t.root.findAll(n => n.type === 'Text' && !n.props.onTextLayout && !n.props['aria-hidden'])[0];
     const copia = t => t.root.findAll(n => n.type === 'Text' && n.props.onTextLayout)[0];
     const lineas = async (t, n) => act(async () => copia(t).props.onTextLayout({ nativeEvent: { lines: Array.from({ length: n }, (_, i) => ({ y: i * 20, height: 20, text: `linea${i} con texto ` })) } }));
-    const clip = t => t.root.findAll(n => n.type === 'AnimatedView')[0];
-    const alto = t => { const v = flat(clip(t).props.style).height; return typeof v === 'object' ? v.v : v };
+    // La altura se anima con Reanimated en el hilo de UI: se comprueba el recorte y a qué alto va cada withTiming
+    const clip = t => t.root.findAll(n => n.type === 'ReaView')[0];
+    const recortado = t => flat(clip(t).props.style).overflow === 'hidden';
+    const animaA = () => reanimated.timings.at(-1);
+    env.timingCallbacks = true;
     const enlace = t => t.root.findAll(n => n.type === 'Pressable' && n.props.onPress)[0];
     const toggles = [];
     let t = await render(h(ReadMore, { onToggle: v => toggles.push(v), fontSize: 15 }, 'Un texto largo'));
@@ -217,16 +243,15 @@ const textos = t => t.root.findAll(n => n.type === 'Text').map(n => n.children.f
     assert.ok(!textos(t).includes('Leer más'), 'cabe: sin enlace');
     await lineas(t, 6);
     assert.ok(textos(t).includes('Leer más'), 'no cabe: Leer más');
-    assert.equal(alto(t), 60, 'recortado al alto de 3 líneas');
+    assert.ok(recortado(t), 'recortado (al alto de 3 líneas)');
     assert.equal(visible(t).props.numberOfLines, 3, 'recogido: con los …');
     assert.ok(t.root.findAll(n => n.type === 'Icon' && n.props.name === 'chevron-down').length, 'con chevron');
     await act(async () => enlace(t).props.onPress());
     assert.equal(visible(t).props.numberOfLines, undefined, 'desplegando: sin límite');
-    await wait(300);
-    assert.equal(alto(t), 120, 'anima hasta el alto entero');
+    assert.equal(animaA(), 120, 'anima hasta el alto entero');
     assert.ok(textos(t).includes('Leer menos'));
-    await act(async () => enlace(t).props.onPress()); await wait(300);
-    assert.equal(alto(t), 60, 'recoge animando');
+    await act(async () => enlace(t).props.onPress()); await wait(10);
+    assert.equal(animaA(), 60, 'recoge animando hasta 3 líneas');
     assert.equal(visible(t).props.numberOfLines, 3, 'y vuelve a llevar los …');
     assert.deepEqual(toggles, [true, false]);
     // fade: degradado y sin …
@@ -234,7 +259,7 @@ const textos = t => t.root.findAll(n => n.type === 'Text').map(n => n.children.f
     await lineas(t, 5);
     assert.equal(t.root.findAll(n => n.type === 'LinearGradient').length, 1, 'fade: degradado');
     assert.equal(visible(t).props.numberOfLines, undefined, 'fade: sin …, lo recorta el alto');
-    assert.equal(alto(t), 40);
+    assert.ok(recortado(t));
     // overlay: botón flotante sobre el final recortado; desplegado va debajo
     t = await render(h(ReadMore, { fade: true, triggerPlacement: 'overlay' }, 'Texto'));
     await lineas(t, 6);
@@ -255,8 +280,13 @@ const textos = t => t.root.findAll(n => n.type === 'Text').map(n => n.children.f
     assert.equal(flat(clip(t).props.style).maxHeight, 100, 'antes de medir: recortado con maxHeight');
     const contenido = t.root.findAll(n => n.type === 'View' && n.props.onLayout)[0];
     await act(async () => contenido.props.onLayout({ nativeEvent: { layout: { height: 300 } } }));
-    assert.equal(alto(t), 100); assert.ok(textos(t).includes('Leer más'), 'contenido más alto: enlace');
-    await act(async () => contenido.props.onLayout({ nativeEvent: { layout: { height: 80 } } }));
+    assert.ok(recortado(t) && textos(t).includes('Leer más'), 'contenido más alto: enlace');
+    await act(async () => enlace(t).props.onPress());
+    assert.equal(animaA(), 300, 'despliega hasta su alto');
+    await act(async () => enlace(t).props.onPress());
+    assert.equal(animaA(), 100, 'recoge hasta maxHeight');
+    await act(async () => t.update(h(ReadMore, { maxHeight: 100 }, h(RN.View, null, h(RN.Text, null, 'Párrafo')))));
+    await act(async () => t.root.findAll(n => n.type === 'View' && n.props.onLayout)[0].props.onLayout({ nativeEvent: { layout: { height: 80 } } }));
     assert.ok(!textos(t).includes('Leer más'), 'contenido que cabe: sin enlace');
     // collapsed propio, textos propios, showLess y renderTrigger
     t = await render(h(ReadMore, { collapsed: h(RN.Text, null, 'Resumen'), readMoreText: 'Ver todo', showLess: false }, h(RN.Text, null, 'Completo')));
@@ -269,6 +299,7 @@ const textos = t => t.root.findAll(n => n.type === 'Text').map(n => n.children.f
     assert.ok(textos(t).includes('más'));
     await act(async () => estado.toggle());
     assert.ok(textos(t).includes('menos'), 'renderTrigger');
+    env.timingCallbacks = false;
     ok('ReadMore: líneas o maxHeight, enlace debajo / inline / flotante, chevron, fade, altura animada, collapsed, showLess y renderTrigger');
   }
 

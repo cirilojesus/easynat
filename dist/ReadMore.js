@@ -47,6 +47,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ReadMore = void 0;
 const react_1 = __importStar(require("react"));
 const react_native_1 = require("react-native");
+const react_native_reanimated_1 = __importStar(require("react-native-reanimated"));
 const react_native_svg_1 = __importStar(require("react-native-svg"));
 const useThemeProps_1 = require("./utils/useThemeProps");
 const translate_1 = require("./utils/translate");
@@ -77,7 +78,9 @@ const ReadMore = (rawProps) => {
         ? !!lines && lines.length > numberOfLines
         : fullH != null && collapsedH != null && fullH > collapsedH + 1);
     // Altura animada del contenido recortado. `settled`: recogido y quieto (con texto, entonces lleva los "…")
-    const height = (0, react_1.useRef)(new react_native_1.Animated.Value(collapsedH !== null && collapsedH !== void 0 ? collapsedH : 0)).current;
+    // Se anima en el hilo de UI (Reanimated): con Animated y useNativeDriver: false iba a tirones
+    const height = (0, react_native_reanimated_1.useSharedValue)(collapsedH !== null && collapsedH !== void 0 ? collapsedH : 0);
+    const heightStyle = (0, react_native_reanimated_1.useAnimatedStyle)(() => ({ height: height.value }));
     const [settled, setSettled] = (0, react_1.useState)(!expanded);
     const first = (0, react_1.useRef)(true);
     (0, react_1.useEffect)(() => {
@@ -86,15 +89,18 @@ const ReadMore = (rawProps) => {
         const to = expanded ? fullH : collapsedH;
         if (first.current || !animated) {
             first.current = false;
-            height.setValue(to);
+            height.value = to;
             setSettled(!expanded);
             return;
         }
         if (expanded)
             setSettled(false);
-        react_native_1.Animated.timing(height, { toValue: to, duration, useNativeDriver: false })
-            .start(({ finished }) => { if (finished && !expanded)
-            setSettled(true); });
+        const collapsing = !expanded;
+        height.value = (0, react_native_reanimated_1.withTiming)(to, { duration, easing: react_native_reanimated_1.Easing.out(react_native_reanimated_1.Easing.cubic) }, finished => {
+            'worklet';
+            if (finished && collapsing)
+                (0, react_native_reanimated_1.runOnJS)(setSettled)(true);
+        });
     }, [expanded, fullH, collapsedH, overflows]);
     const toggle = () => {
         const next = !expanded;
@@ -156,7 +162,7 @@ const ReadMore = (rawProps) => {
     const clip = collapsed != null
         ? null
         : measured
-            ? { height, overflow: 'hidden' }
+            ? [{ overflow: 'hidden' }, heightStyle]
             : !isText && maxHeight != null ? { maxHeight, overflow: 'hidden' } : null;
     const showFade = fade && overflows && collapsed == null && !expanded;
     // Flotante sobre el degradado solo recogido; desplegado va debajo
@@ -167,7 +173,7 @@ const ReadMore = (rawProps) => {
             {measureCopy}
             {collapsed != null && !expanded
             ? collapsed
-            : (<react_native_1.Animated.View style={clip}>
+            : (<react_native_reanimated_1.default.View style={clip}>
                         {content}
                         {showFade && (<react_native_svg_1.default pointerEvents="none" width="100%" height={fadeH} style={{ position: 'absolute', left: 0, right: 0, bottom: 0 }}>
                                 <react_native_svg_1.Defs>
@@ -181,7 +187,7 @@ const ReadMore = (rawProps) => {
                         {floating && (<react_native_1.View style={{ position: 'absolute', left: 0, right: 0, bottom: 6, paddingHorizontal: 4 }} pointerEvents="box-none">
                                 {trigger(true)}
                             </react_native_1.View>)}
-                    </react_native_1.Animated.View>)}
+                    </react_native_reanimated_1.default.View>)}
             {overflows && !floating && (expanded ? showLess : true) && trigger(false)}
         </Box_1.Box>);
 };

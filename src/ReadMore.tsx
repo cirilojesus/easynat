@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, View, ViewStyle } from "react-native";
+import { View, ViewStyle } from "react-native";
+import Animated, { Easing, runOnJS, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { useThemeProps } from "./utils/useThemeProps";
 import { libT } from "./utils/translate";
@@ -98,7 +99,9 @@ export const ReadMore: React.FC<EAReadMoreProps> = (rawProps) => {
         : fullH != null && collapsedH != null && fullH > collapsedH + 1);
 
     // Altura animada del contenido recortado. `settled`: recogido y quieto (con texto, entonces lleva los "…")
-    const height = useRef(new Animated.Value(collapsedH ?? 0)).current;
+    // Se anima en el hilo de UI (Reanimated): con Animated y useNativeDriver: false iba a tirones
+    const height = useSharedValue(collapsedH ?? 0);
+    const heightStyle = useAnimatedStyle(() => ({ height: height.value }));
     const [settled, setSettled] = useState(!expanded);
     const first = useRef(true);
     useEffect(() => {
@@ -106,13 +109,16 @@ export const ReadMore: React.FC<EAReadMoreProps> = (rawProps) => {
         const to = expanded ? fullH : collapsedH;
         if (first.current || !animated) {
             first.current = false;
-            height.setValue(to);
+            height.value = to;
             setSettled(!expanded);
             return;
         }
         if (expanded) setSettled(false);
-        Animated.timing(height, { toValue: to, duration, useNativeDriver: false })
-            .start(({ finished }) => { if (finished && !expanded) setSettled(true) });
+        const collapsing = !expanded;
+        height.value = withTiming(to, { duration, easing: Easing.out(Easing.cubic) }, finished => {
+            'worklet';
+            if (finished && collapsing) runOnJS(setSettled)(true);
+        });
     }, [expanded, fullH, collapsedH, overflows]);
 
     const toggle = () => {
@@ -205,7 +211,7 @@ export const ReadMore: React.FC<EAReadMoreProps> = (rawProps) => {
     const clip: any = collapsed != null
         ? null
         : measured
-            ? { height, overflow: 'hidden' }
+            ? [{ overflow: 'hidden' }, heightStyle]
             : !isText && maxHeight != null ? { maxHeight, overflow: 'hidden' } : null;
     const showFade = fade && overflows && collapsed == null && !expanded;
     // Flotante sobre el degradado solo recogido; desplegado va debajo
@@ -219,7 +225,7 @@ export const ReadMore: React.FC<EAReadMoreProps> = (rawProps) => {
             {collapsed != null && !expanded
                 ? collapsed
                 : (
-                    <Animated.View style={clip as ViewStyle}>
+                    <Animated.View style={clip as any}>
                         {content}
                         {showFade && (
                             <Svg pointerEvents="none" width="100%" height={fadeH} style={{ position: 'absolute', left: 0, right: 0, bottom: 0 }}>

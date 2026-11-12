@@ -72,28 +72,31 @@ const TOOLTIP_DEFAULTS = {
     duration: 3000,
     hasArrow: true,
 };
-function Bubble({ trigger, placement, hasArrow, style, animation, onReady, children }) {
+function Bubble({ trigger, placement, hasArrow, relative, style, animation, onReady, children }) {
     var _a;
     const window = (0, react_native_1.useWindowDimensions)();
     const insets = (0, react_native_safe_area_context_1.useSafeAreaInsets)();
+    // Tamaño de la burbuja + flecha (su ancho natural, como mucho maxWidth)
     const [size, setSize] = (0, react_1.useState)({ w: 0, h: 0 });
     const sized = size.w > 0;
-    // size: el conjunto burbuja + flecha
     const needed = size.h + GAP;
     const spaceAbove = trigger.y - insets.top - EDGE;
     const spaceBelow = window.height - insets.bottom - EDGE - (trigger.y + trigger.height);
     const side = placement === 'top'
         ? (spaceAbove < needed && spaceBelow > spaceAbove ? 'bottom' : 'top')
         : (spaceBelow < needed && spaceAbove > spaceBelow ? 'top' : 'bottom');
-    // Centrada en el trigger, sin salirse de la pantalla
+    // Centrada en el trigger, sin salirse de la pantalla (x en la pantalla)
     const center = trigger.x + trigger.width / 2;
     const left = Math.min(Math.max(center - size.w / 2, EDGE), Math.max(window.width - size.w - EDGE, EDGE));
-    const position = !sized
-        // Primero se mide oculta en la esquina (con todo el ancho, para no partir el texto antes de tiempo)
-        ? { left: 0, top: 0 }
+    // Una franja del ancho de la pantalla, encima o debajo del trigger; la burbuja va dentro con marginLeft.
+    // En el Portal en coordenadas de la pantalla; en 'absolute', relativas al trigger
+    const strip = relative
+        ? side === 'top'
+            ? { left: -trigger.x, width: window.width, bottom: trigger.height + GAP }
+            : { left: -trigger.x, width: window.width, top: trigger.height + GAP }
         : side === 'top'
-            ? { left, bottom: window.height - trigger.y + GAP }
-            : { left, top: trigger.y + trigger.height + GAP };
+            ? { left: 0, width: window.width, bottom: window.height - trigger.y + GAP }
+            : { left: 0, width: window.width, top: trigger.y + trigger.height + GAP };
     // La flecha apunta al centro del trigger aunque la burbuja se haya desplazado para caber (sin pasar de las esquinas)
     const radius = Number(style.borderRadius) || 0;
     const minArrow = Math.max(radius, 4);
@@ -106,25 +109,28 @@ function Bubble({ trigger, placement, hasArrow, style, animation, onReady, child
     const arrow = hasArrow && (<react_native_1.View style={Object.assign({ marginLeft: arrowLeft, width: 0, height: 0, borderLeftWidth: ARROW, borderRightWidth: ARROW, borderLeftColor: 'transparent', borderRightColor: 'transparent' }, (side === 'top'
             ? { borderTopWidth: ARROW, borderTopColor: bg }
             : { borderBottomWidth: ARROW, borderBottomColor: bg }))}/>);
-    return (<react_native_1.Animated.View accessibilityRole="text" pointerEvents="none" onLayout={e => {
+    return (<react_native_1.Animated.View pointerEvents="none" style={Object.assign(Object.assign({ position: 'absolute' }, strip), { alignItems: 'flex-start', zIndex: 1000, elevation: 1000, opacity: sized ? animation : 0, transform: [{ translateY: animation.interpolate({ inputRange: [0, 1], outputRange: [side === 'top' ? 4 : -4, 0] }) }] })}>
+            <react_native_1.View accessibilityRole="text" style={{ marginLeft: sized ? left : 0, maxWidth, alignItems: 'flex-start' }} onLayout={e => {
             const { width: w, height: h } = e.nativeEvent.layout;
             if (Math.round(w) !== Math.round(size.w) || Math.round(h) !== Math.round(size.h))
                 setSize({ w, h });
-        }} style={Object.assign(Object.assign({ position: 'absolute' }, position), { alignItems: 'flex-start', maxWidth, opacity: sized ? animation : 0, transform: [{ translateY: animation.interpolate({ inputRange: [0, 1], outputRange: [side === 'top' ? 4 : -4, 0] }) }] })}>
-            {side === 'bottom' && arrow}
-            <react_native_1.View style={[style, { maxWidth }]}>{children}</react_native_1.View>
-            {side === 'top' && arrow}
+        }}>
+                {side === 'bottom' && arrow}
+                <react_native_1.View style={[style, { maxWidth }]}>{children}</react_native_1.View>
+                {side === 'top' && arrow}
+            </react_native_1.View>
         </react_native_1.Animated.View>);
 }
 /* ---------------- Tooltip ---------------- */
 /**
  * Burbuja con un texto corto junto a un elemento (un icono de información, un botón con solo icono…). Se abre al
  * tocarlo (o al mantenerlo pulsado con openOn="longPress"), se cierra sola tras `duration`, al tocar en cualquier
- * sitio o con el botón atrás. Se pinta en un Portal, encima de todo, sin salirse de la pantalla
+ * sitio o con el botón atrás. Se pinta en un Portal, encima de todo (o junto al trigger con mode="absolute"), sin salirse
+ * de la pantalla
  */
 exports.Tooltip = (0, react_1.forwardRef)((rawProps, ref) => {
     // Defaults → theme.components.Tooltip → variante → props → plataforma
-    const [_a, theme] = (0, useThemeProps_1.useThemeProps)('Tooltip', rawProps, { defaults: TOOLTIP_DEFAULTS }), { label, children, placement, openOn, duration, isOpen: controlled, defaultOpen, onOpenChange, hasArrow, disabled, _text, _trigger, style, variant: _variant } = _a, props = __rest(_a, ["label", "children", "placement", "openOn", "duration", "isOpen", "defaultOpen", "onOpenChange", "hasArrow", "disabled", "_text", "_trigger", "style", "variant"]);
+    const [_a, theme] = (0, useThemeProps_1.useThemeProps)('Tooltip', rawProps, { defaults: TOOLTIP_DEFAULTS }), { label, children, placement, openOn, duration, isOpen: controlled, defaultOpen, onOpenChange, hasArrow, disabled, _text, _trigger, style, mode, variant: _variant } = _a, props = __rest(_a, ["label", "children", "placement", "openOn", "duration", "isOpen", "defaultOpen", "onOpenChange", "hasArrow", "disabled", "_text", "_trigger", "style", "mode", "variant"]);
     const [internal, setInternal] = (0, react_1.useState)(!!defaultOpen);
     const open = controlled !== null && controlled !== void 0 ? controlled : internal;
     // Montada mientras está abierta o animando el cierre
@@ -209,23 +215,25 @@ exports.Tooltip = (0, react_1.forwardRef)((rawProps, ref) => {
     const label_ = typeof label === 'string' || typeof label === 'number'
         ? <Text_1.Text color="background" fontSize={13} {..._text}>{label}</Text_1.Text>
         : label;
+    const relative = mode === 'absolute';
+    const bubble = mounted && layout && (<Bubble trigger={layout} placement={placement !== null && placement !== void 0 ? placement : 'top'} hasArrow={hasArrow !== false} relative={relative} style={bubbleStyle} animation={animation} onReady={() => {
+            if (openRef.current)
+                react_native_1.Animated.timing(animation, { toValue: 1, duration: 120, useNativeDriver: true }).start();
+        }}>
+            {label_}
+        </Bubble>);
     return (<>
-            <react_native_1.View ref={triggerRef} collapsable={false} style={react_native_1.StyleSheet.flatten((0, DEFAULT_PROPS_1.DEFAULT_PROPS)(_trigger || {}, theme))}>
+            {/* En 'absolute', abierto, el contenedor del trigger sube de capa para que la burbuja quede encima de sus hermanos */}
+            <react_native_1.View ref={triggerRef} collapsable={false} style={[react_native_1.StyleSheet.flatten((0, DEFAULT_PROPS_1.DEFAULT_PROPS)(_trigger || {}, theme)), relative && mounted && { zIndex: 1000, elevation: 1000 }]}>
                 {typeof children === 'function'
             ? children(triggerProps)
             : (<Pressable_1.Pressable accessibilityHint={typeof label === 'string' ? label : (0, translate_1.libT)('tooltipHint')} {...(openOn === 'longPress' ? { onLongPress: show } : { onPress: toggle })}>
                             {children}
                         </Pressable_1.Pressable>)}
+                {relative && bubble}
             </react_native_1.View>
-            {mounted && (<Portal_1.Portal>
-                    <react_native_1.View style={react_native_1.StyleSheet.absoluteFill} pointerEvents="box-none">
-                        {layout && (<Bubble trigger={layout} placement={placement !== null && placement !== void 0 ? placement : 'top'} hasArrow={hasArrow !== false} style={bubbleStyle} animation={animation} onReady={() => {
-                    if (openRef.current)
-                        react_native_1.Animated.timing(animation, { toValue: 1, duration: 120, useNativeDriver: true }).start();
-                }}>
-                                {label_}
-                            </Bubble>)}
-                    </react_native_1.View>
+            {!relative && mounted && (<Portal_1.Portal>
+                    <react_native_1.View style={react_native_1.StyleSheet.absoluteFill} pointerEvents="box-none">{bubble}</react_native_1.View>
                 </Portal_1.Portal>)}
         </>);
 });

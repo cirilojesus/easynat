@@ -19,7 +19,10 @@ export type EAImageProps = ImageProps & EADefaultProps & {
     _android?: EAImageProps;
     _web?: EAImageProps;
     fallback?: ImageSourcePropType; // nodo alternativo si falla la imagen
-    /** Ancho y alto iguales (cuadrada). Sin size, ni ancho ni alto: ocupa todo el ancho (100%) con la proporción de la imagen */
+    /**
+     * Ancho y alto iguales (cuadrada). Sin size, ni ancho ni alto: ocupa todo el ancho (100%) con la proporción de la
+     * imagen; en una fila (flexDir="row") varias se reparten el ancho (o usa flex={1}, o flex distintos para repartir a tu gusto)
+     */
     size?: number
     variant?: (string & {});
 };
@@ -59,12 +62,15 @@ export const Image: React.FC<EAImageProps> = (props) => {
     const { size } = combinedProps;
     // Sin size: todo el ancho y, si tampoco hay alto ni proporción, la proporción real de la imagen (sin ella,
     // una imagen remota con width 100% saldría con alto 0)
-    const auto = !size && own.height == null && own.aspectRatio == null && own.flex == null;
+    // (con flex también: en una fila, flex da el ancho y la proporción el alto; en una columna con alto y ancho
+    // fijados, Yoga ignora la proporción)
+    const auto = !size && own.height == null && own.aspectRatio == null;
     const ratio = useAspectRatio(combinedProps.source, auto);
     const baseStyle = StyleSheet.flatten<ImageStyle>([
         size
             ? { width: size, height: size }
-            : { width: '100%', ...(auto && ratio ? { aspectRatio: ratio } : null) },
+            // flexShrink: en una fila, varias imágenes sin ancho se reparten el espacio en vez de salirse
+            : { width: '100%', flexShrink: 1, ...(auto && ratio ? { aspectRatio: ratio } : null) },
         own,
     ]);
 

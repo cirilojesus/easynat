@@ -31,6 +31,13 @@ export type EATooltipProps = Omit<ViewProps, 'children'> & EADefaultProps & {
     children: React.ReactNode | ((props: TooltipTriggerProps) => React.ReactNode);
     /** Lado preferido; si no cabe y en el otro hay más sitio, se coloca en el otro. Por defecto 'top' */
     placement?: 'top' | 'bottom';
+    /**
+     * 'portal' (por defecto): se pinta encima de toda la app (en un Portal) y sigue al trigger midiéndolo.
+     * 'absolute': se pinta junto al trigger (position absolute), dentro de su pantalla: se mueve con él sin medir
+     * (scroll, animaciones) y le llegan los contextos de la pantalla. Lo puede tapar o recortar un contenedor
+     * con overflow: 'hidden' o un hermano de un contenedor superior con más zIndex
+     */
+    mode?: 'portal' | 'absolute';
     /** Cómo se abre con un elemento como children: 'press' (tocar, por defecto) o 'longPress' (mantener pulsado) */
     openOn?: 'press' | 'longPress';
     /** Se cierra solo tras estos ms (0: no se cierra solo). Por defecto 3000 */
@@ -55,7 +62,8 @@ export type EATooltipProps = Omit<ViewProps, 'children'> & EADefaultProps & {
 /**
  * Burbuja con un texto corto junto a un elemento (un icono de información, un botón con solo icono…). Se abre al
  * tocarlo (o al mantenerlo pulsado con openOn="longPress"), se cierra sola tras `duration`, al tocar en cualquier
- * sitio o con el botón atrás. Se pinta en un Portal, encima de todo, sin salirse de la pantalla
+ * sitio o con el botón atrás. Se pinta en un Portal, encima de todo (o junto al trigger con mode="absolute"), sin salirse
+ * de la pantalla
  */
 export declare const Tooltip: React.ForwardRefExoticComponent<Omit<ViewProps, "children"> & import("react-native").FlexStyle & {
     p?: import("react-native").DimensionValue;
@@ -111,6 +119,13 @@ export declare const Tooltip: React.ForwardRefExoticComponent<Omit<ViewProps, "c
     children: React.ReactNode | ((props: TooltipTriggerProps) => React.ReactNode);
     /** Lado preferido; si no cabe y en el otro hay más sitio, se coloca en el otro. Por defecto 'top' */
     placement?: "top" | "bottom";
+    /**
+     * 'portal' (por defecto): se pinta encima de toda la app (en un Portal) y sigue al trigger midiéndolo.
+     * 'absolute': se pinta junto al trigger (position absolute), dentro de su pantalla: se mueve con él sin medir
+     * (scroll, animaciones) y le llegan los contextos de la pantalla. Lo puede tapar o recortar un contenedor
+     * con overflow: 'hidden' o un hermano de un contenedor superior con más zIndex
+     */
+    mode?: "portal" | "absolute";
     /** Cómo se abre con un elemento como children: 'press' (tocar, por defecto) o 'longPress' (mantener pulsado) */
     openOn?: "press" | "longPress";
     /** Se cierra solo tras estos ms (0: no se cierra solo). Por defecto 3000 */

@@ -155,4 +155,4 @@ const layout = async () => { await act(async () => { env.siblingRoot.root.findAl
 const shown = txt => env.siblingRoot.root.findAll(n => typeof n.type === 'string' && n.children.includes(txt)).length > 0;
 const texts = tree => tree.root.findAll(n => typeof n.type === 'string').flatMap(n => n.children.filter(c => typeof c === 'string'));
 
-module.exports = { React, h, TR, act, RN, host, siblings, env, lib, wait, mountSiblings, layout, shown, texts, webviewLoads: () => webviewLoads };
+module.exports = { React, h, TR, act, RN, host, siblings, env, reanimated, lib, wait, mountSiblings, layout, shown, texts, webviewLoads: () => webviewLoads };
