@@ -35,7 +35,7 @@ export type TooltipTriggerProps = {
  * <Tooltip label="Se guarda solo cada 5 minutos"><Icon name="info" /></Tooltip>
  * <Tooltip label="Copiar" openOn="longPress">{t => <Button {...t} onPress={copiar}>Copiar</Button>}</Tooltip>
  */
-export type EATooltipProps = ViewProps & EADefaultProps & {
+export type EATooltipProps = Omit<ViewProps, 'children'> & EADefaultProps & {
     /** Texto (o contenido) de la burbuja */
     label: React.ReactNode;
     /** Lo que abre el tooltip. Un elemento se envuelve en un Pressable; con una función, la conectas tú (TooltipTriggerProps) */
