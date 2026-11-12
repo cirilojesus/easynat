@@ -3,6 +3,7 @@ import { ImageProps, ImageSourcePropType } from "react-native";
 import { EADefaultProps } from "./utils/DEFAULT_PROPS";
 import { EABoxProps } from "./Box";
 export type EAImageProps = ImageProps & EADefaultProps & {
+    /** Estilo de la caja que sale si no carga la imagen (ni el fallback): fondo gris con un icono y el texto de `alt` */
     _alt?: EABoxProps;
     _ios?: EAImageProps;
     _android?: EAImageProps;

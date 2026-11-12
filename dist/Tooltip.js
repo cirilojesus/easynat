@@ -78,7 +78,8 @@ function Bubble({ trigger, placement, hasArrow, style, animation, onReady, child
     const insets = (0, react_native_safe_area_context_1.useSafeAreaInsets)();
     const [size, setSize] = (0, react_1.useState)({ w: 0, h: 0 });
     const sized = size.w > 0;
-    const needed = size.h + GAP + (hasArrow ? ARROW : 0);
+    // size: el conjunto burbuja + flecha
+    const needed = size.h + GAP;
     const spaceAbove = trigger.y - insets.top - EDGE;
     const spaceBelow = window.height - insets.bottom - EDGE - (trigger.y + trigger.height);
     const side = placement === 'top'
@@ -87,30 +88,32 @@ function Bubble({ trigger, placement, hasArrow, style, animation, onReady, child
     // Centrada en el trigger, sin salirse de la pantalla
     const center = trigger.x + trigger.width / 2;
     const left = Math.min(Math.max(center - size.w / 2, EDGE), Math.max(window.width - size.w - EDGE, EDGE));
-    const offset = GAP + (hasArrow ? ARROW : 0);
     const position = !sized
         // Primero se mide oculta en la esquina (con todo el ancho, para no partir el texto antes de tiempo)
         ? { left: 0, top: 0 }
         : side === 'top'
-            ? { left, bottom: window.height - trigger.y + offset }
-            : { left, top: trigger.y + trigger.height + offset };
-    // La flecha apunta al centro del trigger aunque la burbuja se haya desplazado para caber
-    const arrowLeft = Math.min(Math.max(center - left - ARROW, 6), Math.max(size.w - ARROW * 2 - 6, 6));
+            ? { left, bottom: window.height - trigger.y + GAP }
+            : { left, top: trigger.y + trigger.height + GAP };
+    // La flecha apunta al centro del trigger aunque la burbuja se haya desplazado para caber (sin pasar de las esquinas)
+    const radius = Number(style.borderRadius) || 0;
+    const minArrow = Math.max(radius, 4);
+    const arrowLeft = Math.min(Math.max(center - left - ARROW, minArrow), Math.max(size.w - ARROW * 2 - minArrow, minArrow));
     const bg = (_a = style.backgroundColor) !== null && _a !== void 0 ? _a : '#000';
+    const maxWidth = Math.min(Number(style.maxWidth) || Infinity, window.width - EDGE * 2);
     (0, react_1.useEffect)(() => { if (sized)
         onReady(); }, [sized]);
+    // La flecha va fuera de la burbuja (hermana suya, encima o debajo), así no depende de su padding
+    const arrow = hasArrow && (<react_native_1.View style={Object.assign({ marginLeft: arrowLeft, width: 0, height: 0, borderLeftWidth: ARROW, borderRightWidth: ARROW, borderLeftColor: 'transparent', borderRightColor: 'transparent' }, (side === 'top'
+            ? { borderTopWidth: ARROW, borderTopColor: bg }
+            : { borderBottomWidth: ARROW, borderBottomColor: bg }))}/>);
     return (<react_native_1.Animated.View accessibilityRole="text" pointerEvents="none" onLayout={e => {
             const { width: w, height: h } = e.nativeEvent.layout;
             if (Math.round(w) !== Math.round(size.w) || Math.round(h) !== Math.round(size.h))
                 setSize({ w, h });
-        }} style={[
-            style,
-            Object.assign(Object.assign({ position: 'absolute' }, position), { maxWidth: Math.min(Number(style.maxWidth) || Infinity, window.width - EDGE * 2), opacity: sized ? animation : 0, transform: [{ translateY: animation.interpolate({ inputRange: [0, 1], outputRange: [side === 'top' ? 4 : -4, 0] }) }] }),
-        ]}>
-            {children}
-            {hasArrow && sized && (<react_native_1.View style={Object.assign({ position: 'absolute', left: arrowLeft, width: 0, height: 0, borderLeftWidth: ARROW, borderRightWidth: ARROW, borderLeftColor: 'transparent', borderRightColor: 'transparent' }, (side === 'top'
-                ? { top: '100%', borderTopWidth: ARROW, borderTopColor: bg }
-                : { bottom: '100%', borderBottomWidth: ARROW, borderBottomColor: bg }))}/>)}
+        }} style={Object.assign(Object.assign({ position: 'absolute' }, position), { alignItems: 'flex-start', maxWidth, opacity: sized ? animation : 0, transform: [{ translateY: animation.interpolate({ inputRange: [0, 1], outputRange: [side === 'top' ? 4 : -4, 0] }) }] })}>
+            {side === 'bottom' && arrow}
+            <react_native_1.View style={[style, { maxWidth }]}>{children}</react_native_1.View>
+            {side === 'top' && arrow}
         </react_native_1.Animated.View>);
 }
 /* ---------------- Tooltip ---------------- */
@@ -148,14 +151,19 @@ exports.Tooltip = (0, react_1.forwardRef)((rawProps, ref) => {
         const node = triggerRef.current;
         if (!(node === null || node === void 0 ? void 0 : node.measure))
             return setLayout({ x: 0, y: 0, width: 0, height: 0 });
-        node.measure((_x, _y, width, height, pageX, pageY) => setLayout({ x: pageX, y: pageY, width, height }));
+        node.measure((_x, _y, width, height, pageX, pageY) => setLayout(prev => prev && Math.abs(prev.x - pageX) < 1 && Math.abs(prev.y - pageY) < 1
+            && Math.abs(prev.width - width) < 1 && Math.abs(prev.height - height) < 1
+            ? prev : { x: pageX, y: pageY, width, height }));
     };
     (0, react_1.useEffect)(() => {
         if (open) {
             setLayout(null);
             setMounted(true);
             measure();
-            return;
+            // Sigue al trigger mientras está abierto (scroll, teclado…): una medida cada ~100 ms, y solo
+            // re-renderiza si se movió
+            const timer = setInterval(measure, 100);
+            return () => clearInterval(timer);
         }
         react_native_1.Animated.timing(animation, { toValue: 0, duration: 100, useNativeDriver: true })
             .start(({ finished }) => { if (finished && !openRef.current)

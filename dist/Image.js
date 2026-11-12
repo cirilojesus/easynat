@@ -20,18 +20,22 @@ const react_native_1 = require("react-native");
 const DEFAULT_PROPS_1 = require("./utils/DEFAULT_PROPS");
 const Box_1 = require("./Box");
 const useThemeProps_1 = require("./utils/useThemeProps");
+const Icon_1 = require("./Icon");
+const Text_1 = require("./Text");
 // Proporción (ancho / alto) real de una imagen: la de un require() al momento y la de una uri al cargarla
 const useAspectRatio = (source, enabled) => {
     var _a, _b;
     const uri = enabled && source && typeof source === 'object' && !Array.isArray(source) ? source.uri : undefined;
     const local = enabled && typeof source === 'number' ? (_b = (_a = react_native_1.Image).resolveAssetSource) === null || _b === void 0 ? void 0 : _b.call(_a, source) : null;
+    // 0: no se pudo saber (la imagen no carga)
     const [ratios, setRatios] = react_1.default.useState({});
     react_1.default.useEffect(() => {
-        if (!uri || ratios[uri] || !react_native_1.Image.getSize)
+        if (!uri || ratios[uri] != null || !react_native_1.Image.getSize)
             return;
         let alive = true;
         react_native_1.Image.getSize(uri, (w, h) => { if (alive && w > 0 && h > 0)
-            setRatios(r => (Object.assign(Object.assign({}, r), { [uri]: w / h }))); }, () => { });
+            setRatios(r => (Object.assign(Object.assign({}, r), { [uri]: w / h }))); }, () => { if (alive)
+            setRatios(r => (Object.assign(Object.assign({}, r), { [uri]: 0 }))); });
         return () => { alive = false; };
     }, [uri]);
     if ((local === null || local === void 0 ? void 0 : local.width) && (local === null || local === void 0 ? void 0 : local.height))
@@ -39,9 +43,18 @@ const useAspectRatio = (source, enabled) => {
     return uri ? ratios[uri] : undefined;
 };
 const Image = (props) => {
+    var _a;
     const [error, setError] = react_1.default.useState('');
     // Defaults → theme.components.Image → variante → props → plataforma
-    const [_a, theme] = (0, useThemeProps_1.useThemeProps)('Image', props), { style, fallback, variant: _variant } = _a, combinedProps = __rest(_a, ["style", "fallback", "variant"]);
+    const [_b, theme] = (0, useThemeProps_1.useThemeProps)('Image', props), { style, fallback, variant: _variant } = _b, combinedProps = __rest(_b, ["style", "fallback", "variant"]);
+    // Otra imagen: se vuelve a intentar (el error era de la anterior)
+    const sourceKey = JSON.stringify((_a = combinedProps.source) !== null && _a !== void 0 ? _a : null);
+    const [errorFor, setErrorFor] = react_1.default.useState(sourceKey);
+    if (errorFor !== sourceKey) {
+        setErrorFor(sourceKey);
+        if (error)
+            setError('');
+    }
     const styles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(combinedProps, theme);
     const own = react_native_1.StyleSheet.flatten([style, ...styles]);
     const { size } = combinedProps;
@@ -59,8 +72,12 @@ const Image = (props) => {
         return (<react_native_1.Image {...combinedProps} source={fallback} style={baseStyle} onError={() => setError('alt')}/>);
     }
     if (error == 'alt') {
-        return (<Box_1.Box style={baseStyle} {...combinedProps === null || combinedProps === void 0 ? void 0 : combinedProps._alt}>
-                {combinedProps.alt}
+        // Hueco gris con un icono (y el texto de alt) del mismo tamaño; sin proporción conocida, 16:9
+        const { alt, _alt } = combinedProps;
+        const iconSize = Math.max(16, Math.min(32, Number(size) / 2 || 32));
+        return (<Box_1.Box style={[baseStyle, auto && !ratio && { aspectRatio: 16 / 9 }]} bg="light.50" alignItems="center" justifyContent="center" gap={4} overflow="hidden" accessibilityRole="image" accessibilityLabel={alt} {..._alt}>
+                <Icon_1.Icon as="Feather" name="image" size={iconSize} color="text.subtle"/>
+                {!!alt && (!size || size >= 80) && <Text_1.Text fontSize={12} color="text.subtle" textAlign="center" px={2} numberOfLines={2}>{alt}</Text_1.Text>}
             </Box_1.Box>);
     }
     return (<react_native_1.Image {...combinedProps} style={baseStyle} onError={() => setError(fallback ? 'fallback' : 'alt')}/>);
