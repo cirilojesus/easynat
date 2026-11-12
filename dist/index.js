@@ -26,6 +26,7 @@ __exportStar(require("./utils/date"), exports);
 var webview_1 = require("./utils/webview");
 Object.defineProperty(exports, "toDataUri", { enumerable: true, get: function () { return webview_1.toDataUri; } });
 Object.defineProperty(exports, "isWebViewAvailable", { enumerable: true, get: function () { return webview_1.isWebViewAvailable; } });
+__exportStar(require("./utils/watermark"), exports);
 __exportStar(require("./Box"), exports);
 __exportStar(require("./Text"), exports);
 __exportStar(require("./ScrollView"), exports);

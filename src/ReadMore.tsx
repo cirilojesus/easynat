@@ -102,6 +102,9 @@ export const ReadMore: React.FC<EAReadMoreProps> = (rawProps) => {
     // Se anima en el hilo de UI (Reanimated): con Animated y useNativeDriver: false iba a tirones
     const height = useSharedValue(collapsedH ?? 0);
     const heightStyle = useAnimatedStyle(() => ({ height: height.value }));
+    // La altura final también en el estado de React: con Fabric, al repintar el componente (p. ej. al cambiar
+    // `settled`), React aplica su estilo y, sin height, pisaba la que había puesto Reanimated (salía el texto entero)
+    const [target, setTarget] = useState<number | null>(null);
     const [settled, setSettled] = useState(!expanded);
     const first = useRef(true);
     useEffect(() => {
@@ -110,6 +113,7 @@ export const ReadMore: React.FC<EAReadMoreProps> = (rawProps) => {
         if (first.current || !animated) {
             first.current = false;
             height.value = to;
+            setTarget(to);
             setSettled(!expanded);
             return;
         }
@@ -117,7 +121,10 @@ export const ReadMore: React.FC<EAReadMoreProps> = (rawProps) => {
         const collapsing = !expanded;
         height.value = withTiming(to, { duration, easing: Easing.out(Easing.cubic) }, finished => {
             'worklet';
-            if (finished && collapsing) runOnJS(setSettled)(true);
+            if (!finished) return;
+            // Al terminar: React ya pinta con la altura final
+            runOnJS(setTarget)(to);
+            if (collapsing) runOnJS(setSettled)(true);
         });
     }, [expanded, fullH, collapsedH, overflows]);
 
@@ -211,7 +218,7 @@ export const ReadMore: React.FC<EAReadMoreProps> = (rawProps) => {
     const clip: any = collapsed != null
         ? null
         : measured
-            ? [{ overflow: 'hidden' }, heightStyle]
+            ? [{ overflow: 'hidden', height: target ?? collapsedH }, heightStyle]
             : !isText && maxHeight != null ? { maxHeight, overflow: 'hidden' } : null;
     const showFade = fade && overflows && collapsed == null && !expanded;
     // Flotante sobre el degradado solo recogido; desplegado va debajo

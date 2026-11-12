@@ -48,4 +48,10 @@ export type EADefaultProps = FlexStyle & {
     minW?: DimensionValue;
     minH?: DimensionValue;
 };
+/**
+ * Las props sin las de estilo (flex, bg, p, w…), para pasarlas a un componente nativo: el estilo ya va en `style`.
+ * Sueltas, en la nueva arquitectura (Fabric) una prop como `flex` cuenta como estilo y puede pisar el estilo que
+ * pone el propio componente (p. ej. KeyboardAvoidingView pone flex: 0 al salir el teclado y flex={1} lo anulaba)
+ */
+export declare const withoutStyleProps: <P extends object>(props: P) => P;
 export declare const DEFAULT_PROPS: (props: EADefaultProps, theme: Theme) => any[];

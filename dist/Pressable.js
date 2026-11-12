@@ -32,7 +32,7 @@ const Pressable = (_a) => {
         combinedProps.disabled && { opacity: .5 },
         ...styles,
     ]);
-    return (<react_native_1.Pressable {...combinedProps} style={({ pressed }) => [
+    return (<react_native_1.Pressable {...(0, DEFAULT_PROPS_1.withoutStyleProps)(combinedProps)} style={({ pressed }) => [
             baseStyle,
             pressed && pressedStyles,
         ]}>

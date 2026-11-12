@@ -38,10 +38,18 @@ const useAspectRatio = (source, enabled) => {
             setRatios(r => (Object.assign(Object.assign({}, r), { [uri]: 0 }))); });
         return () => { alive = false; };
     }, [uri]);
+    // Al cargar, la imagen dice su tamaño (getSize falla con algunas, p. ej. data: URIs en Android)
+    const onLoaded = (w, h) => {
+        var _a;
+        if (uri && w && h && w > 0 && h > 0 && Math.abs(((_a = ratios[uri]) !== null && _a !== void 0 ? _a : 0) - w / h) > 0.001)
+            setRatios(r => (Object.assign(Object.assign({}, r), { [uri]: w / h })));
+    };
     if ((local === null || local === void 0 ? void 0 : local.width) && (local === null || local === void 0 ? void 0 : local.height))
-        return local.width / local.height;
-    return uri ? ratios[uri] : undefined;
+        return [local.width / local.height, onLoaded];
+    return [uri ? ratios[uri] : undefined, onLoaded];
 };
+// Proporción provisional mientras no se conoce la real: con alto 0 la imagen no se vería (ni cargaría en algunos casos)
+const PROVISIONAL_RATIO = 16 / 9;
 const Image = (props) => {
     var _a;
     const [error, setError] = react_1.default.useState('');
@@ -63,26 +71,31 @@ const Image = (props) => {
     // (con flex también: en una fila, flex da el ancho y la proporción el alto; en una columna con alto y ancho
     // fijados, Yoga ignora la proporción)
     const auto = !size && own.height == null && own.aspectRatio == null;
-    const ratio = useAspectRatio(combinedProps.source, auto);
+    const [ratio, onLoaded] = useAspectRatio(combinedProps.source, auto);
     const baseStyle = react_native_1.StyleSheet.flatten([
         size
             ? { width: size, height: size }
             // flexShrink: en una fila, varias imágenes sin ancho se reparten el espacio en vez de salirse
-            : Object.assign({ width: '100%', flexShrink: 1 }, (auto && ratio ? { aspectRatio: ratio } : null)),
+            : Object.assign({ width: '100%', flexShrink: 1 }, (auto ? { aspectRatio: ratio || PROVISIONAL_RATIO } : null)),
         own,
     ]);
     if (error == 'fallback') {
-        return (<react_native_1.Image {...combinedProps} source={fallback} style={baseStyle} onError={() => setError('alt')}/>);
+        return (<react_native_1.Image {...(0, DEFAULT_PROPS_1.withoutStyleProps)(combinedProps)} source={fallback} style={baseStyle} onError={() => setError('alt')}/>);
     }
     if (error == 'alt') {
         // Hueco gris con un icono (y el texto de alt) del mismo tamaño; sin proporción conocida, 16:9
         const { alt, _alt } = combinedProps;
         const iconSize = Math.max(16, Math.min(32, Number(size) / 2 || 32));
-        return (<Box_1.Box style={[baseStyle, auto && !ratio && { aspectRatio: 16 / 9 }]} bg="light.50" alignItems="center" justifyContent="center" gap={4} overflow="hidden" accessibilityRole="image" accessibilityLabel={alt} {..._alt}>
+        return (<Box_1.Box style={baseStyle} bg="light.50" alignItems="center" justifyContent="center" gap={4} overflow="hidden" accessibilityRole="image" accessibilityLabel={alt} {..._alt}>
                 <Icon_1.Icon as="Feather" name="image" size={iconSize} color="text.subtle"/>
                 {!!alt && (!size || size >= 80) && <Text_1.Text fontSize={12} color="text.subtle" textAlign="center" px={2} numberOfLines={2}>{alt}</Text_1.Text>}
             </Box_1.Box>);
     }
-    return (<react_native_1.Image {...combinedProps} style={baseStyle} onError={() => setError(fallback ? 'fallback' : 'alt')}/>);
+    return (<react_native_1.Image {...(0, DEFAULT_PROPS_1.withoutStyleProps)(combinedProps)} style={baseStyle} onLoad={e => {
+            var _a, _b;
+            const src = (_a = e.nativeEvent) === null || _a === void 0 ? void 0 : _a.source;
+            onLoaded(src === null || src === void 0 ? void 0 : src.width, src === null || src === void 0 ? void 0 : src.height);
+            (_b = combinedProps.onLoad) === null || _b === void 0 ? void 0 : _b.call(combinedProps, e);
+        }} onError={() => setError(fallback ? 'fallback' : 'alt')}/>);
 };
 exports.Image = Image;

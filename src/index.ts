@@ -7,6 +7,7 @@ export * from './utils/translate';
 export * from './utils/color';
 export * from './utils/date';
 export { toDataUri, isWebViewAvailable } from './utils/webview';
+export * from './utils/watermark';
 export * from './Box'
 export * from './Text'
 export * from './ScrollView'

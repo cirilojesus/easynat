@@ -71,7 +71,9 @@ const pressItem = async txt => {
     let app3;
     await act(async () => { app3 = TR.create(h(SearchInput, { value: null, data: DATA, _item: { label: 'nombre', value: 'id' } })) });
     await act(async () => input(app3).props.onFocus({})); await settle();
-    const fondo = () => env.siblingRoot.root.findAll(n => n.type === 'Pressable' && n.props.onPress && n.props.flex === 1);
+    // El fondo: Pressable con flex 1 en su style (las props de estilo ya no llegan sueltas al nativo)
+    const flexDe = st => Object.assign({}, ...[].concat(typeof st === 'function' ? st({ pressed: false }) : st).flat(9).filter(Boolean)).flex;
+    const fondo = () => env.siblingRoot.root.findAll(n => n.type === 'Pressable' && n.props.onPress && flexDe(n.props.style) === 1);
     assert.ok(shown('Lima') && fondo().length === 0, 'modo menu: sin backdrop por defecto');
     await act(async () => input(app3).props.onBlur({})); await wait(250);
     assert.ok(!shown('Lima'), 'perder el foco cierra la lista');

@@ -1,7 +1,7 @@
 import React from "react";
 import { ScrollView as RNScrollView, ScrollViewProps, StyleSheet } from "react-native";
 import { EATextProps } from "./Text";
-import { EADefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
+import { EADefaultProps, DEFAULT_PROPS, withoutStyleProps } from "./utils/DEFAULT_PROPS";
 import { renderChild } from "./utils/helpers";
 import { useThemeProps } from "./utils/useThemeProps";
 
@@ -36,7 +36,7 @@ export const ScrollView: React.FC<EAScrollViewProps> = ({
 
     return (
         <RNScrollView
-            {...combinedProps}
+            {...withoutStyleProps(combinedProps)}
             style={scrollStyle}
             contentContainerStyle={scrollContentStyle}
         >

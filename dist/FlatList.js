@@ -57,7 +57,7 @@ const FlatListBase = (0, react_1.forwardRef)((props, ref) => {
     const styles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)(combinedProps, theme);
     const baseStyle = react_native_1.StyleSheet.flatten([style, ...styles]);
     const contentStyles = (0, DEFAULT_PROPS_1.DEFAULT_PROPS)((_a = combinedProps._contentContainerStyle) !== null && _a !== void 0 ? _a : {}, theme);
-    return (<react_native_1.FlatList ref={ref} {...combinedProps} style={baseStyle} contentContainerStyle={[
+    return (<react_native_1.FlatList ref={ref} {...(0, DEFAULT_PROPS_1.withoutStyleProps)(combinedProps)} style={baseStyle} contentContainerStyle={[
             combinedProps.contentContainerStyle,
             ...contentStyles,
         ]}/>);

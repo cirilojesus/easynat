@@ -1,6 +1,6 @@
 import React from "react";
 import { KeyboardAvoidingView as NRKeyboardAvoidingView, StyleSheet, KeyboardAvoidingViewProps } from "react-native";
-import { EADefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
+import { EADefaultProps, DEFAULT_PROPS, withoutStyleProps } from "./utils/DEFAULT_PROPS";
 import { useThemeProps } from "./utils/useThemeProps";
 
 export type EAKeyboardAvoidingProps = KeyboardAvoidingViewProps & EADefaultProps & {
@@ -23,7 +23,7 @@ export const KeyboardAvoidingView: React.FC<EAKeyboardAvoidingProps> = (props) =
 
     return (
         <NRKeyboardAvoidingView
-            {...combinedProps}
+            {...withoutStyleProps(combinedProps)}
             style={baseStyles}
         >
             {combinedProps.children}

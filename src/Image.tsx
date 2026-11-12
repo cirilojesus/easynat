@@ -6,7 +6,7 @@ import {
     StyleSheet,
     ImageSourcePropType,
 } from "react-native";
-import { EADefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
+import { EADefaultProps, DEFAULT_PROPS, withoutStyleProps } from "./utils/DEFAULT_PROPS";
 import { Box, EABoxProps } from "./Box";
 import { useThemeProps } from "./utils/useThemeProps";
 import { Icon } from "./Icon";
@@ -40,9 +40,16 @@ const useAspectRatio = (source: ImageProps['source'], enabled: boolean) => {
             () => { if (alive) setRatios(r => ({ ...r, [uri]: 0 })) });
         return () => { alive = false };
     }, [uri]);
-    if (local?.width && local?.height) return local.width / local.height;
-    return uri ? ratios[uri] : undefined;
+    // Al cargar, la imagen dice su tamaño (getSize falla con algunas, p. ej. data: URIs en Android)
+    const onLoaded = (w?: number, h?: number) => {
+        if (uri && w && h && w > 0 && h > 0 && Math.abs((ratios[uri] ?? 0) - w / h) > 0.001) setRatios(r => ({ ...r, [uri]: w / h }));
+    };
+    if (local?.width && local?.height) return [local.width / local.height, onLoaded] as const;
+    return [uri ? ratios[uri] : undefined, onLoaded] as const;
 };
+
+// Proporción provisional mientras no se conoce la real: con alto 0 la imagen no se vería (ni cargaría en algunos casos)
+const PROVISIONAL_RATIO = 16 / 9;
 
 export const Image: React.FC<EAImageProps> = (props) => {
     const [error, setError] = React.useState<'fallback' | 'alt' | ''>('');
@@ -65,19 +72,19 @@ export const Image: React.FC<EAImageProps> = (props) => {
     // (con flex también: en una fila, flex da el ancho y la proporción el alto; en una columna con alto y ancho
     // fijados, Yoga ignora la proporción)
     const auto = !size && own.height == null && own.aspectRatio == null;
-    const ratio = useAspectRatio(combinedProps.source, auto);
+    const [ratio, onLoaded] = useAspectRatio(combinedProps.source, auto);
     const baseStyle = StyleSheet.flatten<ImageStyle>([
         size
             ? { width: size, height: size }
             // flexShrink: en una fila, varias imágenes sin ancho se reparten el espacio en vez de salirse
-            : { width: '100%', flexShrink: 1, ...(auto && ratio ? { aspectRatio: ratio } : null) },
+            : { width: '100%', flexShrink: 1, ...(auto ? { aspectRatio: ratio || PROVISIONAL_RATIO } : null) },
         own,
     ]);
 
     if (error == 'fallback') {
         return (
             <RNImage
-                {...combinedProps}
+                {...withoutStyleProps(combinedProps)}
                 source={fallback}
                 style={baseStyle}
                 onError={() => setError('alt')}
@@ -91,7 +98,7 @@ export const Image: React.FC<EAImageProps> = (props) => {
         const iconSize = Math.max(16, Math.min(32, Number(size) / 2 || 32));
         return (
             <Box
-                style={[baseStyle, auto && !ratio && { aspectRatio: 16 / 9 }]}
+                style={baseStyle}
                 bg="light.50" alignItems="center" justifyContent="center" gap={4} overflow="hidden"
                 accessibilityRole="image" accessibilityLabel={alt}
                 {..._alt}
@@ -104,8 +111,13 @@ export const Image: React.FC<EAImageProps> = (props) => {
 
     return (
         <RNImage
-            {...combinedProps}
+            {...withoutStyleProps(combinedProps)}
             style={baseStyle}
+            onLoad={e => {
+                const src: any = (e.nativeEvent as any)?.source;
+                onLoaded(src?.width, src?.height);
+                combinedProps.onLoad?.(e);
+            }}
             onError={() => setError(fallback ? 'fallback' : 'alt')}
         />
     );

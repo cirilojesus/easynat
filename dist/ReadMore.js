@@ -81,6 +81,9 @@ const ReadMore = (rawProps) => {
     // Se anima en el hilo de UI (Reanimated): con Animated y useNativeDriver: false iba a tirones
     const height = (0, react_native_reanimated_1.useSharedValue)(collapsedH !== null && collapsedH !== void 0 ? collapsedH : 0);
     const heightStyle = (0, react_native_reanimated_1.useAnimatedStyle)(() => ({ height: height.value }));
+    // La altura final también en el estado de React: con Fabric, al repintar el componente (p. ej. al cambiar
+    // `settled`), React aplica su estilo y, sin height, pisaba la que había puesto Reanimated (salía el texto entero)
+    const [target, setTarget] = (0, react_1.useState)(null);
     const [settled, setSettled] = (0, react_1.useState)(!expanded);
     const first = (0, react_1.useRef)(true);
     (0, react_1.useEffect)(() => {
@@ -90,6 +93,7 @@ const ReadMore = (rawProps) => {
         if (first.current || !animated) {
             first.current = false;
             height.value = to;
+            setTarget(to);
             setSettled(!expanded);
             return;
         }
@@ -98,7 +102,11 @@ const ReadMore = (rawProps) => {
         const collapsing = !expanded;
         height.value = (0, react_native_reanimated_1.withTiming)(to, { duration, easing: react_native_reanimated_1.Easing.out(react_native_reanimated_1.Easing.cubic) }, finished => {
             'worklet';
-            if (finished && collapsing)
+            if (!finished)
+                return;
+            // Al terminar: React ya pinta con la altura final
+            (0, react_native_reanimated_1.runOnJS)(setTarget)(to);
+            if (collapsing)
                 (0, react_native_reanimated_1.runOnJS)(setSettled)(true);
         });
     }, [expanded, fullH, collapsedH, overflows]);
@@ -162,7 +170,7 @@ const ReadMore = (rawProps) => {
     const clip = collapsed != null
         ? null
         : measured
-            ? [{ overflow: 'hidden' }, heightStyle]
+            ? [{ overflow: 'hidden', height: target !== null && target !== void 0 ? target : collapsedH }, heightStyle]
             : !isText && maxHeight != null ? { maxHeight, overflow: 'hidden' } : null;
     const showFade = fade && overflows && collapsed == null && !expanded;
     // Flotante sobre el degradado solo recogido; desplegado va debajo

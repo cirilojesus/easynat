@@ -11,7 +11,7 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DEFAULT_PROPS = void 0;
+exports.DEFAULT_PROPS = exports.withoutStyleProps = void 0;
 const helpers_1 = require("./helpers");
 // Claves de estilo válidas de React Native (View, Text e Image)
 const STYLE_KEYS = new Set([
@@ -41,6 +41,30 @@ const STYLE_KEYS = new Set([
     "textTransform", "tintColor", "top", "transform", "transformMatrix", "transformOrigin", "translateX",
     "translateY", "userSelect", "verticalAlign", "width", "writingDirection", "zIndex",
 ]);
+// Props cortas de estilo de la librería (las convierte DEFAULT_PROPS)
+const SHORTHAND_KEYS = new Set([
+    "p", "m", "px", "py", "pt", "pb", "pl", "pr", "mx", "my", "mt", "mb", "ml", "mr",
+    "bg", "rounded", "roundedTop", "roundedBottom", "roundedLeft", "roundedRight", "roundedX", "roundedY",
+    "borderXWidth", "borderYWidth", "borderXColor", "borderYColor",
+    "shadow", "flexDir", "w", "h", "maxW", "maxH", "minW", "minH",
+]);
+// Claves de estilo que también son props de verdad del componente nativo: se mantienen
+const NATIVE_PROP_KEYS = new Set(["pointerEvents", "resizeMode"]);
+/**
+ * Las props sin las de estilo (flex, bg, p, w…), para pasarlas a un componente nativo: el estilo ya va en `style`.
+ * Sueltas, en la nueva arquitectura (Fabric) una prop como `flex` cuenta como estilo y puede pisar el estilo que
+ * pone el propio componente (p. ej. KeyboardAvoidingView pone flex: 0 al salir el teclado y flex={1} lo anulaba)
+ */
+const withoutStyleProps = (props) => {
+    const out = {};
+    for (const key in props) {
+        if ((STYLE_KEYS.has(key) || SHORTHAND_KEYS.has(key)) && !NATIVE_PROP_KEYS.has(key))
+            continue;
+        out[key] = props[key];
+    }
+    return out;
+};
+exports.withoutStyleProps = withoutStyleProps;
 const DEFAULT_PROPS = (props, theme) => {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
     const { 

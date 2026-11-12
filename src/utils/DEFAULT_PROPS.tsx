@@ -91,6 +91,30 @@ const STYLE_KEYS = new Set([
     "translateY", "userSelect", "verticalAlign", "width", "writingDirection", "zIndex",
 ]);
 
+// Props cortas de estilo de la librería (las convierte DEFAULT_PROPS)
+const SHORTHAND_KEYS = new Set([
+    "p", "m", "px", "py", "pt", "pb", "pl", "pr", "mx", "my", "mt", "mb", "ml", "mr",
+    "bg", "rounded", "roundedTop", "roundedBottom", "roundedLeft", "roundedRight", "roundedX", "roundedY",
+    "borderXWidth", "borderYWidth", "borderXColor", "borderYColor",
+    "shadow", "flexDir", "w", "h", "maxW", "maxH", "minW", "minH",
+]);
+// Claves de estilo que también son props de verdad del componente nativo: se mantienen
+const NATIVE_PROP_KEYS = new Set(["pointerEvents", "resizeMode"]);
+
+/**
+ * Las props sin las de estilo (flex, bg, p, w…), para pasarlas a un componente nativo: el estilo ya va en `style`.
+ * Sueltas, en la nueva arquitectura (Fabric) una prop como `flex` cuenta como estilo y puede pisar el estilo que
+ * pone el propio componente (p. ej. KeyboardAvoidingView pone flex: 0 al salir el teclado y flex={1} lo anulaba)
+ */
+export const withoutStyleProps = <P extends object>(props: P): P => {
+    const out: any = {};
+    for (const key in props) {
+        if ((STYLE_KEYS.has(key) || SHORTHAND_KEYS.has(key)) && !NATIVE_PROP_KEYS.has(key)) continue;
+        out[key] = (props as any)[key];
+    }
+    return out;
+};
+
 export const DEFAULT_PROPS = (props: EADefaultProps, theme: Theme) => {
     const {
         // spacing

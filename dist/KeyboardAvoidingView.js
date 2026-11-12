@@ -16,7 +16,7 @@ const KeyboardAvoidingView = (props) => {
         combinedProps.style,
         ...styles,
     ]);
-    return (<react_native_1.KeyboardAvoidingView {...combinedProps} style={baseStyles}>
+    return (<react_native_1.KeyboardAvoidingView {...(0, DEFAULT_PROPS_1.withoutStyleProps)(combinedProps)} style={baseStyles}>
             {combinedProps.children}
         </react_native_1.KeyboardAvoidingView>);
 };

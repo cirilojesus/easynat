@@ -1,6 +1,6 @@
 import React from "react";
 import { Pressable as PressableRN, PressableProps, StyleSheet } from "react-native";
-import { EADefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
+import { EADefaultProps, DEFAULT_PROPS, withoutStyleProps } from "./utils/DEFAULT_PROPS";
 import { renderChild } from "./utils/helpers";
 import { useThemeProps } from "./utils/useThemeProps";
 import { EATextProps } from "./Text";
@@ -27,7 +27,7 @@ export const Pressable: React.FC<EAPressableProps> = ({ ...props }) => {
 
     return (
         <PressableRN
-            {...combinedProps}
+            {...withoutStyleProps(combinedProps)}
             style={({ pressed }) => [
                 baseStyle,
                 pressed && pressedStyles,

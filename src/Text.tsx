@@ -1,6 +1,6 @@
 import React from "react";
 import { Platform, Text as RNText, TextProps as RNTextProps, StyleSheet, TextStyle } from "react-native";
-import { EADefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
+import { EADefaultProps, DEFAULT_PROPS, withoutStyleProps } from "./utils/DEFAULT_PROPS";
 import { ThemeColor } from "./theme";
 import { useThemeProps } from "./utils/useThemeProps";
 
@@ -58,7 +58,7 @@ export const Text: React.FC<EATextProps> = ({ children, ...props }) => {
 
     return (
         <RNText
-            {...combinedProps}
+            {...withoutStyleProps(combinedProps)}
             style={[
                 theme.fontFamily && { fontFamily: theme?.fonts?.[theme.fontFamily + '_' + (textStyle?.fontWeight || '400')] || theme.fontFamily + '_' + (textStyle?.fontWeight || '400') },
                 textStyle,

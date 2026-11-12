@@ -3,7 +3,7 @@
 const assert = require('assert');
 const path = require('path');
 const fs = require('fs');
-const { React, h, TR, act, RN, env, reanimated, lib, wait, mountSiblings, shown, texts } = require('./harness');
+const { React, h, TR, act, RN, env, reanimated, siblings, lib, wait, mountSiblings, shown, texts } = require('./harness');
 const ok = msg => console.log('OK ' + msg);
 const flat = s => Object.assign({}, ...[].concat(s).flat(9).filter(Boolean));
 const render = async el => { let t; await act(async () => { t = TR.create(el) }); return t };
@@ -50,6 +50,15 @@ const textos = t => t.root.findAll(n => n.type === 'Text').map(n => n.children.f
     assert.deepEqual([img(t).flex, img(t).aspectRatio, img(t).flexShrink], [1, 2, 1], 'con flex (en una fila): mantiene la proporción');
     t = await render(h(Image, { source: { uri: 'https://x/e.jpg' } })); await wait(10);
     assert.equal(img(t).flexShrink, 1, 'por defecto flexShrink 1: en una fila se reparten el ancho');
+    // getSize falla (p. ej. data: URI en Android): proporción provisional y la real al cargar (onLoad)
+    const getSize = RN.Image.getSize; RN.Image.getSize = (uri, ok, fail) => setTimeout(() => fail(new Error('no')));
+    let cargada = 0;
+    t = await render(h(Image, { source: { uri: 'data:image/jpeg;base64,AAA' }, onLoad: () => cargada++ })); await wait(10);
+    assert.equal(img(t).aspectRatio, 16 / 9, 'sin tamaño conocido: 16:9 provisional (no alto 0)');
+    await act(async () => t.root.findAll(n => n.type === 'Image')[0].props.onLoad({ nativeEvent: { source: { width: 300, height: 100 } } }));
+    assert.equal(img(t).aspectRatio, 3, 'al cargar: la proporción real');
+    assert.equal(cargada, 1, 'y llama al onLoad propio');
+    RN.Image.getSize = getSize;
     // Si no carga: hueco gris con icono (y alt), del mismo tamaño
     t = await render(h(Image, { source: { uri: 'https://x/rota.jpg' }, alt: 'Foto' })); await wait(10);
     await act(async () => t.root.findAll(n => n.type === 'Image')[0].props.onError());
@@ -243,15 +252,18 @@ const textos = t => t.root.findAll(n => n.type === 'Text').map(n => n.children.f
     assert.ok(!textos(t).includes('Leer más'), 'cabe: sin enlace');
     await lineas(t, 6);
     assert.ok(textos(t).includes('Leer más'), 'no cabe: Leer más');
-    assert.ok(recortado(t), 'recortado (al alto de 3 líneas)');
+    assert.ok(recortado(t), 'recortado');
+    assert.equal(flat(clip(t).props.style).height, 60, 'al alto de 3 líneas también en el estilo de React');
     assert.equal(visible(t).props.numberOfLines, 3, 'recogido: con los …');
     assert.ok(t.root.findAll(n => n.type === 'Icon' && n.props.name === 'chevron-down').length, 'con chevron');
     await act(async () => enlace(t).props.onPress());
     assert.equal(visible(t).props.numberOfLines, undefined, 'desplegando: sin límite');
     assert.equal(animaA(), 120, 'anima hasta el alto entero');
+    assert.equal(flat(clip(t).props.style).height, 120, 'al terminar, React también pinta con el alto final (si no, un repintado lo pisaba)');
     assert.ok(textos(t).includes('Leer menos'));
     await act(async () => enlace(t).props.onPress()); await wait(10);
     assert.equal(animaA(), 60, 'recoge animando hasta 3 líneas');
+    assert.equal(flat(clip(t).props.style).height, 60);
     assert.equal(visible(t).props.numberOfLines, 3, 'y vuelve a llevar los …');
     assert.deepEqual(toggles, [true, false]);
     // fade: degradado y sin …
@@ -301,6 +313,91 @@ const textos = t => t.root.findAll(n => n.type === 'Text').map(n => n.children.f
     assert.ok(textos(t).includes('menos'), 'renderTrigger');
     env.timingCallbacks = false;
     ok('ReadMore: líneas o maxHeight, enlace debajo / inline / flotante, chevron, fade, altura animada, collapsed, showLess y renderTrigger');
+  }
+
+  // ---- watermarkImage: función (WebView invisible que se crea y se quita sola) y el dibujo del canvas
+  {
+    const { watermarkImage } = lib('index');
+    const webview = () => env.siblingRoot.root.findAll(n => n.type === 'WebView')[0];
+    const send = async msg => act(async () => webview().props.onMessage({ nativeEvent: { data: JSON.stringify(msg) } }));
+    env.injected.length = 0;
+    const antes = siblings.size;
+    const p = watermarkImage('data:image/png;base64,AAA', { text: 'Ana López', date: true, position: 'top-left' });
+    await wait(20);
+    assert.ok(webview(), 'monta un WebView invisible');
+    await send({ type: 'ready' });
+    const js = env.injected.find(j => j.startsWith('window.__wm('));
+    assert.ok(js && js.includes('Ana López') && js.includes('top-left'), 'le pasa la imagen y las opciones');
+    await send({ type: 'done', dataUri: 'data:image/jpeg;base64,QUJD', width: 800, height: 600 });
+    const r = await p;
+    assert.deepEqual([r.base64, r.mimeType, r.width, r.height], ['QUJD', 'image/jpeg', 800, 600], 'resultado');
+    await wait(20);
+    assert.equal(siblings.size, antes, 'y quita el WebView al terminar');
+    // Error de la página: rechaza
+    const p2 = watermarkImage('data:image/png;base64,AAA', { text: 'x' });
+    const rechazo = assert.rejects(p2, /No se pudo leer/);
+    await wait(20);
+    await send({ type: 'error', message: 'No se pudo leer la imagen' });
+    await rechazo;
+    await wait(20);
+
+    // El script de la página con un canvas simulado (imagen de 1000x500)
+    const p3 = watermarkImage('data:image/png;base64,AAA', { text: 'x' }); p3.catch(() => { }); await wait(20);
+    const html = webview().props.source.html;
+    await send({ type: 'error', message: 'fin' }); await wait(20);
+    const script = html.slice(html.indexOf('<script>') + 8, html.indexOf('</script>'));
+    const dibujar = cfg => {
+      const calls = []; let posted;
+      const ctx = { font: '10px sans-serif', save() { }, restore() { }, translate() { }, rotate(a) { calls.push(['rotate', a]) },
+        drawImage(_i, x, y, w, h) { calls.push(['drawImage', w, h]) }, fillRect(...a) { calls.push(['fillRect', ...a]) },
+        fillText(t, x, y) { calls.push(['fillText', t, x, y, this.textAlign, this.font]) },
+        measureText(t) { return { width: t.length * parseFloat(/(\d+)px/.exec(this.font)[1]) * 0.5 } } };
+      const canvas = { getContext: () => ctx, toDataURL: (m, q) => `data:${m};base64,Q${q ?? ''}` };
+      class Img { set src(v) { this.naturalWidth = 1000; this.naturalHeight = 500; this.onload() } }
+      const win = { ReactNativeWebView: { postMessage: m => { posted = JSON.parse(m) } } };
+      new Function('window', 'document', 'Image', script)(win, { createElement: () => canvas }, Img);
+      win.__wm({ src: 'data:', position: 'bottom-right', color: '#000', background: '#ddd', quality: 0.9, format: 'jpeg', ...cfg });
+      return { calls, posted, canvas };
+    };
+    let d = dibujar({ lines: ['Ana'] });
+    const size = Math.round(500 * 0.035); // 18: 3,5% del lado menor
+    const tw = 3 * size * 0.5, m = Math.round(size / 2);
+    const rect = d.calls.find(c => c[0] === 'fillRect');
+    assert.deepEqual(rect.slice(1, 3), [1000 - (tw + m * 2), 500 - (Math.round(size * 1.25) + m * 2 - (Math.round(size * 1.25) - size))], 'fondo en la esquina inferior derecha');
+    const txt = d.calls.find(c => c[0] === 'fillText');
+    assert.deepEqual([txt[1], txt[2], txt[4]], ['Ana', 1000 - m, 'right'], 'texto alineado a la derecha, con margen');
+    assert.equal(d.posted.dataUri, 'data:image/jpeg;base64,Q0.9', 'jpeg con calidad');
+    d = dibujar({ lines: ['Ana'], position: 'top-left', background: null });
+    assert.ok(!d.calls.some(c => c[0] === 'fillRect'), 'sin fondo');
+    assert.deepEqual(d.calls.find(c => c[0] === 'fillText').slice(2, 5), [m, m, 'left'], 'arriba a la izquierda');
+    d = dibujar({ lines: ['CONFIDENCIAL'], position: 'tile', format: 'png' });
+    assert.ok(d.calls.filter(c => c[0] === 'fillText').length > 10, 'tile: repetida por toda la imagen');
+    assert.ok(d.calls.some(c => c[0] === 'rotate' && Math.abs(c[1] + Math.PI / 6) < 1e-9), 'tile: girada -30°');
+    assert.ok(d.posted.dataUri.startsWith('data:image/png'), 'png');
+    d = dibujar({ lines: ['Ana'], maxSize: 400 });
+    assert.deepEqual(d.calls.find(c => c[0] === 'drawImage').slice(1), [400, 200], 'maxSize reduce la imagen');
+    assert.deepEqual([d.posted.width, d.posted.height], [400, 200]);
+    d = dibujar({ lines: ['x'.repeat(200)] });
+    const largo = d.calls.find(c => c[0] === 'fillText');
+    assert.ok(parseFloat(/(\d+)px/.exec(largo[5])[1]) < size, 'texto largo: letra más pequeña para caber');
+    assert.ok(largo[1].length * parseFloat(/(\d+)px/.exec(largo[5])[1]) * 0.5 <= 1000 * 0.9, 'y cabe en el 90% del ancho');
+    ok('watermarkImage: WebView invisible que se quita solo, opciones, errores, esquinas, sin fondo, mosaico, png/jpeg y maxSize');
+  }
+
+  // ---- Props de estilo (flex, bg, p…) no llegan sueltas al componente nativo: solo en style
+  {
+    const { KeyboardAvoidingView, Box } = lib('index');
+    let t = await render(h(KeyboardAvoidingView, { flex: 1, bg: 'primary.100', behavior: 'height' }));
+    const kav = t.root.findAll(n => n.type === 'KAV')[0];
+    assert.equal(kav.props.flex, undefined, 'KAV sin flex suelto (pisaba el flex: 0 que pone al salir el teclado)');
+    assert.equal(kav.props.bg, undefined);
+    assert.equal(flat(kav.props.style).flex, 1, 'flex en el style');
+    assert.equal(kav.props.behavior, 'height', 'las demás props siguen');
+    t = await render(h(Box, { p: 2, w: 100, pointerEvents: 'none', testID: 'b' }));
+    const v = t.root.findAll(n => n.type === 'View')[0];
+    assert.deepEqual([v.props.p, v.props.w, v.props.testID, v.props.pointerEvents], [undefined, undefined, 'b', 'none'], 'Box: sin p ni w sueltos; pointerEvents sí');
+    assert.deepEqual([flat(v.props.style).padding, flat(v.props.style).width], [8, 100]);
+    ok('props de estilo solo en style (KeyboardAvoidingView con flex={1}, Box…)');
   }
 
   // ---- easynat/pdfjs: el archivo de la raíz carga dist/utils/pdfjs y va en el paquete

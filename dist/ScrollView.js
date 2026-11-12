@@ -34,7 +34,7 @@ const ScrollView = (_a) => {
         ...contentStyles,
         combinedProps.contentContainerStyle
     ]);
-    return (<react_native_1.ScrollView {...combinedProps} style={scrollStyle} contentContainerStyle={scrollContentStyle}>
+    return (<react_native_1.ScrollView {...(0, DEFAULT_PROPS_1.withoutStyleProps)(combinedProps)} style={scrollStyle} contentContainerStyle={scrollContentStyle}>
             {(0, helpers_1.renderChild)(children, combinedProps._text)}
         </react_native_1.ScrollView>);
 };

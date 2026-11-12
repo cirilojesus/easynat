@@ -58,7 +58,7 @@ const Text = (_a) => {
         ...styles,
         color !== undefined && { color: ((_c = theme.colors) === null || _c === void 0 ? void 0 : _c[color]) || color },
     ]);
-    return (<react_native_1.Text {...combinedProps} style={[
+    return (<react_native_1.Text {...(0, DEFAULT_PROPS_1.withoutStyleProps)(combinedProps)} style={[
             theme.fontFamily && { fontFamily: ((_d = theme === null || theme === void 0 ? void 0 : theme.fonts) === null || _d === void 0 ? void 0 : _d[theme.fontFamily + '_' + ((textStyle === null || textStyle === void 0 ? void 0 : textStyle.fontWeight) || '400')]) || theme.fontFamily + '_' + ((textStyle === null || textStyle === void 0 ? void 0 : textStyle.fontWeight) || '400') },
             textStyle,
             theme.fontFamily && { fontWeight: undefined }

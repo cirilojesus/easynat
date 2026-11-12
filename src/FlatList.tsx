@@ -5,7 +5,7 @@ import {
     StyleSheet,
     ViewStyle,
 } from "react-native";
-import { EADefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
+import { EADefaultProps, DEFAULT_PROPS, withoutStyleProps } from "./utils/DEFAULT_PROPS";
 import { EABoxProps } from "./Box";
 import { useThemeProps } from "./utils/useThemeProps";
 
@@ -43,7 +43,7 @@ const FlatListBase = forwardRef(
         return (
             <RNFlatList
                 ref={ref}
-                {...combinedProps}
+                {...withoutStyleProps(combinedProps)}
                 style={baseStyle}
                 contentContainerStyle={[
                     combinedProps.contentContainerStyle,

@@ -1,7 +1,7 @@
 import React, { createContext, useContext } from "react";
 import { View, ViewProps, StyleSheet } from "react-native";
 import { EATextProps } from "./Text";
-import { EADefaultProps, DEFAULT_PROPS } from "./utils/DEFAULT_PROPS";
+import { EADefaultProps, DEFAULT_PROPS, withoutStyleProps } from "./utils/DEFAULT_PROPS";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { renderChild } from "./utils/helpers";
 import { useThemeProps } from "./utils/useThemeProps";
@@ -114,7 +114,7 @@ export const Box: React.FC<EABoxProps> = ({ children, ...props }) => {
 
     return (
         <View
-            {...combinedProps}
+            {...withoutStyleProps(combinedProps)}
             style={{
                 ...baseStyle,
                 ...((safeArea || safeAreaTop) && { paddingTop: (baseStyle.paddingTop ?? baseStyle.paddingVertical ?? baseStyle.padding ?? 0) + insets.top }),
