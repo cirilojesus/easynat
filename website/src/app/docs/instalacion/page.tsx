@@ -46,10 +46,10 @@ cd ios && pod install`} />
             </section>
             <section className="space-y-3">
                 <H2>2. Opcional: react-native-webview</H2>
-                <p className="text-muted">Solo para RichTextEditor, ImageViewer, ImageEditor y PDFViewer. Si no está instalada, esos componentes muestran un aviso con el comando y el resto funciona igual.</p>
+                <p className="text-muted">Solo para RichTextEditor, ImageViewer, ImageEditor, PDFViewer y watermarkImage. Si no está instalada, esos componentes muestran un aviso con el comando y el resto funciona igual.</p>
                 <CodeBlock lang="bash" code={`npx expo install react-native-webview`} />
                 <p className="text-muted">El PDFViewer descarga pdf.js de internet la primera vez. Para que funcione sin conexión, impórtalo una vez (añade unos 1,5 MB a la app):</p>
-                <CodeBlock code={`import 'easynat/dist/utils/pdfjs';`} />
+                <CodeBlock code={`import 'easynat/pdfjs';`} />
             </section>
             <section className="space-y-3">
                 <H2>3. El ThemeProvider</H2>

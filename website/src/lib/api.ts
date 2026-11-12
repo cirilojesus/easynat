@@ -18,11 +18,11 @@ export const FUNCTION_GROUPS: { title: string; description: string; modules: str
     { title: 'Tema y estilos', description: 'Leer y combinar el tema, y las props por defecto de cada componente.', modules: ['theme', 'theme-provider', 'utils/useThemeProps', 'utils/helpers', 'Box', 'utils/color'] },
     { title: 'Idiomas', description: 'Traducciones de la app y de los textos de la librería.', modules: ['utils/translate'] },
     { title: 'Formularios', description: 'Hooks y ayudas de EAForm.', modules: ['EAForm'] },
-    { title: 'Fechas', description: 'Formatear y leer fechas como el DatePicker.', modules: ['DatePicker'] },
+    { title: 'Fechas', description: 'Formatear y leer fechas como el DatePicker, y el tiempo relativo (ago).', modules: ['DatePicker', 'utils/date'] },
     { title: 'Listas y filtros', description: 'Listas de la API y filtros de datos locales.', modules: ['AsyncList', 'Filter'] },
     { title: 'HTML', description: 'Convertir y limpiar HTML.', modules: ['RenderHTML'] },
     { title: 'Teclado y toques', description: 'Estado del teclado y toques fuera de una vista.', modules: ['utils/keyboard', 'utils/touches'] },
-    { title: 'Multimedia y WebView', description: 'Abrir visores y editores y leer archivos.', modules: ['ImageViewer', 'ImageEditor', 'PDFViewer', 'utils/webview', 'RichTextEditor', 'Chart', 'Stagger'] },
+    { title: 'Multimedia y WebView', description: 'Abrir visores y editores y leer archivos.', modules: ['ImageViewer', 'ImageEditor', 'PDFViewer', 'utils/webview', 'utils/watermark', 'RichTextEditor', 'Chart', 'Stagger'] },
 ];
 
 /* ---------- Tipos que se usan unos a otros ---------- */

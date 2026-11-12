@@ -207,15 +207,42 @@ const { mode, setMode, toggleTheme } = useTheme();
         slug: 'image',
         name: 'Image',
         category: 'Base',
-        summary: 'Imagen con imagen de reserva si falla, tamaño cuadrado rápido y props de estilo.',
-        description: 'Image de React Native con props de estilo, size para hacerla cuadrada y fallback: si la imagen no carga, se muestra otra.',
-        features: ['fallback: otra imagen si falla la carga; _alt: un texto en su lugar', 'size={64} para un cuadrado (50 × 50 si no se indica tamaño)', 'rounded, w, h y el resto de props de estilo'],
+        summary: 'Imagen que ocupa el ancho con su proporción real, con hueco si falla y props de estilo.',
+        description: 'Image de React Native con props de estilo. Sin tamaño ocupa todo el ancho con la proporción real de la imagen (sin calcular nada); en una fila, varias se reparten el ancho. size la hace cuadrada y, si no carga, sale otra imagen (fallback) o un hueco gris con un icono y el texto de alt.',
+        features: [
+            'Sin size ni tamaño: ancho 100% y alto según la proporción de la imagen (16:9 mientras no la conoce)',
+            'En una fila (flexDir="row"): varias imágenes sin ancho se reparten el espacio; con flex mantienen su proporción',
+            'size={64} para un cuadrado; w o h propios se respetan',
+            'fallback: otra imagen si falla la carga; si tampoco, un hueco gris con icono y alt (estilo con _alt)',
+            'Al cambiar de source lo vuelve a intentar',
+            'rounded y el resto de props de estilo',
+        ],
         imports: ['Image'],
         shots: ['misc'],
-        examples: [{
-            title: 'Foto de perfil',
-            code: `<Image source={{ uri: usuario.foto }} fallback={require('./avatar.png')} size={64} rounded={40} />`,
-        }],
+        examples: [
+            {
+                title: 'Foto de perfil',
+                code: `<Image source={{ uri: usuario.foto }} fallback={require('./avatar.png')} size={64} rounded={40} />`,
+            },
+            {
+                title: 'A todo el ancho y en filas',
+                description: 'Sin tamaño ocupa el ancho con su proporción. En una fila se reparten el ancho; con flex distintos, a tu gusto.',
+                code: `<Image source={{ uri: portada }} rounded={2} />                  {/* 100% de ancho, alto según la foto */}
+
+<Box flexDir="row" gap={2}>
+    <Image source={{ uri: a }} rounded={2} />                     {/* se reparten el ancho */}
+    <Image source={{ uri: b }} rounded={2} />
+</Box>
+
+<Box flexDir="row" gap={2}>
+    <Image source={{ uri: a }} flex={2} rounded={2} />            {/* dos tercios */}
+    <Image source={{ uri: b }} flex={1} rounded={2} />
+</Box>
+
+<Image source={{ uri: banner }} h={80} resizeMode="cover" />     {/* alto fijo, ancho 100% */}
+<Image source={{ uri: rota }} alt="Sin foto" />                  {/* si falla: hueco con icono y "Sin foto" */}`,
+            },
+        ],
         types: ['EAImageProps'],
     },
     {
@@ -263,7 +290,7 @@ const { mode, setMode, toggleTheme } = useTheme();
         category: 'Base',
         summary: 'Sube el contenido por encima del teclado, con hooks para saber su altura.',
         description: 'KeyboardAvoidingView con props de estilo y comportamiento correcto por plataforma, más hooks para leer el estado y la altura del teclado.',
-        features: ['Props de estilo', 'useKeyboard() y useKeyboardHeight()', 'useAndroidKeyboardPadding para pantallas edge-to-edge (Android 15+)'],
+        features: ['Props de estilo (flex={1}, bg…) también con behavior="height"', 'useKeyboard() y useKeyboardHeight()', 'useAndroidKeyboardPadding para pantallas edge-to-edge (Android 15+)'],
         imports: ['KeyboardAvoidingView', 'useKeyboardHeight'],
         examples: [{
             title: 'Formulario con teclado',
@@ -316,11 +343,11 @@ export const BUTTONS: ComponentDoc[] = [
         name: 'Button',
         category: 'Botones',
         summary: 'Seis variantes, tamaños, iconos, spinner por ref o automático y cambios animados al pulsar.',
-        description: 'El botón de la librería: variantes solid, subtle, outline, link, ghost y unstyled con cualquier colorScheme del tema, cuatro tamaños e iconos. Muestra un spinner cuando se lo pides por ref o solo si onPress devuelve una promesa, puede alternar como interruptor (_active) y enseñar un mensaje momentáneo (feedback), con el cambio animado.',
+        description: 'El botón de la librería: variantes solid, subtle, outline, link, ghost y unstyled con cualquier colorScheme del tema, cuatro tamaños e iconos. Muestra un spinner cuando se lo pides por ref o prop, o solo (con loadingOnPress) mientras dura la promesa de onPress, puede alternar como interruptor (_active) y enseñar un mensaje momentáneo (feedback), con el cambio animado.',
         features: [
             'Variantes solid, subtle, outline, link, ghost y unstyled con cualquier colorScheme',
             'Tamaños sm, md, lg, xl e iconos a izquierda y derecha',
-            'Spinner: ref.startLoading(), isLoading, loadingText o automático si onPress devuelve una promesa',
+            'Spinner: ref.startLoading(), isLoading, loadingText o, con loadingOnPress, automático si onPress devuelve una promesa',
             'Sin loadingText el botón no cambia de tamaño al cargar',
             'toggle + _active: cambia texto, icono o variante (un like, guardar…)',
             'feedback: "¡Copiado!" durante un momento y vuelve solo',
@@ -346,11 +373,11 @@ export const BUTTONS: ComponentDoc[] = [
             },
             {
                 title: 'Spinner',
-                description: 'Con ref, con la prop o solo: si onPress devuelve una promesa, el spinner sale hasta que termina y mientras no se puede volver a pulsar.',
+                description: 'Con ref, con la prop o solo: con loadingOnPress, si onPress devuelve una promesa el spinner sale hasta que termina y mientras no se puede volver a pulsar (por defecto false: sin spinner).',
                 code: `const ref = useRef<ButtonRef>(null);
 <Button ref={ref} onPress={() => { ref.current?.startLoading(); … ref.current?.stopLoading() }}>Guardar</Button>
 
-<Button onPress={() => api.guardar(datos)}>Guardar</Button>          {/* promesa: spinner solo */}
+<Button loadingOnPress onPress={() => api.guardar(datos)}>Guardar</Button>   {/* promesa: spinner solo */}
 <Button isLoading loadingText="Enviando…">Enviar</Button>`,
             },
             {

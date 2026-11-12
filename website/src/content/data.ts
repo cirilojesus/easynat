@@ -273,6 +273,54 @@ htmlToText(html, { lineBreaks: true });                          // con saltos d
         functions: ['DEFAULT_TOOLBAR'],
         shots: ['rich-text'],
     },
+    {
+        slug: 'read-more',
+        name: 'ReadMore',
+        category: 'Contenido',
+        summary: 'Texto o contenido recortado con "Leer más", degradado y altura animada.',
+        description: 'Recorta un texto a unas líneas (o cualquier contenido a una altura) y pone "Leer más" / "Leer menos" solo si no cabe. El enlace puede ir debajo, al final de la última línea ("… Leer más") o flotando sobre un degradado, y la altura se anima en el hilo de UI.',
+        features: [
+            'numberOfLines para texto; maxHeight para cualquier contenido',
+            'triggerPlacement: below (debajo), inline (al final de la última línea) u overlay (botón flotante)',
+            'fade: degradado al final (fadeColor del fondo donde esté, p. ej. surface en una tarjeta)',
+            'triggerAlign left / center / right y chevron que gira (showIcon)',
+            'Altura animada con Reanimated (animated, duration)',
+            'collapsed: un resumen propio recogido; renderTrigger: enlace propio',
+            'readMoreText / readLessText (por defecto en el idioma actual), showLess, controlado con expanded + onToggle',
+        ],
+        imports: ['ReadMore', 'Text'],
+        shots: ['read-more'],
+        examples: [
+            {
+                title: 'Texto',
+                code: `<ReadMore numberOfLines={3}>{producto.descripcion}</ReadMore>
+
+{/* "… Leer más" al final de la última línea */}
+<ReadMore numberOfLines={4} triggerPlacement="inline">{comentario}</ReadMore>`,
+            },
+            {
+                title: 'Degradado y botón flotante',
+                description: 'Dentro de una tarjeta, el degradado tiene que ser del color de la tarjeta (surface).',
+                code: `<ReadMore fade fadeColor="surface" triggerAlign="center">{texto}</ReadMore>
+
+<ReadMore maxHeight={160} fade fadeColor="surface" triggerPlacement="overlay">
+    <Text>Primer párrafo…</Text>
+    <Text>Segundo párrafo…</Text>
+</ReadMore>`,
+            },
+            {
+                title: 'Resumen propio y enlace propio',
+                code: `<ReadMore collapsed={<Text numberOfLines={1}>{resumen}</Text>} readMoreText="Ver el artículo" showLess={false}>
+    <Articulo />
+</ReadMore>
+
+<ReadMore renderTrigger={({ expanded, toggle }) => <Button variant="link" onPress={toggle}>{expanded ? 'Menos' : 'Más'}</Button>}>
+    {texto}
+</ReadMore>`,
+            },
+        ],
+        types: ['EAReadMoreProps'],
+    },
 ];
 
 export const MEDIA: ComponentDoc[] = [
@@ -354,11 +402,48 @@ openPDFViewer(archivo.uri, { initialPage: 3 });`,
             {
                 title: 'Sin internet',
                 description: 'pdf.js se descarga del CDN la primera vez. Importando este archivo una vez va dentro de la app.',
-                code: `import 'easynat/dist/utils/pdfjs';`,
+                code: `import 'easynat/pdfjs';`,
             },
         ],
         types: ['PDFViewerProps', 'PDFViewerRef', 'PDFSource', 'PDFViewerError'],
         functions: ['openPDFViewer', 'registerPdfJs', 'PDFJS_VERSION'],
         shots: ['pdf'],
+    },
+    {
+        slug: 'watermark',
+        name: 'watermarkImage (marca de agua)',
+        category: 'Multimedia',
+        summary: 'Graba una marca de agua de texto en una foto con una sola función.',
+        description: 'watermarkImage(uri, opciones) devuelve una imagen nueva con el texto grabado (por ejemplo el usuario y la fecha). No hay que montar nada: crea un WebView invisible, dibuja en un canvas y lo quita al terminar. Acepta file://, content://, https o data:.',
+        features: [
+            'Esquinas, centro o tile (repetida en diagonal por toda la imagen)',
+            'Varias líneas (array o "\\n") y date: true añade la fecha y hora',
+            'Tamaño proporcional a la foto (3,5% del lado menor) y se reduce si el texto no cabe',
+            'color, background (o null), bold, fontSize, margin y angle del mosaico',
+            'maxSize para reducir fotos de cámara; jpeg (quality) o png',
+            'Devuelve dataUri y base64: súbela o guárdala con expo-file-system',
+        ],
+        imports: ['watermarkImage'],
+        requires: 'react-native-webview',
+        shots: ['watermark'],
+        examples: [
+            {
+                title: 'Usuario y fecha en la esquina',
+                code: `import { File, Paths } from 'expo-file-system';
+
+const r = await watermarkImage(foto.uri, { text: usuario.nombre, date: true });
+const archivo = new File(Paths.cache, 'foto.jpg');
+archivo.write(r.base64, { encoding: 'base64' });`,
+            },
+            {
+                title: 'Otras posiciones',
+                code: `await watermarkImage(uri, { text: ['EPC Tracker', 'Obra 12'], position: 'top-left', background: null, color: '#ffffffd9', bold: true });
+await watermarkImage(uri, { text: 'MUESTRA', position: 'center', fontSize: 120, color: '#ffffff99' });
+await watermarkImage(uri, { text: 'CONFIDENCIAL', position: 'tile', color: '#ff000055', bold: true });
+await watermarkImage(uri, { text: 'Reducida', maxSize: 1280, format: 'png' });`,
+            },
+        ],
+        types: ['WatermarkOptions', 'WatermarkResult', 'WatermarkPosition'],
+        functions: ['watermarkImage'],
     },
 ];

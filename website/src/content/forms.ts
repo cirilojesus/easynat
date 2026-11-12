@@ -14,6 +14,7 @@ export const FORMS: ComponentDoc[] = [
             'iconLeft / iconRight',
             'Variantes outline, filled, underlined, rounded y unstyled',
             'Tamaños sm, md, lg, xl y _focus para el estilo con foco',
+            'multiline (textarea): el texto empieza arriba y el label flotante va en la primera línea',
         ],
         imports: ['Input', 'Icon'],
         variants: [
@@ -30,6 +31,10 @@ export const FORMS: ComponentDoc[] = [
 <Input label="Email" isFloat isRequired keyboardType="email-address" />
 <Input label="Contraseña" isFloat isPassword />
 <Input placeholder="Buscar" iconLeft={<Icon as="Feather" name="search" ml={3} color="gray" />} />`,
+            },
+            {
+                title: 'Textarea',
+                code: `<Input label="Comentarios" isFloat multiline h={120} />`,
             },
             {
                 title: 'Variantes',

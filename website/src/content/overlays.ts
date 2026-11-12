@@ -165,6 +165,8 @@ if (await modal.result) borrar();`,
             'data + renderItem para listas largas',
             'useTriggerWidth, backdrop, emptyContent',
             'ref: open, close, toggle',
+            'Márgenes (ml, mr, mt, mb, m, mx, my) = desplazamiento de la caja en cualquier dirección, sin salirse de la pantalla',
+            'Bien colocado también en Android edge-to-edge (se mide respecto a la raíz, como el Portal)',
         ],
         imports: ['Menu', 'Button', 'Icon'],
         shots: ['menu-open'],
@@ -189,6 +191,46 @@ if (await modal.result) borrar();`,
 </Menu>`,
         }],
         types: ['EAMenuProps', 'EAMenuItemType', 'MenuRef', 'EAMenuTriggerProps'],
+    },
+    {
+        slug: 'tooltip',
+        name: 'Tooltip',
+        category: 'Capas',
+        summary: 'Burbuja con un texto corto junto a un icono o botón, con flecha y sin salirse de la pantalla.',
+        description: 'Se abre al tocar (o al mantener pulsado) un elemento y enseña una burbuja con flecha encima o debajo, la que tenga sitio. Sigue al elemento al hacer scroll y se cierra sola, al tocar en cualquier sitio o con atrás. Va en un Portal encima de todo o, con mode="absolute", junto al elemento.',
+        features: [
+            'placement top / bottom con cambio de lado si no cabe',
+            'Centrada en el trigger sin salirse de la pantalla; la flecha apunta a su centro',
+            'openOn press o longPress; children función para conectarlo a tu propio botón',
+            'Se cierra sola (duration, 3 s; 0 = no), al tocar fuera y con atrás',
+            'mode portal (por defecto, sigue al trigger) o absolute (junto a él, sin Portal)',
+            'Controlado (isOpen + onOpenChange) y ref: open, close, toggle',
+            'Estilo de la burbuja con props de estilo; invertida respecto al tema (oscura en claro y clara en oscuro)',
+        ],
+        imports: ['Tooltip', 'Icon', 'Button'],
+        shots: ['tooltip'],
+        examples: [
+            {
+                title: 'Información',
+                code: `<Tooltip label="Se guarda solo cada 5 minutos">
+    <Icon as="Feather" name="info" />
+</Tooltip>
+
+<Tooltip label="Abajo y sin flecha" placement="bottom" hasArrow={false} bg="primary.100" _text={{ color: 'white' }}>
+    <Icon as="Feather" name="help-circle" />
+</Tooltip>`,
+            },
+            {
+                title: 'Con tu botón, mantener pulsado y absolute',
+                code: `<Tooltip label="Copiar enlace" openOn="longPress">
+    {t => <Button {...t} onPress={copiar} icon={<Icon as="Feather" name="copy" />} />}
+</Tooltip>
+
+{/* Junto al trigger, sin Portal: se mueve con él (un contenedor con overflow hidden lo recorta) */}
+<Tooltip mode="absolute" label="Dentro de la pantalla"><Icon as="Feather" name="info" /></Tooltip>`,
+            },
+        ],
+        types: ['EATooltipProps', 'TooltipRef', 'TooltipTriggerProps'],
     },
 ];
 
@@ -295,5 +337,61 @@ export const LAYOUT: ComponentDoc[] = [
         types: ['StaggerProps', 'StaggerRef', 'StaggerAnimValues', 'StaggerPreset', 'StaggerOrder'],
         functions: ['STAGGER_PRESETS'],
         shots: ['stagger'],
+    },
+    {
+        slug: 'breadcrumbs',
+        name: 'Breadcrumbs',
+        category: 'Disposición y animación',
+        summary: 'Ruta de navegación con enlaces, chips o flechas, "…" con menú y desplegables.',
+        description: 'La ruta hasta la pantalla actual ("Inicio › Productos › Zapatillas"). El último es la página actual. Si hay muchos, "…" abre un menú con los ocultos, y un elemento puede tener su propio desplegable para saltar a otro del mismo nivel.',
+        features: [
+            'Variantes text, underline, chips (con colorScheme por elemento) y arrows (barra de flechas)',
+            'separator: chevron (por defecto), slash, un texto o un elemento',
+            'maxItems: el primero, "…" (abre un menú con los ocultos) y los últimos',
+            'options: desplegable en un elemento (p. ej. cambiar de proyecto), con la opción actual marcada',
+            'Iconos por elemento, scrollable (una línea con scroll) y startContent / endContent (atrás, adelante…)',
+        ],
+        imports: ['Breadcrumbs', 'Icon'],
+        shots: ['breadcrumbs'],
+        variants: [
+            { name: 'text', description: 'Enlaces de color y el actual en negrita (por defecto)' },
+            { name: 'underline', description: 'Enlaces subrayados' },
+            { name: 'chips', description: 'Cada elemento en una etiqueta de su color' },
+            { name: 'arrows', description: 'Barra de flechas encadenadas en una línea' },
+        ],
+        examples: [
+            {
+                title: 'Ruta',
+                code: `<Breadcrumbs items={[
+    { label: 'Inicio', icon: <Icon as="Feather" name="home" size={14} />, onPress: () => nav.navigate('Home') },
+    { label: 'Tienda', onPress: () => nav.navigate('Shop') },
+    { label: 'Zapatillas' },
+]} />
+
+<Breadcrumbs items={ruta} maxItems={3} separator="slash" />   {/* Inicio / … / Hombre / Zapatillas */}`,
+            },
+            {
+                title: 'Variantes',
+                code: `<Breadcrumbs variant="chips" items={[
+    { label: 'PRB.01 · PV PLANT', colorScheme: 'warning', onPress: abrir },
+    { label: 'PRB.01.01 · CIVIL', colorScheme: 'secondary' },
+]} />
+<Breadcrumbs variant="arrows" items={pasos} />
+<Breadcrumbs variant="underline" items={pasos} />`,
+            },
+            {
+                title: 'Desplegable y botones',
+                code: `<Breadcrumbs
+    bg="light.50" rounded={3} px={2}
+    startContent={<Button variant="ghost" icon={<Icon as="Feather" name="chevron-left" />} onPress={atras} />}
+    items={[
+        { label: 'Equipo', onPress: verEquipo },
+        { label: pod, options: pods.map(p => ({ label: p, selected: p === pod, onPress: () => setPod(p) })) },
+        { label: 'Miembros' },
+    ]}
+/>`,
+            },
+        ],
+        types: ['EABreadcrumbsProps', 'BreadcrumbItem', 'BreadcrumbOption'],
     },
 ];
