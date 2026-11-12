@@ -108,7 +108,7 @@ exports.Button = (0, react_1.forwardRef)((props, ref) => {
     // Lo activo y el feedback se aplican encima de las props (pueden cambiar hasta la variante)
     const effective = (0, useThemeProps_1.mergeProps)(props, active && props._active, feedbackShown);
     // Defaults → theme.components.Button → variante → tamaño → props → plataforma
-    const _g = (0, useThemeProps_1.useThemeProps)('Button', effective, { defaults: BUTTON_DEFAULTS, variants: buttonVariants, sizes: BUTTON_SIZES })[0], { variant: _variant, colorScheme: _colorScheme, size: _size, icon, iconRight, _icon, _iconRight, children, isLoading, loadingText, spinnerPlacement = 'start', loadingOnPress = true, toggle, active: _a, defaultActive: _d, onActiveChange, _active, feedback, feedbackDuration = 1500, changeAnimation = 'zoom', onPress } = _g, rest = __rest(_g, ["variant", "colorScheme", "size", "icon", "iconRight", "_icon", "_iconRight", "children", "isLoading", "loadingText", "spinnerPlacement", "loadingOnPress", "toggle", "active", "defaultActive", "onActiveChange", "_active", "feedback", "feedbackDuration", "changeAnimation", "onPress"]);
+    const _g = (0, useThemeProps_1.useThemeProps)('Button', effective, { defaults: BUTTON_DEFAULTS, variants: buttonVariants, sizes: BUTTON_SIZES })[0], { variant: _variant, colorScheme: _colorScheme, size: _size, icon, iconRight, _icon, _iconRight, children, isLoading, loadingText, spinnerPlacement = 'start', loadingOnPress = false, toggle, active: _a, defaultActive: _d, onActiveChange, _active, feedback, feedbackDuration = 1500, changeAnimation = 'zoom', onPress } = _g, rest = __rest(_g, ["variant", "colorScheme", "size", "icon", "iconRight", "_icon", "_iconRight", "children", "isLoading", "loadingText", "spinnerPlacement", "loadingOnPress", "toggle", "active", "defaultActive", "onActiveChange", "_active", "feedback", "feedbackDuration", "changeAnimation", "onPress"]);
     const loading = isLoading !== null && isLoading !== void 0 ? isLoading : internalLoading;
     const showFeedback = (f, duration) => {
         const fb = f !== null && f !== void 0 ? f : props.feedback;
@@ -140,8 +140,10 @@ exports.Button = (0, react_1.forwardRef)((props, ref) => {
         if (toggle || props.active != null)
             setActive(!active);
         const r = onPress === null || onPress === void 0 ? void 0 : onPress(e);
-        if (r && typeof r.then === 'function' && loadingOnPress) {
-            setInternalLoading(true);
+        if (r && typeof r.then === 'function') {
+            // El feedback sale al terminar la promesa; el spinner, solo con loadingOnPress
+            if (loadingOnPress)
+                setInternalLoading(true);
             r.then(() => { if (alive.current) {
                 setInternalLoading(false);
                 showFeedback();

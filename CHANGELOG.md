@@ -5,6 +5,12 @@
 - **Menu en Android (edge-to-edge):** el menú ya no tapa el botón que lo abre. Se medía el trigger con `measureInWindow`, que en Android resta la barra de estado, mientras que el Portal empieza en y = 0; ahora se mide con `measure` (pageX/pageY), la misma referencia que el Portal, en iOS y Android.
 - **SearchInput** (`listType="absolute"`): mismo cambio; el espacio libre arriba y abajo del input ya no sale desplazado en Android.
 - **Menu: márgenes como desplazamiento.** `m`, `mx`, `my`, `mt`, `mb`, `ml` y `mr` (o `margin…` en `style` o en el tema) mueven la caja en cualquier dirección (x = izquierdo − derecho, y = superior − inferior, también negativos) y se aplican antes de ajustarla a la pantalla, así que no se sale. Antes `mr` y `mb` no hacían nada y `ml` / `mt` podían sacarla de la pantalla.
+- **Nuevos componentes:** `Tooltip` (burbuja junto a un elemento: se abre al tocar o mantener pulsado, se coloca arriba o abajo según el sitio, se cierra sola, al tocar fuera o con atrás), `Breadcrumbs` (ruta de navegación con `maxItems` y "…" desplegable, separador propio y `scrollable`) y `ReadMore` (texto recortado a `numberOfLines` con "Leer más" / "Leer menos", que solo aparece si no cabe).
+- **`ago(fecha, ahora?)`:** tiempo relativo corto en el idioma actual ("ahora", "hace 5 min", "hace 3 h", "hace 2 d"; desde 30 días, la fecha). Acepta milisegundos, `Date` o texto.
+- **`import 'easynat/pdfjs'`:** acceso corto para usar PDFViewer sin internet (`easynat/dist/utils/pdfjs` sigue funcionando).
+- **Image:** sin `size` ni tamaño propio ocupa todo el ancho (`100%`) con la proporción real de la imagen (antes 50×50). Con `size` sigue siendo cuadrada.
+- **Input multiline (textarea):** el label flotante, en reposo, va en la primera línea y no en el centro de la caja; el texto empieza arriba (`textAlignVertical="top"` por defecto).
+- **Button: `loadingOnPress` ahora es `false` por defecto.** Si `onPress` devuelve una promesa ya no sale el spinner salvo con `loadingOnPress`. El `feedback` sigue esperando a que termine la promesa.
 
 ## 1.0.0 — primera versión
 

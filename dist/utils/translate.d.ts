@@ -91,6 +91,12 @@ declare const LIB_TEXTS: {
         loadMore: string;
         total: string;
         select: string;
+        agoNow: string;
+        agoMinutes: string;
+        agoHours: string;
+        agoDays: string;
+        tooltipHint: string;
+        breadcrumbs: string;
     };
     es: {
         required: string;
@@ -182,6 +188,12 @@ declare const LIB_TEXTS: {
         loadMore: string;
         total: string;
         select: string;
+        agoNow: string;
+        agoMinutes: string;
+        agoHours: string;
+        agoDays: string;
+        tooltipHint: string;
+        breadcrumbs: string;
     };
 };
 export type LibTextKey = keyof typeof LIB_TEXTS['en'];

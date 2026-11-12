@@ -1,6 +1,6 @@
 // Genera src/utils/pdfjs.ts: pdf.js (build legacy, minificado) como texto, para que PDFViewer funcione sin internet.
 // Uso: node scripts/build-pdfjs.js [versión]   (por defecto la que usa PDFViewer)
-// No va en el índice de la librería: quien lo quiera lo importa una vez (import 'easynat/dist/utils/pdfjs'); sin él,
+// No va en el índice de la librería: quien lo quiera lo importa una vez (import 'easynat/pdfjs', o 'easynat/dist/utils/pdfjs'); sin él,
 // PDFViewer carga pdf.js del CDN
 const { execSync } = require('child_process');
 const fs = require('fs');
@@ -18,7 +18,7 @@ if (/<\/script/i.test(main + worker)) throw new Error('pdf.js contiene </script:
 
 const out = `// GENERADO por scripts/build-pdfjs.js (pdfjs-dist ${version}, build legacy). No editar a mano.
 // pdf.js © Mozilla, licencia Apache-2.0 (https://github.com/mozilla/pdf.js/blob/master/LICENSE)
-// Importarlo una vez hace que PDFViewer funcione sin internet: import 'easynat/dist/utils/pdfjs'
+// Importarlo una vez hace que PDFViewer funcione sin internet: import 'easynat/pdfjs'
 import { registerPdfJs } from '../PDFViewer';
 
 registerPdfJs({

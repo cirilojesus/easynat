@@ -8,6 +8,7 @@ export type EAImageProps = ImageProps & EADefaultProps & {
     _android?: EAImageProps;
     _web?: EAImageProps;
     fallback?: ImageSourcePropType;
+    /** Ancho y alto iguales (cuadrada). Sin size, ni ancho ni alto: ocupa todo el ancho (100%) con la proporción de la imagen */
     size?: number;
     variant?: (string & {});
 };

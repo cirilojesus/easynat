@@ -7,7 +7,7 @@ type PdfJsBundle = {
     main: string;
     worker: string;
 };
-/** Registra pdf.js dentro de la app (lo hace `import 'easynat/dist/utils/pdfjs'`): así no hace falta internet */
+/** Registra pdf.js dentro de la app (lo hace `import 'easynat/pdfjs'`): así no hace falta internet */
 export declare const registerPdfJs: (lib: PdfJsBundle) => void;
 /** Un PDF: su uri (https, file://, content://, data:), con cabeceras (p. ej. Authorization), o su base64 */
 export type PDFSource = string | {
@@ -73,7 +73,7 @@ export type PDFViewerProps = Omit<EABoxProps, 'children'> & {
 };
 /**
  * Visor de PDF. Necesita react-native-webview (dependencia opcional). pdf.js sale del CDN; para usarlo sin
- * internet, importa una vez 'easynat/dist/utils/pdfjs'
+ * internet, importa una vez 'easynat/pdfjs'
  * @example <PDFViewer source={{ uri: 'https://…/factura.pdf' }} onPageChange={p => …} />
  * @example openPDFViewer(archivo.uri, { initialPage: 3 })
  */

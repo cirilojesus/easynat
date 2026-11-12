@@ -7,6 +7,8 @@
     "react-native": "dist/index.js",
     "files": [
         "dist",
+        "pdfjs.js",
+        "pdfjs.d.ts",
         "README.md",
         "LICENSE",
         "CHANGELOG.md"

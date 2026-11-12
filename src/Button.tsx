@@ -32,7 +32,7 @@ export type EAButtonProps = Omit<EAPressableProps, 'variant' | '_ios' | '_androi
     loadingText?: string;
     /** Dónde va el spinner con loadingText. Por defecto 'start' */
     spinnerPlacement?: 'start' | 'end';
-    /** Si onPress devuelve una promesa, spinner hasta que termine. Por defecto true */
+    /** true: si onPress devuelve una promesa, spinner hasta que termine (y no se puede pulsar otra vez). Por defecto false */
     loadingOnPress?: boolean;
     /** Interruptor: cada pulsación alterna `active` (y se aplica _active) */
     toggle?: boolean;
@@ -123,7 +123,7 @@ export const Button = forwardRef<ButtonRef, EAButtonProps>((props, ref) => {
     // Defaults → theme.components.Button → variante → tamaño → props → plataforma
     const {
         variant: _variant, colorScheme: _colorScheme, size: _size, icon, iconRight, _icon, _iconRight, children,
-        isLoading, loadingText, spinnerPlacement = 'start', loadingOnPress = true, toggle, active: _a, defaultActive: _d, onActiveChange,
+        isLoading, loadingText, spinnerPlacement = 'start', loadingOnPress = false, toggle, active: _a, defaultActive: _d, onActiveChange,
         _active, feedback, feedbackDuration = 1500, changeAnimation = 'zoom', onPress, ...rest
     } = useThemeProps<EAButtonProps>('Button', effective, { defaults: BUTTON_DEFAULTS, variants: buttonVariants, sizes: BUTTON_SIZES })[0];
     const loading = isLoading ?? internalLoading;
@@ -153,8 +153,9 @@ export const Button = forwardRef<ButtonRef, EAButtonProps>((props, ref) => {
         if (loading) return;
         if (toggle || props.active != null) setActive(!active);
         const r: any = onPress?.(e);
-        if (r && typeof r.then === 'function' && loadingOnPress) {
-            setInternalLoading(true);
+        if (r && typeof r.then === 'function') {
+            // El feedback sale al terminar la promesa; el spinner, solo con loadingOnPress
+            if (loadingOnPress) setInternalLoading(true);
             r.then(() => { if (alive.current) { setInternalLoading(false); showFeedback() } }, () => { if (alive.current) setInternalLoading(false) });
         } else showFeedback();
     };

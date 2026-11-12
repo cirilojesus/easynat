@@ -1,6 +1,6 @@
 // GENERADO por scripts/build-pdfjs.js (pdfjs-dist 3.11.174, build legacy). No editar a mano.
 // pdf.js © Mozilla, licencia Apache-2.0 (https://github.com/mozilla/pdf.js/blob/master/LICENSE)
-// Importarlo una vez hace que PDFViewer funcione sin internet: import 'easynat/dist/utils/pdfjs'
+// Importarlo una vez hace que PDFViewer funcione sin internet: import 'easynat/pdfjs'
 import { registerPdfJs } from '../PDFViewer';
 
 registerPdfJs({

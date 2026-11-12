@@ -43,7 +43,7 @@ const ok = msg => console.log('OK ' + msg);
     assert.equal(spinners(t), 0);
     const p = await render(h(Button, { isLoading: true, loadingText: 'Enviando…' }, 'Enviar'));
     assert.ok(txt(p).includes('Enviando…') && !txt(p).includes('Enviar|') && spinners(p) === 1, 'loadingText');
-    let resolve; const a = await render(h(Button, { onPress: () => new Promise(r => { resolve = r }) }, 'Async'));
+    let resolve; const a = await render(h(Button, { loadingOnPress: true, onPress: () => new Promise(r => { resolve = r }) }, 'Async'));
     await act(async () => press(a).props.onPress({}));
     assert.equal(spinners(a), 1, 'promesa: spinner solo');
     await act(async () => { resolve(); await wait(1) });
@@ -51,6 +51,9 @@ const ok = msg => console.log('OK ' + msg);
     const off = await render(h(Button, { loadingOnPress: false, onPress: () => new Promise(() => { }) }, 'X'));
     await act(async () => press(off).props.onPress({}));
     assert.equal(spinners(off), 0, 'loadingOnPress={false}');
+    const def = await render(h(Button, { onPress: () => new Promise(() => { }) }, 'Def'));
+    await act(async () => press(def).props.onPress({}));
+    assert.equal(spinners(def), 0, 'por defecto (false): sin spinner con promesa');
     ok('carga: ref (start / stop / isLoading), sin pulsar dos veces, mismo tamaño, isLoading + loadingText, promesa de onPress y loadingOnPress');
   }
 

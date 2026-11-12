@@ -23,7 +23,7 @@ export type EAButtonProps = Omit<EAPressableProps, 'variant' | '_ios' | '_androi
     loadingText?: string;
     /** Dónde va el spinner con loadingText. Por defecto 'start' */
     spinnerPlacement?: 'start' | 'end';
-    /** Si onPress devuelve una promesa, spinner hasta que termine. Por defecto true */
+    /** true: si onPress devuelve una promesa, spinner hasta que termine (y no se puede pulsar otra vez). Por defecto false */
     loadingOnPress?: boolean;
     /** Interruptor: cada pulsación alterna `active` (y se aplica _active) */
     toggle?: boolean;
@@ -68,7 +68,7 @@ export declare const Button: React.ForwardRefExoticComponent<Omit<EAPressablePro
     loadingText?: string;
     /** Dónde va el spinner con loadingText. Por defecto 'start' */
     spinnerPlacement?: "start" | "end";
-    /** Si onPress devuelve una promesa, spinner hasta que termine. Por defecto true */
+    /** true: si onPress devuelve una promesa, spinner hasta que termine (y no se puede pulsar otra vez). Por defecto false */
     loadingOnPress?: boolean;
     /** Interruptor: cada pulsación alterna `active` (y se aplica _active) */
     toggle?: boolean;

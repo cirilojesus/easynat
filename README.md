@@ -55,7 +55,7 @@ npx expo install react-native-webview
 El PDFViewer descarga pdf.js de internet la primera vez. Para que funcione sin conexión, impórtalo una vez en tu app (añade unos 1,5 MB):
 
 ```ts
-import 'easynat/dist/utils/pdfjs';
+import 'easynat/pdfjs';
 ```
 
 ## Empezar

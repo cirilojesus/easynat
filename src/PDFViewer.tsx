@@ -1,6 +1,6 @@
 // PDFViewer: visor de PDF sobre react-native-webview (opcional) con pdf.js. Páginas en scroll vertical (solo se
 // dibujan las cercanas a la vista), zoom con dos dedos y doble toque, enlaces (internos y externos), buscar texto,
-// seleccionar y copiar texto, contraseña e indicador de página. pdf.js se carga del CDN; para usarlo sin internet: import 'easynat/dist/utils/pdfjs'
+// seleccionar y copiar texto, contraseña e indicador de página. pdf.js se carga del CDN; para usarlo sin internet: import 'easynat/pdfjs'
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react";
 import { Linking, Pressable, StyleSheet, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -19,7 +19,7 @@ import { jsValue, loadWebView, MissingWebView, toDataUri, WebViewHandle, WebView
 export const PDFJS_VERSION = '3.11.174';
 type PdfJsBundle = { version: string; main: string; worker: string };
 let bundled: PdfJsBundle | null = null;
-/** Registra pdf.js dentro de la app (lo hace `import 'easynat/dist/utils/pdfjs'`): así no hace falta internet */
+/** Registra pdf.js dentro de la app (lo hace `import 'easynat/pdfjs'`): así no hace falta internet */
 export const registerPdfJs = (lib: PdfJsBundle) => { bundled = lib };
 const cdnBase = (version: string) => `https://cdn.jsdelivr.net/npm/pdfjs-dist@${version}`;
 
@@ -130,7 +130,7 @@ const VIEWER_SCRIPT = String.raw`(function () {
         .then(function (code) { lib.GlobalWorkerOptions.workerSrc = blobUrl(code); post({ type: 'ready' }); })
         .catch(function (e) { fail('lib', e); });
     };
-    s.onerror = function () { fail('lib', 'No se pudo descargar pdf.js (sin internet). Para usarlo sin conexión: import "easynat/dist/utils/pdfjs"'); };
+    s.onerror = function () { fail('lib', 'No se pudo descargar pdf.js (sin internet). Para usarlo sin conexión: import "easynat/pdfjs"'); };
     document.head.appendChild(s);
   }
 
@@ -441,7 +441,7 @@ const readSource = async (s: PDFSource): Promise<string> => {
 
 /**
  * Visor de PDF. Necesita react-native-webview (dependencia opcional). pdf.js sale del CDN; para usarlo sin
- * internet, importa una vez 'easynat/dist/utils/pdfjs'
+ * internet, importa una vez 'easynat/pdfjs'
  * @example <PDFViewer source={{ uri: 'https://…/factura.pdf' }} onPageChange={p => …} />
  * @example openPDFViewer(archivo.uri, { initialPage: 3 })
  */

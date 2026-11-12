@@ -106,6 +106,12 @@ const LIB_TEXTS = {
         loadMore: 'Load more',
         total: 'Total',
         select: '- SELECT -',
+        agoNow: 'now',
+        agoMinutes: '{{n}} min ago',
+        agoHours: '{{n}} h ago',
+        agoDays: '{{n}} d ago',
+        tooltipHint: 'Shows more information',
+        breadcrumbs: 'Breadcrumbs',
     },
     es: {
         required: 'Campo requerido',
@@ -197,6 +203,12 @@ const LIB_TEXTS = {
         loadMore: 'Cargar más',
         total: 'Total',
         select: '- SELECCIONE -',
+        agoNow: 'ahora',
+        agoMinutes: 'hace {{n}} min',
+        agoHours: 'hace {{n}} h',
+        agoDays: 'hace {{n}} d',
+        tooltipHint: 'Muestra más información',
+        breadcrumbs: 'Ruta de navegación',
     },
 };
 const interpolate = (text, params) => {

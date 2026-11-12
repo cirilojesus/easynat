@@ -69,7 +69,7 @@ const INPUT_SIZES = {
 };
 const isFilled = (v) => v != null && v !== '';
 const Input = (_a) => {
-    var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
+    var _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
     var { style } = _a, props = __rest(_a, ["style"]);
     const [focus, setFocus] = (0, react_1.useState)(false);
     const [showPassword, setShowPassword] = (0, react_1.useState)(false);
@@ -94,6 +94,14 @@ const Input = (_a) => {
         ...styles,
         { color: theme.colors[color !== null && color !== void 0 ? color : 'text'] || color }
     ]);
+    // Textarea (multiline): el texto empieza arriba (en Android se centraba) y el label flotante, en reposo, va en
+    // la primera línea y no en el centro de la caja. Para el label se usa el alto de una sola línea
+    const multiline = !!inputProps.multiline;
+    const pad = (side) => { var _a, _b, _c; return Number((_c = (_b = (_a = inputStyle[`padding${side}`]) !== null && _a !== void 0 ? _a : inputStyle.paddingVertical) !== null && _b !== void 0 ? _b : inputStyle.padding) !== null && _c !== void 0 ? _c : 0) || 0; };
+    const lineHeight = Number(inputStyle.lineHeight) || (Number(inputStyle.fontSize) || 14) * 1.25;
+    const labelFieldHeight = multiline && fieldHeight
+        ? Math.min(fieldHeight, lineHeight + pad('Top') + pad('Bottom') + 2)
+        : fieldHeight;
     // El label flotante sube con foco o con texto (controlado por value, o escrito sin value)
     const hasText = props.value !== undefined ? isFilled(props.value) : typed;
     const raised = focus || hasText;
@@ -111,8 +119,8 @@ const Input = (_a) => {
                 {iconLeft}
                 <react_native_1.TextInput {...inputProps} 
     // Label flotante abajo (vacío y sin foco): hace de placeholder, el placeholder taparía con él
-    placeholder={isFloat && label && !raised ? undefined : placeholder} placeholderTextColor={(_j = inputProps.placeholderTextColor) !== null && _j !== void 0 ? _j : (_k = theme.colors) === null || _k === void 0 ? void 0 : _k['text.subtle']} secureTextEntry={isPassword && !showPassword} style={[
-            theme.fontFamily && { fontFamily: ((_l = theme === null || theme === void 0 ? void 0 : theme.fonts) === null || _l === void 0 ? void 0 : _l[theme.fontFamily + '_' + ((inputStyle === null || inputStyle === void 0 ? void 0 : inputStyle.fontWeight) || '400')]) || theme.fontFamily + '_' + ((inputStyle === null || inputStyle === void 0 ? void 0 : inputStyle.fontWeight) || '400') },
+    placeholder={isFloat && label && !raised ? undefined : placeholder} placeholderTextColor={(_j = inputProps.placeholderTextColor) !== null && _j !== void 0 ? _j : (_k = theme.colors) === null || _k === void 0 ? void 0 : _k['text.subtle']} secureTextEntry={isPassword && !showPassword} textAlignVertical={(_l = inputProps.textAlignVertical) !== null && _l !== void 0 ? _l : (multiline ? 'top' : undefined)} style={[
+            theme.fontFamily && { fontFamily: ((_m = theme === null || theme === void 0 ? void 0 : theme.fonts) === null || _m === void 0 ? void 0 : _m[theme.fontFamily + '_' + ((inputStyle === null || inputStyle === void 0 ? void 0 : inputStyle.fontWeight) || '400')]) || theme.fontFamily + '_' + ((inputStyle === null || inputStyle === void 0 ? void 0 : inputStyle.fontWeight) || '400') },
             inputStyle,
             theme.fontFamily && { fontWeight: undefined }
         ]} onChangeText={t => {
@@ -137,7 +145,7 @@ const Input = (_a) => {
     // Con label: label y campo juntos en una vista propia. Si fueran hermanos sueltos (Fragment), el `gap`
     // del contenedor se metía entre ellos y el label flotante no se colocaba sobre el campo
     return (<react_native_1.View>
-            <Label_1.Label ref={labelRef} isFloat={isFloat} isRequired={isRequired} fieldHeight={fieldHeight} {..._label}>{label}</Label_1.Label>
+            <Label_1.Label ref={labelRef} isFloat={isFloat} isRequired={isRequired} fieldHeight={labelFieldHeight} {..._label}>{label}</Label_1.Label>
             {field}
         </react_native_1.View>);
 };

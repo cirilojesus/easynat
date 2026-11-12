@@ -79,6 +79,15 @@ export const Input: React.FC<EATextInputProps> = ({ style, ...props }) => {
         { color: theme.colors[color ?? 'text'] || color }
     ]);
 
+    // Textarea (multiline): el texto empieza arriba (en Android se centraba) y el label flotante, en reposo, va en
+    // la primera línea y no en el centro de la caja. Para el label se usa el alto de una sola línea
+    const multiline = !!inputProps.multiline;
+    const pad = (side: 'Top' | 'Bottom') => Number(inputStyle[`padding${side}`] ?? inputStyle.paddingVertical ?? inputStyle.padding ?? 0) || 0;
+    const lineHeight = Number(inputStyle.lineHeight) || (Number(inputStyle.fontSize) || 14) * 1.25;
+    const labelFieldHeight = multiline && fieldHeight
+        ? Math.min(fieldHeight, lineHeight + pad('Top') + pad('Bottom') + 2)
+        : fieldHeight;
+
     // El label flotante sube con foco o con texto (controlado por value, o escrito sin value)
     const hasText = props.value !== undefined ? isFilled(props.value) : typed;
     const raised = focus || hasText;
@@ -108,6 +117,7 @@ export const Input: React.FC<EATextInputProps> = ({ style, ...props }) => {
                     placeholder={isFloat && label && !raised ? undefined : placeholder}
                     placeholderTextColor={inputProps.placeholderTextColor ?? theme.colors?.['text.subtle']}
                     secureTextEntry={isPassword && !showPassword}
+                    textAlignVertical={inputProps.textAlignVertical ?? (multiline ? 'top' : undefined)}
                     style={[
                         theme.fontFamily && { fontFamily: theme?.fonts?.[theme.fontFamily + '_' + (inputStyle?.fontWeight || '400')] || theme.fontFamily + '_' + (inputStyle?.fontWeight || '400') },
                         inputStyle,
@@ -148,7 +158,7 @@ export const Input: React.FC<EATextInputProps> = ({ style, ...props }) => {
     // del contenedor se metía entre ellos y el label flotante no se colocaba sobre el campo
     return (
         <View>
-            <Label ref={labelRef} isFloat={isFloat} isRequired={isRequired} fieldHeight={fieldHeight} {..._label}>{label}</Label>
+            <Label ref={labelRef} isFloat={isFloat} isRequired={isRequired} fieldHeight={labelFieldHeight} {..._label}>{label}</Label>
             {field}
         </View>
     );

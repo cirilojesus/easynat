@@ -121,6 +121,7 @@ export type ComponentsTheme = {
     Alert?: ComponentTheme<COMPONENTS.EAAlertProps>
     AsyncList?: ComponentTheme<COMPONENTS.AsyncListProps<any>>
     Box?: ComponentTheme<COMPONENTS.EABoxProps>
+    Breadcrumbs?: ComponentTheme<COMPONENTS.EABreadcrumbsProps>
     Button?: ComponentTheme<COMPONENTS.EAButtonProps>
     Carousel?: ComponentTheme<COMPONENTS.CarouselType>
     /** Para todos los tipos (los defaults de cada type van por debajo) */
@@ -143,6 +144,7 @@ export type ComponentsTheme = {
     Pressable?: ComponentTheme<COMPONENTS.EAPressableProps>
     ProgressBar?: ComponentTheme<COMPONENTS.EAProgressBarProps>
     Radio?: ComponentTheme<COMPONENTS.EARadioProps>
+    ReadMore?: ComponentTheme<COMPONENTS.EAReadMoreProps>
     RenderHTML?: ComponentTheme<COMPONENTS.EARenderHTMLProps>
     RichTextEditor?: ComponentTheme<COMPONENTS.RichTextEditorProps>
     ImageViewer?: ComponentTheme<COMPONENTS.ImageViewerProps>
@@ -162,6 +164,7 @@ export type ComponentsTheme = {
     Switch?: ComponentTheme<COMPONENTS.EASwitchProps>
     Table?: ComponentTheme<COMPONENTS.TableProps<any>>
     Text?: ComponentTheme<COMPONENTS.EATextProps>
+    Tooltip?: ComponentTheme<COMPONENTS.EATooltipProps>
 }
 
 export const defaultTheme: {
