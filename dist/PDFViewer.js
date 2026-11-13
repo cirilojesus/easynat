@@ -47,8 +47,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.openPDFViewer = exports.PDFViewer = exports.getPdfJs = exports.registerPdfJs = exports.PDFJS_VERSION = void 0;
 // PDFViewer: visor de PDF sobre react-native-webview (opcional) con pdf.js. Páginas en scroll vertical (solo se
 // dibujan las cercanas a la vista), zoom con dos dedos y doble toque, enlaces (internos y externos), buscar texto,
-// seleccionar y copiar texto, contraseña e indicador de página. pdf.js se carga del CDN; para usarlo sin internet: import 'easynat/pdfjs'.
-// pdf.js 4+ son módulos ES (ES2022): el WebView necesita iOS 16.4+ (en Android el WebView se actualiza solo)
+// seleccionar y copiar texto, contraseña e indicador de página. pdf.js se carga del CDN; para usarlo sin internet: import 'easynat/pdfjs'
 const react_1 = __importStar(require("react"));
 const react_native_1 = require("react-native");
 const react_native_safe_area_context_1 = require("react-native-safe-area-context");
@@ -61,27 +60,25 @@ const translate_1 = require("./utils/translate");
 const useThemeProps_1 = require("./utils/useThemeProps");
 const webview_1 = require("./utils/webview");
 /* ---------------- pdf.js ---------------- */
-/** Versión de pdf.js del CDN (build legacy, módulos ES: necesita iOS 16.4+) */
-exports.PDFJS_VERSION = '6.5.438';
+/** Versión de pdf.js del CDN (la última que se carga como script normal: funciona en WebViews antiguos) */
+exports.PDFJS_VERSION = '3.11.174';
 let bundled = null;
 /** Registra pdf.js dentro de la app (lo hace `import 'easynat/pdfjs'`): así no hace falta internet */
 const registerPdfJs = (lib) => { bundled = lib; };
 exports.registerPdfJs = registerPdfJs;
 /**
  * El pdf.js registrado (null si no se importó 'easynat/pdfjs'), para usarlo en tu propio WebView sin descargar nada.
- * Son módulos ES: cárgalo con `import()` desde un blob y pon el worker en `GlobalWorkerOptions.workerSrc`
+ * Es un script clásico: mételo en un `<script>` (deja `window.pdfjsLib`) y pon el worker en `GlobalWorkerOptions.workerSrc`
  * @example
  * const pdf = getPdfJs();
  * // en el WebView:
- * // const lib = await import(URL.createObjectURL(new Blob([main], { type: 'text/javascript' })));
- * // lib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(new Blob([worker], { type: 'text/javascript' }));
+ * // script.textContent = main; document.head.appendChild(script);
+ * // pdfjsLib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(new Blob([worker], { type: 'text/javascript' }));
  */
 const getPdfJs = () => bundled;
 exports.getPdfJs = getPdfJs;
 const cdnBase = (version) => `https://cdn.jsdelivr.net/npm/pdfjs-dist@${version}`;
-const viewerDocument = (cfg, lib) => {
-    var _a;
-    return `<!DOCTYPE html>
+const viewerDocument = (cfg, lib) => `<!DOCTYPE html>
 <html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <style>
@@ -92,10 +89,9 @@ html,body{margin:0;height:100%;background:${cfg.bg};overflow:hidden;-webkit-tap-
 .page canvas{position:absolute;left:0;top:0;width:100%;height:100%}
 .link{position:absolute;display:block;z-index:3}
 .hl{position:absolute;background:rgba(255,213,0,.45);mix-blend-mode:multiply;border-radius:2px;pointer-events:none;z-index:1}
-.textLayer{position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;opacity:.25;line-height:1;letter-spacing:normal;word-spacing:normal;-webkit-text-size-adjust:none;text-size-adjust:none;transform-origin:0 0;z-index:2;-webkit-user-select:text;user-select:text;--min-font-size:1;--text-scale-factor:calc(var(--total-scale-factor) * var(--min-font-size));--min-font-size-inv:calc(1 / var(--min-font-size))}
+.textLayer{position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;opacity:.25;line-height:1;-webkit-text-size-adjust:none;text-size-adjust:none;transform-origin:0 0;z-index:2;-webkit-user-select:text;user-select:text}
 .textLayer span,.textLayer br{color:transparent;position:absolute;white-space:pre;cursor:text;transform-origin:0 0}
-.textLayer > :not(.markedContent),.textLayer .markedContent span:not(.markedContent){z-index:1;--font-height:0;font-size:calc(var(--text-scale-factor) * var(--font-height));--scale-x:1;--rotate:0deg;transform:rotate(var(--rotate)) scaleX(var(--scale-x)) scale(var(--min-font-size-inv))}
-.textLayer .markedContent{display:contents}
+.textLayer span.markedContent{top:0;height:0}
 .textLayer ::selection{background:#0050ff}
 .textLayer br::selection{background:transparent}
 .textLayer .endOfContent{display:block;position:absolute;left:0;right:0;top:100%;bottom:0;z-index:-1;-webkit-user-select:none;user-select:none}
@@ -103,65 +99,51 @@ html,body{margin:0;height:100%;background:${cfg.bg};overflow:hidden;-webkit-tap-
 .hl.cur{background:rgba(255,120,0,.6)}
 </style></head>
 <body><div id="scroll"><div id="pages"></div></div>
-<script>window.__CFG=${(0, webview_1.jsValue)(cfg)};${lib ? `window.__PDFJS_MAIN=${(0, webview_1.jsValue)(lib.main)};window.__PDFJS_WORKER=${(0, webview_1.jsValue)(lib.worker)};window.__PDFJS_WASM=${(0, webview_1.jsValue)((_a = lib.wasm) !== null && _a !== void 0 ? _a : {})};` : ''}</script>
+<script>window.__CFG=${(0, webview_1.jsValue)(cfg)};${lib ? `window.__PDFJS_MAIN=${(0, webview_1.jsValue)(lib.main)};window.__PDFJS_WORKER=${(0, webview_1.jsValue)(lib.worker)};` : ''}</script>
 <script>${VIEWER_SCRIPT}</script></body></html>`;
-};
 // Nuestro código va en ES5; pdf.js (build legacy) trae lo suyo
 const VIEWER_SCRIPT = String.raw `(function () {
   var cfg = window.__CFG, RN = window.ReactNativeWebView;
   function post(o) { if (RN) RN.postMessage(JSON.stringify(o)); }
   var scroller = document.getElementById('scroll'), pagesEl = document.getElementById('pages');
-  var dpr = window.devicePixelRatio || 1, lib = null, doc = null, docTask = null, pages = [], zoom = 1, baseScale = 1, chunks = [], current = 0;
+  var dpr = window.devicePixelRatio || 1, lib = null, doc = null, pages = [], zoom = 1, baseScale = 1, chunks = [], current = 0;
   var pendingPassword = null, frame = false, gen = 0, MAX_PX = 16e6;
 
   /* ----- Cargar pdf.js (de dentro de la app o del CDN) y su worker (desde un blob: así funciona sin servidor) ----- */
   function fail(code, e) { post({ type: 'error', code: code, message: String(e && e.message || e || code) }); }
   function blobUrl(code) { return URL.createObjectURL(new Blob([code], { type: 'text/javascript' })); }
-  // pdf.js 4+ es un módulo ES: se carga con import() (el de dentro de la app, desde un blob). window.__import es para las pruebas
-  function importLib(url) { return window.__import ? window.__import(url) : import(url); }
   function loadLib() {
-    importLib(cfg.inline ? blobUrl(window.__PDFJS_MAIN) : cfg.lib + 'pdf.min.mjs').then(function (m) {
-      lib = m;
-      if (!lib || !lib.getDocument) throw new Error('pdf.js no se pudo cargar');
-      return cfg.inline ? window.__PDFJS_WORKER : fetch(cfg.lib + 'pdf.worker.min.mjs').then(function (r) { return r.text(); });
-    }).then(function (code) {
-      lib.GlobalWorkerOptions.workerSrc = blobUrl(code);
-      window.__PDFJS_MAIN = window.__PDFJS_WORKER = null;
-      post({ type: 'ready' });
-    }).catch(function (e) {
-      fail('lib', lib ? e : 'No se pudo cargar pdf.js: sin internet o WebView sin módulos ES (iOS 16.4+). Para usarlo sin conexión: import "easynat/pdfjs" (' + (e && e.message || e) + ')');
-    });
+    var s = document.createElement('script');
+    s.src = cfg.inline ? blobUrl(window.__PDFJS_MAIN) : cfg.lib + 'pdf.min.js';
+    s.onload = function () {
+      lib = window.pdfjsLib;
+      if (!lib) return fail('lib', 'pdf.js no se pudo cargar');
+      if (cfg.inline) { lib.GlobalWorkerOptions.workerSrc = blobUrl(window.__PDFJS_WORKER); window.__PDFJS_MAIN = window.__PDFJS_WORKER = null; post({ type: 'ready' }); return; }
+      fetch(cfg.lib + 'pdf.worker.min.js').then(function (r) { return r.text(); })
+        .then(function (code) { lib.GlobalWorkerOptions.workerSrc = blobUrl(code); post({ type: 'ready' }); })
+        .catch(function (e) { fail('lib', e); });
+    };
+    s.onerror = function () { fail('lib', 'No se pudo descargar pdf.js (sin internet). Para usarlo sin conexión: import "easynat/pdfjs"'); };
+    document.head.appendChild(s);
   }
-  // Lo que pide pdf.js aparte (cmaps, fuentes y wasm): los wasm, de dentro de la app si se registraron; lo demás, de su URL
-  function BinaryData(urls) { this.urls = urls; }
-  BinaryData.prototype.fetch = function (q) {
-    var inside = q.kind === 'wasmUrl' && window.__PDFJS_WASM && window.__PDFJS_WASM[q.filename];
-    if (inside) return Promise.resolve(b64ToBytes(inside));
-    var base = this.urls[q.kind];
-    if (!base) return Promise.reject(new Error('Sin URL para ' + q.kind));
-    return fetch(base + q.filename).then(function (r) { if (!r.ok) throw new Error(r.statusText || ('HTTP ' + r.status)); return r.arrayBuffer(); })
-      .then(function (b) { return new Uint8Array(b); });
-  };
 
   /* ----- Abrir ----- */
   function b64ToBytes(b) { var bin = atob(b), n = bin.length, u = new Uint8Array(n); for (var i = 0; i < n; i++) u[i] = bin.charCodeAt(i); return u; }
   function closeDoc() {
     gen++; pages.forEach(function (p) { if (p.task) p.task.cancel(); release(p); });
     pages = []; pagesEl.innerHTML = ''; textCache = {}; matches = []; cur = -1;
-    // pdf.js 6: se cierra con la tarea de carga (el documento ya no tiene destroy)
-    if (docTask) { docTask.destroy(); docTask = null; }
-    doc = null;
+    if (doc) { doc.destroy(); doc = null; }
   }
   window.__chunk = function (s) { chunks.push(s); };
   window.__open = function (o) {
     var data = b64ToBytes(chunks.join('')); chunks = [];
     closeDoc();
-    var my = gen, task = docTask = lib.getDocument({ data: data, password: o && o.password || undefined, isEvalSupported: false, enableXfa: false,
-      cMapUrl: cfg.cmaps, cMapPacked: true, standardFontDataUrl: cfg.fonts, wasmUrl: cfg.wasm, useWorkerFetch: false, BinaryDataFactory: BinaryData });
+    var my = gen, task = lib.getDocument({ data: data, password: o && o.password || undefined, isEvalSupported: false, enableXfa: false,
+      cMapUrl: cfg.cmaps, cMapPacked: true, standardFontDataUrl: cfg.fonts });
     task.onPassword = function (update, reason) { pendingPassword = update; post({ type: 'password', incorrect: reason === 2 }); };
     task.onProgress = function (p) { if (p.total) post({ type: 'progress', value: p.loaded / p.total }); };
     task.promise.then(function (d) {
-      if (my !== gen) return task.destroy();
+      if (my !== gen) return d.destroy();
       doc = d;
       // Los tamaños de todas las páginas (para saber cuánto ocupa cada una antes de dibujarla)
       var all = []; for (var i = 1; i <= d.numPages; i++) all.push(d.getPage(i));
@@ -212,18 +194,17 @@ const VIEWER_SCRIPT = String.raw `(function () {
   }
   function addText(p) {
     var s = baseScale * zoom;
-    if (!cfg.text || !lib.TextLayer || (p.textLayer && Math.abs(p.textScale - s) / s < 0.01)) return;
+    if (!cfg.text || !lib.renderTextLayer || (p.textLayer && Math.abs(p.textScale - s) / s < 0.01)) return;
     dropText(p);
     var layer = document.createElement('div'), my = p.textScale = s;
     layer.className = 'textLayer';
-    // pdf.js pone las letras con --total-scale-factor (la escala de la página en pantalla)
+    // pdf.js pone las letras con --scale-factor (el mismo que la escala de la página en pantalla)
     layer.style.setProperty('--scale-factor', String(s));
-    layer.style.setProperty('--total-scale-factor', String(s));
     p.textLayer = layer; p.el.appendChild(layer);
     pageText(p).then(function (t) {
       if (p.textLayer !== layer || p.textScale !== my) return;
-      p.textTask = new lib.TextLayer({ textContentSource: t.tc, container: layer, viewport: p.page.getViewport({ scale: s }) });
-      return p.textTask.render().then(function () {
+      p.textTask = lib.renderTextLayer({ textContentSource: t.tc, container: layer, viewport: p.page.getViewport({ scale: s }), textDivs: [], isOffscreenCanvasSupported: false });
+      return p.textTask.promise.then(function () {
         // Lo que va al final de la capa: al arrastrar la selección más allá del texto no se salta a otra página
         var end = document.createElement('div'); end.className = 'endOfContent'; layer.appendChild(end);
       });
@@ -483,7 +464,7 @@ exports.PDFViewer = (0, react_1.forwardRef)((rawProps, ref) => {
     const html = (0, react_1.useMemo)(() => {
         var _a, _b;
         const lib = bundled, base = (_a = pdfjsUrl === null || pdfjsUrl === void 0 ? void 0 : pdfjsUrl.replace(/\/$/, '')) !== null && _a !== void 0 ? _a : cdnBase((_b = lib === null || lib === void 0 ? void 0 : lib.version) !== null && _b !== void 0 ? _b : exports.PDFJS_VERSION);
-        return { html: viewerDocument({ inline: !!lib, lib: `${base}/legacy/build/`, cmaps: `${base}/cmaps/`, fonts: `${base}/standard_fonts/`, wasm: `${base}/wasm/`, spacing, fit, maxZoom, doubleTap: doubleTapZoom, bg: backgroundColor, initialPage, text: textSelection }, lib) };
+        return { html: viewerDocument({ inline: !!lib, lib: `${base}/legacy/build/`, cmaps: `${base}/cmaps/`, fonts: `${base}/standard_fonts/`, spacing, fit, maxZoom, doubleTap: doubleTapZoom, bg: backgroundColor, initialPage, text: textSelection }, lib) };
     }, []);
     const fail = (e) => { var _a, _b; setError(e); setStatus('error'); (_b = (_a = latest.current).onError) === null || _b === void 0 ? void 0 : _b.call(_a, e); };
     // El PDF se lee en React Native y se manda al WebView en trozos (un solo mensaje enorme va lento)

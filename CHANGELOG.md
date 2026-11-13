@@ -2,6 +2,8 @@
 
 ## Próxima versión
 
+- **Modal: cierra el teclado al abrirse.** Si un campo tenía el foco, el teclado se quedaba abierto encima del modal (también con `openModal`).
+- **Pruebas:** `datepicker.js` acepta las horas coreanas con o sin 시/분: con ICU 79 (Node 26) el formato de 24 h coreano es "08:05:00".
 - **Menu en Android (edge-to-edge):** el menú ya no tapa el botón que lo abre. Se medía el trigger con `measureInWindow`, que en Android resta la barra de estado, mientras que el Portal empieza en y = 0; ahora se mide con `measure` (pageX/pageY), la misma referencia que el Portal, en iOS y Android.
 - **SearchInput** (`listType="absolute"`): mismo cambio; el espacio libre arriba y abajo del input ya no sale desplazado en Android.
 - **Menu: márgenes como desplazamiento.** `m`, `mx`, `my`, `mt`, `mb`, `ml` y `mr` (o `margin…` en `style` o en el tema) mueven la caja en cualquier dirección (x = izquierdo − derecho, y = superior − inferior, también negativos) y se aplican antes de ajustarla a la pantalla, así que no se sale. Antes `mr` y `mb` no hacían nada y `ml` / `mt` podían sacarla de la pantalla.
@@ -15,9 +17,8 @@
 - **`import 'easynat/pdfjs'`:** acceso corto para usar PDFViewer sin internet (`easynat/dist/utils/pdfjs` sigue funcionando).
 - **Image:** sin `size` ni tamaño propio ocupa todo el ancho (`100%`) con la proporción real de la imagen (antes 50×50). Con `size` sigue siendo cuadrada. En una fila (`flexDir="row"`), varias imágenes sin ancho se reparten el espacio (`flexShrink: 1`), y con `flex` mantienen su proporción. Mientras no se conoce la proporción usa 16:9 y la toma también al cargar (con `data:` URIs en Android `getSize` falla y antes quedaba con alto 0). Si no carga, muestra un hueco gris con un icono (y el texto de `alt`) en vez de una caja vacía, y al cambiar de `source` lo vuelve a intentar.
 - **Input multiline (textarea):** el label flotante, en reposo, va en la primera línea y no en el centro de la caja; el texto empieza arriba (`textAlignVertical="top"` por defecto).
-- **PDFViewer con pdf.js 6.5.438** (antes 3.11.174), del CDN y en `easynat/pdfjs`. pdf.js 4+ son módulos ES (ES2022): el WebView necesita **iOS 16.4+** (en Android se actualiza solo). Se carga con `import()`, la capa de texto usa `TextLayer` y el documento se cierra con su tarea de carga. `easynat/pdfjs` lleva también los decodificadores wasm de imágenes (JPEG 2000 y JBIG2, de PDFs escaneados), para que se vean sin internet; cmaps y fuentes estándar siguen viniendo del CDN (o de `pdfjsUrl`, que ahora también sirve la carpeta `wasm`).
 - **PDFViewer, contraseña:** al pulsar «Abrir» o «Cancelar» se cierra el teclado (en Android se quedaba abierto encima del PDF).
-- **`getPdfJs()`:** devuelve el pdf.js registrado (`{ version, main, worker, wasm }`, o `null`) para usarlo en tus propios WebView sin descargar nada.
+- **`getPdfJs()`:** devuelve el pdf.js registrado (`{ version, main, worker }`, o `null`) para usarlo en tus propios WebView sin descargar nada. Sigue siendo pdf.js 3.11.174 (script clásico, iOS 15+): se probó la 6.5 y, en iPhone, con planos escaneados grandes (A0, 11 MB) gastaba tanta memoria que iOS cerraba el WebView; la 3.11 los abre.
 - **Button: `loadingOnPress` ahora es `false` por defecto.** Si `onPress` devuelve una promesa ya no sale el spinner salvo con `loadingOnPress`. El `feedback` sigue esperando a que termine la promesa.
 
 ## 1.0.0 — primera versión

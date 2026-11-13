@@ -172,6 +172,8 @@ function InternalModal(props, ref) {
     // Referencia estable a este modal para el registro global
     const handle = (0, react_1.useRef)(null);
     const open = (0, react_1.useCallback)((nextData) => {
+        // El teclado del campo que tenía el foco se quedaba abierto encima del modal
+        react_native_1.Keyboard.dismiss();
         isOpen.current = true;
         resultRef.current = undefined;
         dataRef.current = nextData;

@@ -27,6 +27,15 @@ const ok = msg => console.log('OK ' + msg);
   assert.equal(slide(), 1, 'tras onLayout anima hasta 1');
   ok('abrir: el contenido llega y anima solo cuando está montado');
 
+  {
+    const real = RN.Keyboard.dismiss; let dismissed = 0; RN.Keyboard.dismiss = () => dismissed++;
+    await act(async () => ref.current.close()); await wait(400);
+    await act(async () => ref.current.open()); await settle();
+    RN.Keyboard.dismiss = real;
+    assert.equal(dismissed, 1, 'abrir cierra el teclado');
+    ok('abrir: cierra el teclado que hubiera abierto');
+  }
+
   await act(async () => ref.current.close()); await wait(400);
   assert.ok(!shown('contenido')); ok('cerrar: se desmonta al terminar la animación');
 

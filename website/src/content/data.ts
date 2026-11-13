@@ -387,10 +387,10 @@ if (r) await subir(r.base64);            // { dataUri, base64, mimeType, width, 
             'Seleccionar y copiar texto (onTextSelect)',
             'Enlaces internos y externos (onLinkPress)',
             'Contraseña: por prop o se pregunta',
-            'pdf.js 6 del CDN o dentro de la app (sin internet), también para tus propios WebView (getPdfJs)',
+            'pdf.js del CDN o dentro de la app (sin internet), también para tus propios WebView (getPdfJs)',
         ],
         imports: ['PDFViewer', 'openPDFViewer'],
-        requires: 'react-native-webview (iOS 16.4+: pdf.js 6 usa módulos ES)',
+        requires: 'react-native-webview',
         examples: [
             {
                 title: 'Dentro de una pantalla y a pantalla completa',
@@ -406,15 +406,16 @@ openPDFViewer(archivo.uri, { initialPage: 3 });`,
             },
             {
                 title: 'pdf.js en tu propio WebView',
-                description: 'Para pantallas que dibujan o editan el PDF a su manera: el mismo pdf.js, sin descargar nada. Son módulos ES: se cargan con import() desde un blob.',
+                description: 'Para pantallas que dibujan o editan el PDF a su manera: el mismo pdf.js, sin descargar nada. Es un script clásico: se mete en un <script> y deja window.pdfjsLib.',
                 code: `import 'easynat/pdfjs';
-const pdf = getPdfJs(); // { version, main, worker, wasm }
+const pdf = getPdfJs(); // { version, main, worker }
 
 // En el HTML del WebView (pasa pdf como JSON):
-const blob = code => URL.createObjectURL(new Blob([code], { type: 'text/javascript' }));
-const lib = await import(blob(pdf.main));
-lib.GlobalWorkerOptions.workerSrc = blob(pdf.worker);
-const doc = await lib.getDocument({ data: bytes, isEvalSupported: false }).promise;`,
+const script = document.createElement('script');
+script.textContent = pdf.main;
+document.head.appendChild(script);
+pdfjsLib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(new Blob([pdf.worker], { type: 'text/javascript' }));
+const doc = await pdfjsLib.getDocument({ data: bytes, isEvalSupported: false }).promise;`,
             },
         ],
         types: ['PDFViewerProps', 'PDFViewerRef', 'PDFSource', 'PDFViewerError'],

@@ -18,6 +18,7 @@ import {
     ViewProps,
     PressableProps,
     Dimensions,
+    Keyboard,
 } from "react-native";
 import { Portal } from "./Portal";
 import { touchHandlers } from "./utils/touches";
@@ -233,6 +234,8 @@ function InternalModal(
     const handle = useRef<EAModalRef>(null);
 
     const open = useCallback((nextData?: any) => {
+        // El teclado del campo que tenía el foco se quedaba abierto encima del modal
+        Keyboard.dismiss();
         isOpen.current = true;
         resultRef.current = undefined;
         dataRef.current = nextData;

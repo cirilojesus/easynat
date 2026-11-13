@@ -41,13 +41,10 @@ global.FileReader = class { readAsDataURL(b) { this.result = 'data:application/p
     require(require('path').join(__dirname, '.build/utils/pdfjs.js'));
     const real = webOf(await render(h(PDFViewer, { source: { base64: 'AA==' } }))).props.source.html;
     assert.ok(real.includes('"inline":true') && real.length > 1400000 && scriptsOf(real).length === 2, 'import utils/pdfjs: pdf.js dentro (' + real.length + ')');
-    // getPdfJs: el mismo pdf.js para usarlo en un WebView propio (módulos ES y los wasm de imágenes)
+    // getPdfJs: el mismo pdf.js para usarlo en un WebView propio (scripts clásicos)
     const reg = getPdfJs();
     assert.equal(reg.version, PDFJS_VERSION, 'la versión generada es la del CDN');
-    assert.ok(/export\s*\{/.test(reg.main) && reg.worker.length > 500000, 'main y worker son módulos ES');
-    assert.deepEqual(Object.keys(reg.wasm).sort(), ['jbig2.wasm', 'openjpeg.wasm'], 'wasm de JPEG 2000 y JBIG2');
-    assert.equal(Buffer.from(reg.wasm['openjpeg.wasm'], 'base64').subarray(0, 4).toString('hex'), '0061736d', 'wasm válido (\\0asm)');
-    assert.ok(real.includes('window.__PDFJS_WASM='), 'los wasm van al documento');
+    assert.ok(/pdfjsLib/.test(reg.main) && !/^\s*export\s/m.test(reg.main) && reg.worker.length > 500000, 'main y worker son scripts clásicos');
     registerPdfJs(null);
     assert.equal(getPdfJs(), null, 'sin registrar: null');
     ok('opcional; pdf.js del CDN por defecto, dentro de la app con registerPdfJs (escapado) o de una URL propia');
@@ -175,23 +172,18 @@ global.FileReader = class { readAsDataURL(b) { this.result = 'data:application/p
     });
     const pdfPages = [1, 2, 3].map(mkPage);
     const doc = { numPages: 3, getPage: i => Promise.resolve(pdfPages[i - 1]), getMetadata: () => Promise.resolve({ info: { Title: 'Demo' } }),
-      getDestination: () => Promise.resolve([{ num: 9 }, { name: 'XYZ' }, 0, 400]), getPageIndex: () => Promise.resolve(2) };
+      getDestination: () => Promise.resolve([{ num: 9 }, { name: 'XYZ' }, 0, 400]), getPageIndex: () => Promise.resolve(2), destroy() { calls.destroyed = (calls.destroyed || 0) + 1 } };
     const fakeLib = {
       GlobalWorkerOptions: {},
-      TextLayer: class {
-        constructor(o) { this.o = o; calls.text = (calls.text || 0) + 1; calls.lastText = o; }
-        render() {
-          const o = this.o;
-          o.textContentSource.items.forEach(it => { const sp = o.container.ownerDocument.createElement('span'); sp.textContent = it.str; o.container.appendChild(sp); });
-          return Promise.resolve();
-        }
-        cancel() { calls.textCancel = (calls.textCancel || 0) + 1 }
+      renderTextLayer(o) {
+        calls.text = (calls.text || 0) + 1; calls.lastText = o;
+        o.textContentSource.items.forEach(it => { const sp = o.container.ownerDocument.createElement('span'); sp.textContent = it.str; o.container.appendChild(sp); });
+        return { promise: Promise.resolve(), cancel() { calls.textCancel = (calls.textCancel || 0) + 1 } };
       },
       Util: { transform: (a, b) => [a[0] * b[0] + a[2] * b[1], a[1] * b[0] + a[3] * b[1], a[0] * b[2] + a[2] * b[3], a[1] * b[2] + a[3] * b[3], a[0] * b[4] + a[2] * b[5] + a[4], a[1] * b[4] + a[3] * b[5] + a[5]] },
       getDocument(o) {
         calls.getDocument.push(o);
-        // pdf.js 6: el documento se suelta con la tarea de carga
-        const task = { destroy() { calls.destroyed = (calls.destroyed || 0) + 1 } };
+        const task = {};
         task.promise = new Promise((resolve, reject) => {
           if (failWith) return setTimeout(() => reject(Object.assign(new Error('mal'), { name: failWith })));
           if (!needPassword) return setTimeout(() => resolve(doc));
@@ -201,17 +193,17 @@ global.FileReader = class { readAsDataURL(b) { this.result = 'data:application/p
         return task;
       },
     };
-    // pdf.js "se carga": es un módulo ES, lo pide con import() (aquí, window.__import)
-    const imported = [];
-    window.__import = async u => { imported.push(u); return fakeLib };
-    const realFetch = global.fetch;
-    global.fetch = async u => ({ text: async () => 'worker:' + u });
-    window.fetch = global.fetch;
     const run = new Function('window', 'document', 'requestAnimationFrame', 'atob', 'URL', 'Blob', cfgJs.replace(/window\.__CFG=/, 'window.__CFG=') + ';' + script);
     run(window, document, f => frames.push(f), atob, URL, Blob);
     const flush = async () => { for (let i = 0; i < 5; i++) { await new Promise(r => setTimeout(r)); frames.splice(0).forEach(f => f()) } };
-    await flush();
-    assert.ok(imported[0] && imported[0].startsWith('https://cdn.jsdelivr.net/npm/pdfjs-dist@') && imported[0].endsWith('/legacy/build/pdf.min.mjs'), 'importa el módulo de pdf.js del CDN: ' + imported[0]);
+    // pdf.js "se carga": el script lo había pedido con un <script src>
+    const tag = document.head.querySelector('script');
+    assert.ok(tag && tag.src.startsWith('https://cdn.jsdelivr.net/npm/pdfjs-dist@'), 'pide pdf.js al CDN: ' + (tag && tag.src));
+    window.pdfjsLib = fakeLib;
+    const realFetch = global.fetch;
+    global.fetch = async u => ({ text: async () => 'worker:' + u });
+    window.fetch = global.fetch;
+    tag.onload(); await flush();
     global.fetch = realFetch;
     assert.ok(fakeLib.GlobalWorkerOptions.workerSrc.startsWith('blob:'), 'worker desde un blob');
     assert.equal(posts[0].type, 'ready');
@@ -225,16 +217,6 @@ global.FileReader = class { readAsDataURL(b) { this.result = 'data:application/p
     assert.equal(o.isEvalSupported, false, 'isEvalSupported: false (CVE-2024-4367)');
     assert.equal(o.enableXfa, false);
     assert.ok(o.cMapUrl.endsWith('/cmaps/') && o.cMapPacked);
-    assert.ok(o.wasmUrl.endsWith('/wasm/') && o.useWorkerFetch === false && typeof o.BinaryDataFactory === 'function', 'wasm y ficheros aparte con su propia fábrica');
-    // la fábrica: un wasm registrado sale de dentro de la app; lo demás se descarga de su URL
-    window.__PDFJS_WASM = { 'jbig2.wasm': Buffer.from('WASM').toString('base64') };
-    const fac = new o.BinaryDataFactory({ cMapUrl: 'https://c/cmaps/', standardFontDataUrl: null, wasmUrl: 'https://c/wasm/' });
-    assert.equal(Buffer.from(await fac.fetch({ kind: 'wasmUrl', filename: 'jbig2.wasm' })).toString(), 'WASM', 'wasm de dentro');
-    const asked = []; window.fetch = global.fetch = async u => { asked.push(u); return { ok: true, arrayBuffer: async () => Buffer.from('CMAP') } };
-    assert.equal(Buffer.from(await fac.fetch({ kind: 'cMapUrl', filename: 'A.bcmap' })).toString(), 'CMAP');
-    assert.deepEqual(asked, ['https://c/cmaps/A.bcmap'], 'lo demás, de su URL');
-    await assert.rejects(fac.fetch({ kind: 'standardFontDataUrl', filename: 'x.pfb' }), /Sin URL/);
-    window.fetch = global.fetch = realFetch; window.__PDFJS_WASM = null;
     assert.deepEqual(last('loaded'), { type: 'loaded', numPages: 3, title: 'Demo' });
     const pageEls = pagesEl.querySelectorAll('.page');
     assert.equal(pageEls.length, 3);

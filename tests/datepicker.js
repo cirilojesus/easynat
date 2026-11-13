@@ -249,7 +249,11 @@ const hecho = async () => { await act(async () => btnTexto(root().findAll(n => n
     let t;
     const horas = () => root().findAll(n => n.type === 'FlatList')[0].findAll(n => n.type === 'Pressable' && n.props.onPress).map(textoDe);
     const minutos = () => root().findAll(n => n.type === 'FlatList')[1].findAll(n => n.type === 'Pressable' && n.props.onPress).map(textoDe);
-    for (const [locale, h8, m5] of [['ja', '8時', '05分'], ['ko', '8시', '05분'], ['es', '08', '05'], ['zh-CN', '08', '05']]) {
+    // ko: con ICU 79 (Node 26, CLDR 47) el formato de 24 h coreano pasó a "08:05:00", sin 시/분; con datos
+    // anteriores sigue con unidades. El componente sigue a Intl, así que valen las dos formas.
+    const koParts = new Intl.DateTimeFormat('ko', { timeStyle: 'full', hourCycle: 'h23' }).formatToParts(new Date(2000, 0, 1, 8, 5));
+    const ko = (koParts[koParts.findIndex(p => p.type === 'hour') + 1]?.value || '').includes('시');
+    for (const [locale, h8, m5] of [['ja', '8時', '05分'], ['ko', ko ? '8시' : '08', ko ? '05분' : '05'], ['es', '08', '05'], ['zh-CN', '08', '05']]) {
       await act(async () => { t = TR.create(h(DatePicker, { type: 'time', locale, value: { hour: 8, minute: 5 } })) });
       await abrir(t);
       assert.ok(horas().includes(h8) && minutos().includes(m5), locale + ': hora ' + h8 + ' y minuto ' + m5 + ' (' + horas()[8] + ' / ' + minutos()[5] + ')');
