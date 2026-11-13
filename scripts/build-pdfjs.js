@@ -12,8 +12,12 @@ const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'pdfjs-'));
 execSync(`npm pack pdfjs-dist@${version} --silent`, { cwd: tmp, stdio: 'ignore' });
 execSync(`tar -xzf pdfjs-dist-${version}.tgz`, { cwd: tmp });
 const read = f => fs.readFileSync(path.join(tmp, 'package', 'legacy', 'build', f), 'utf8');
-const main = read('pdf.min.js');
-const worker = read('pdf.worker.min.js');
+// Solo ASCII: pdf.js trae ~45 caracteres no ASCII (ÿ, þ, ©, ×…, todos dentro de cadenas) y por ellos Hermes guarda
+// la cadena entera a 2 bytes por carácter (unos 3 MB en vez de 1,5 en el bytecode de la app). Escapados como \uXXXX
+// el código hace exactamente lo mismo
+const ascii = code => code.replace(/[^\x00-\x7f]/g, c => '\\u' + c.charCodeAt(0).toString(16).padStart(4, '0'));
+const main = ascii(read('pdf.min.js'));
+const worker = ascii(read('pdf.worker.min.js'));
 if (/<\/script/i.test(main + worker)) throw new Error('pdf.js contiene </script: habría que escaparlo');
 
 const out = `// GENERADO por scripts/build-pdfjs.js (pdfjs-dist ${version}, build legacy). No editar a mano.

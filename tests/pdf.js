@@ -45,6 +45,7 @@ global.FileReader = class { readAsDataURL(b) { this.result = 'data:application/p
     const reg = getPdfJs();
     assert.equal(reg.version, PDFJS_VERSION, 'la versión generada es la del CDN');
     assert.ok(/pdfjsLib/.test(reg.main) && !/^\s*export\s/m.test(reg.main) && reg.worker.length > 500000, 'main y worker son scripts clásicos');
+    assert.ok(!/[^\x00-\x7f]/.test(reg.main + reg.worker), 'solo ASCII (con un carácter no ASCII Hermes guarda la cadena a 2 bytes por carácter)');
     registerPdfJs(null);
     assert.equal(getPdfJs(), null, 'sin registrar: null');
     ok('opcional; pdf.js del CDN por defecto, dentro de la app con registerPdfJs (escapado) o de una URL propia');
