@@ -1,14 +1,29 @@
 import React from "react";
 import { EABoxProps } from "./Box";
-/** Versión de pdf.js del CDN (la última que se carga como script normal: funciona en WebViews antiguos) */
-export declare const PDFJS_VERSION = "3.11.174";
-type PdfJsBundle = {
+/** Versión de pdf.js del CDN (build legacy, módulos ES: necesita iOS 16.4+) */
+export declare const PDFJS_VERSION = "6.5.438";
+/**
+ * pdf.js como texto: `main` (pdf.min.mjs) y `worker` (pdf.worker.min.mjs) son módulos ES. `wasm`: los decodificadores
+ * de imágenes en wasm (base64 por nombre de archivo: openjpeg.wasm para JPEG 2000, jbig2.wasm para escaneos en blanco y negro)
+ */
+export type PdfJsBundle = {
     version: string;
     main: string;
     worker: string;
+    wasm?: Record<string, string>;
 };
 /** Registra pdf.js dentro de la app (lo hace `import 'easynat/pdfjs'`): así no hace falta internet */
-export declare const registerPdfJs: (lib: PdfJsBundle) => void;
+export declare const registerPdfJs: (lib: PdfJsBundle | null) => void;
+/**
+ * El pdf.js registrado (null si no se importó 'easynat/pdfjs'), para usarlo en tu propio WebView sin descargar nada.
+ * Son módulos ES: cárgalo con `import()` desde un blob y pon el worker en `GlobalWorkerOptions.workerSrc`
+ * @example
+ * const pdf = getPdfJs();
+ * // en el WebView:
+ * // const lib = await import(URL.createObjectURL(new Blob([main], { type: 'text/javascript' })));
+ * // lib.GlobalWorkerOptions.workerSrc = URL.createObjectURL(new Blob([worker], { type: 'text/javascript' }));
+ */
+export declare const getPdfJs: () => PdfJsBundle | null;
 /** Un PDF: su uri (https, file://, content://, data:), con cabeceras (p. ej. Authorization), o su base64 */
 export type PDFSource = string | {
     uri: string;
@@ -57,7 +72,7 @@ export type PDFViewerProps = Omit<EABoxProps, 'children'> & {
     onTextSelect?: (text: string) => void;
     /** Fondo. Por defecto gris oscuro, como los visores de PDF */
     backgroundColor?: string;
-    /** pdf.js de otro sitio (p. ej. tu servidor): la carpeta de pdfjs-dist (con legacy/build, cmaps y standard_fonts) */
+    /** pdf.js de otro sitio (p. ej. tu servidor): la carpeta de pdfjs-dist (con legacy/build, cmaps, standard_fonts y wasm) */
     pdfjsUrl?: string;
     onLoad?: (info: {
         numPages: number;
@@ -101,7 +116,7 @@ export declare const PDFViewer: React.ForwardRefExoticComponent<Omit<EABoxProps,
     onTextSelect?: (text: string) => void;
     /** Fondo. Por defecto gris oscuro, como los visores de PDF */
     backgroundColor?: string;
-    /** pdf.js de otro sitio (p. ej. tu servidor): la carpeta de pdfjs-dist (con legacy/build, cmaps y standard_fonts) */
+    /** pdf.js de otro sitio (p. ej. tu servidor): la carpeta de pdfjs-dist (con legacy/build, cmaps, standard_fonts y wasm) */
     pdfjsUrl?: string;
     onLoad?: (info: {
         numPages: number;
@@ -120,4 +135,3 @@ export declare const PDFViewer: React.ForwardRefExoticComponent<Omit<EABoxProps,
  * @example openPDFViewer('https://…/manual.pdf', { initialPage: 3 })
  */
 export declare const openPDFViewer: (source: PDFSource, options?: Omit<PDFViewerProps, "source" | "onClose">) => import("./Modal").EAModalHandle<any, any>;
-export {};

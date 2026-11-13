@@ -387,10 +387,10 @@ if (r) await subir(r.base64);            // { dataUri, base64, mimeType, width, 
             'Seleccionar y copiar texto (onTextSelect)',
             'Enlaces internos y externos (onLinkPress)',
             'Contraseña: por prop o se pregunta',
-            'pdf.js del CDN o dentro de la app (sin internet)',
+            'pdf.js 6 del CDN o dentro de la app (sin internet), también para tus propios WebView (getPdfJs)',
         ],
         imports: ['PDFViewer', 'openPDFViewer'],
-        requires: 'react-native-webview',
+        requires: 'react-native-webview (iOS 16.4+: pdf.js 6 usa módulos ES)',
         examples: [
             {
                 title: 'Dentro de una pantalla y a pantalla completa',
@@ -404,9 +404,21 @@ openPDFViewer(archivo.uri, { initialPage: 3 });`,
                 description: 'pdf.js se descarga del CDN la primera vez. Importando este archivo una vez va dentro de la app.',
                 code: `import 'easynat/pdfjs';`,
             },
+            {
+                title: 'pdf.js en tu propio WebView',
+                description: 'Para pantallas que dibujan o editan el PDF a su manera: el mismo pdf.js, sin descargar nada. Son módulos ES: se cargan con import() desde un blob.',
+                code: `import 'easynat/pdfjs';
+const pdf = getPdfJs(); // { version, main, worker, wasm }
+
+// En el HTML del WebView (pasa pdf como JSON):
+const blob = code => URL.createObjectURL(new Blob([code], { type: 'text/javascript' }));
+const lib = await import(blob(pdf.main));
+lib.GlobalWorkerOptions.workerSrc = blob(pdf.worker);
+const doc = await lib.getDocument({ data: bytes, isEvalSupported: false }).promise;`,
+            },
         ],
         types: ['PDFViewerProps', 'PDFViewerRef', 'PDFSource', 'PDFViewerError'],
-        functions: ['openPDFViewer', 'registerPdfJs', 'PDFJS_VERSION'],
+        functions: ['openPDFViewer', 'getPdfJs', 'registerPdfJs', 'PDFJS_VERSION'],
         shots: ['pdf'],
     },
     {

@@ -15,6 +15,9 @@
 - **`import 'easynat/pdfjs'`:** acceso corto para usar PDFViewer sin internet (`easynat/dist/utils/pdfjs` sigue funcionando).
 - **Image:** sin `size` ni tamaño propio ocupa todo el ancho (`100%`) con la proporción real de la imagen (antes 50×50). Con `size` sigue siendo cuadrada. En una fila (`flexDir="row"`), varias imágenes sin ancho se reparten el espacio (`flexShrink: 1`), y con `flex` mantienen su proporción. Mientras no se conoce la proporción usa 16:9 y la toma también al cargar (con `data:` URIs en Android `getSize` falla y antes quedaba con alto 0). Si no carga, muestra un hueco gris con un icono (y el texto de `alt`) en vez de una caja vacía, y al cambiar de `source` lo vuelve a intentar.
 - **Input multiline (textarea):** el label flotante, en reposo, va en la primera línea y no en el centro de la caja; el texto empieza arriba (`textAlignVertical="top"` por defecto).
+- **PDFViewer con pdf.js 6.5.438** (antes 3.11.174), del CDN y en `easynat/pdfjs`. pdf.js 4+ son módulos ES (ES2022): el WebView necesita **iOS 16.4+** (en Android se actualiza solo). Se carga con `import()`, la capa de texto usa `TextLayer` y el documento se cierra con su tarea de carga. `easynat/pdfjs` lleva también los decodificadores wasm de imágenes (JPEG 2000 y JBIG2, de PDFs escaneados), para que se vean sin internet; cmaps y fuentes estándar siguen viniendo del CDN (o de `pdfjsUrl`, que ahora también sirve la carpeta `wasm`).
+- **PDFViewer, contraseña:** al pulsar «Abrir» o «Cancelar» se cierra el teclado (en Android se quedaba abierto encima del PDF).
+- **`getPdfJs()`:** devuelve el pdf.js registrado (`{ version, main, worker, wasm }`, o `null`) para usarlo en tus propios WebView sin descargar nada.
 - **Button: `loadingOnPress` ahora es `false` por defecto.** Si `onPress` devuelve una promesa ya no sale el spinner salvo con `loadingOnPress`. El `feedback` sigue esperando a que termine la promesa.
 
 ## 1.0.0 — primera versión
